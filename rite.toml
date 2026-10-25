@@ -16,3 +16,4 @@ verification = ["Verificação", "Verification"]
 
 [commit]
 co_author_footer = false                     # sem trailer Co-Authored-By nos commits
+push             = "after-each-item"         # rite finish / commit-new fazem push para origin
