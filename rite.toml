@@ -13,3 +13,6 @@ scope        = ["Escopo", "Scope"]
 files        = ["Arquivos", "Files"]
 evidence     = ["Evidência", "Evidence"]
 verification = ["Verificação", "Verification"]
+
+[commit]
+co_author_footer = false                     # sem trailer Co-Authored-By nos commits
