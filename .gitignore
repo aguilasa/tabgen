@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Project
+.tabgen/        # cached intermediate stage results
+*.wav
+*.mp3
+*.flac
+stems/
+models-cache/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
