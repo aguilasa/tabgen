@@ -6,3 +6,10 @@ docs_language   = "pt-BR"   # tarefas, fixes e profiles do Rite em português
 code_language   = "en-US"   # identificadores e comentários de código em inglês
 commit_language = "en-US"
 # session_language = ""
+
+[sections]
+phase_label  = "Fase"                        # tarefas e checks usam "Fase 0", "Fase 1"...
+scope        = ["Escopo", "Scope"]
+files        = ["Arquivos", "Files"]
+evidence     = ["Evidência", "Evidence"]
+verification = ["Verificação", "Verification"]

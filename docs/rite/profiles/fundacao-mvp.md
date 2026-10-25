@@ -32,9 +32,16 @@ which commands search instead of reading whole.
 
 <!-- Commands that must pass before any item of this cycle closes (in addition to rite.toml [gates].global). -->
 
+- `pytest -q` (a partir da FMVP-TASK-01, que cria a suíte)
+- `ruff check .`
+
 ## Hot files
 
 <!-- Files many items touch; batches serialize on them. -->
+
+- `tabgen/cli/main.py` — tarefas 01, 03, 05 e 07 adicionam subcomandos.
+- `pyproject.toml` — tarefas 01, 03, 05 e 06 adicionam dependências.
+- `tabgen/core/pipeline.py` — tarefas 02 e 07.
 
 ## Serialized resources
 
@@ -47,3 +54,18 @@ which commands search instead of reading whole.
 ## Phase-specific checks
 
 <!-- One entry per phase used by tasks ("### Phase 1 — ..."). The reviewer runs these; a phase without an entry is a finding. -->
+
+### Fase 0 — Fundação
+
+- `pip install -e ".[dev]"` em venv limpa termina com exit 0.
+- `tabgen --version` imprime a versão.
+- `pytest -q` e `ruff check .` verdes.
+- `grep -rE "import typer|import rich|print\(" tabgen/core/` não retorna nada (core sem I/O de interface).
+- `tabgen doctor` sai 0 e lista ffmpeg, Python, torch+CUDA e espaço em disco.
+
+### Fase 1 — Separar + MIDI
+
+- `tabgen separate <amostra>.mp3` gera `stems/{vocals,drums,bass,other,guitar}.wav` válidos.
+- `tabgen transcribe <amostra>.mp3` gera `.mid` por instrumento que o `mido` reabre sem erro.
+- Segunda execução reusa o cache `.tabgen/` (sem re-rodar Demucs; termina em segundos).
+- Teste de callbacks confirma eventos de progresso por estágio.
