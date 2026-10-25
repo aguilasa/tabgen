@@ -1,0 +1,8 @@
+# rite.toml — configuração do Rite neste repositório. Referência: docs/CONFIG.md no plugin.
+
+[project]
+name = "tabgen"
+docs_language   = "pt-BR"   # tarefas, fixes e profiles do Rite em português
+code_language   = "en-US"   # identificadores e comentários de código em inglês
+commit_language = "en-US"
+# session_language = ""
