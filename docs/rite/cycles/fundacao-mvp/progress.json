@@ -168,7 +168,7 @@
       "phase": 1,
       "depends_on": ["FMVP-TASK-05", "FMVP-TASK-06", "FMVP-TASK-07"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-1--separar--midi-mvp-útil-desde-já",
-      "files": ["README.md"],
+      "files": ["README.md", "pyproject.toml"],
       "resources": [],
       "status": "done",
       "done_on": "2026-10-26",
