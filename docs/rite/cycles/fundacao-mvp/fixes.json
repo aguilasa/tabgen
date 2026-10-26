@@ -8,12 +8,16 @@
       "title": "Corrigir padrão .tabgen/ no .gitignore (comentário inline quebra o match)",
       "origin": "FMVP-TASK-02",
       "severity": "low",
-      "files": [],
+      "files": [".gitignore"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-26",
+      "done_commit": "215ae9a",
+      "active_since": null,
+      "started_at": "2026-10-26T11:18:06-03:00",
+      "active_s": 274,
+      "finished_at": "2026-10-26T11:22:40-03:00"
     },
     {
       "id": "FIX-FMVP-002",
@@ -21,12 +25,15 @@
       "title": "Medir espaço em disco no diretório do cache de modelos, não no cwd",
       "origin": "FMVP-TASK-03",
       "severity": "low",
-      "files": [],
+      "files": ["tabgen/core/doctor.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-26T11:18:52-03:00",
+      "started_at": "2026-10-26T11:18:52-03:00",
+      "active_s": 0
     }
   ]
 }

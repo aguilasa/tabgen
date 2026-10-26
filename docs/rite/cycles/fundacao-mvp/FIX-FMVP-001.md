@@ -50,4 +50,23 @@ $ git check-ignore -q ".tabgen/foo.json"; echo "exit=$?"
 
 Hoje `exit=1` (vermelho); depois do fix deve ser `exit=0` (verde).
 
+Medido após o fix (2026-10-26):
+
+```text
+$ git check-ignore -q ".tabgen/foo.json"; echo "exit=$?"
+exit=0
+```
+
 ## Execution Log
+
+- 2026-10-26 — Triagem (`rite reproduce FIX-FMVP-001`): REPRODUCED.
+
+  ```text
+  $ grep -n "tabgen" .gitignore
+  19:.tabgen/        # cached intermediate stage results
+  $ git check-ignore -v ".tabgen/foo.json"; echo "exit=$?"
+  exit=1
+  ```
+- **Closed** — commit `215ae9a` (2026-10-26): fix(gitignore): move inline comment off .tabgen/ line so pattern matches
+  - Files (`git show --name-status 215ae9a`):
+    - `M .gitignore`
