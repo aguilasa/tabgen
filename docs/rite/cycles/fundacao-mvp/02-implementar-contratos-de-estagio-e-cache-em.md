@@ -55,3 +55,4 @@ tratado como miss. `pipeline.py`: `ProgressCallback = Callable[[str, float], Non
     - `A tabgen/core/pipeline.py`
     - `A tests/test_cache.py`
     - `A tests/test_models.py`
+- **Reviewed** (2026-10-26) at `72e2dd0`: FIX-FMVP-001

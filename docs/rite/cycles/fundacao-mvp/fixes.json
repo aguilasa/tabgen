@@ -1,5 +1,19 @@
 {
   "schema": 1,
   "cycle": "fundacao-mvp",
-  "fixes": []
+  "fixes": [
+    {
+      "id": "FIX-FMVP-001",
+      "file": "FIX-FMVP-001.md",
+      "title": "Corrigir padrão .tabgen/ no .gitignore (comentário inline quebra o match)",
+      "origin": "FMVP-TASK-02",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    }
+  ]
 }
