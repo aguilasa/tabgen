@@ -32,8 +32,8 @@ which commands search instead of reading whole.
 
 <!-- Commands that must pass before any item of this cycle closes (in addition to rite.toml [gates].global). -->
 
-- `pytest -q` (a partir da FMVP-TASK-01, que cria a suíte)
-- `ruff check .`
+- `.venv/bin/pytest -q` (a partir da FMVP-TASK-01, que cria a suíte)
+- `.venv/bin/ruff check .`
 
 ## Hot files
 
