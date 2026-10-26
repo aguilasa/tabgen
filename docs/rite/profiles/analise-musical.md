@@ -46,3 +46,11 @@ which commands search instead of reading whole.
 ## Phase-specific checks
 
 <!-- One entry per phase used by tasks ("### Phase 1 — ..."). The reviewer runs these; a phase without an entry is a finding. -->
+
+### Fase 2 — Análise musical
+
+- `.venv/bin/python -c "from madmom.features import downbeats, key, chords"` sai 0 no venv do projeto.
+- `.venv/bin/tabgen analyze <amostra>.mp3` sai 0, imprime tom, BPM e sequência de acordes, e grava JSON que `AnalysisResult.from_json` recarrega.
+- Segunda execução reusa o cache `.tabgen/` (`cache hit`, sem madmom nem Demucs; <5 s).
+- Click track sintético de 120 BPM é medido em 120 ± 2 BPM pelo estágio de beats.
+- `grep -rnE "import typer|import rich|print\(" tabgen/core/` não retorna nada.
