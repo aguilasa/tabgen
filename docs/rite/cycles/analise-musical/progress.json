@@ -63,12 +63,14 @@
       "status": "done",
       "done_on": "2026-10-26",
       "done_commit": "d63564f",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-26",
+      "review_commit": "efc5089",
       "active_since": null,
       "started_at": "2026-10-26T17:46:32-03:00",
       "active_s": 424,
-      "finished_at": "2026-10-26T17:53:36-03:00"
+      "finished_at": "2026-10-26T17:53:36-03:00",
+      "review_started_at": "2026-10-26T18:49:07-03:00",
+      "review_s": 217
     },
     {
       "id": "ANA-TASK-04",
@@ -88,7 +90,8 @@
       "active_since": null,
       "started_at": "2026-10-26T17:46:42-03:00",
       "active_s": 457,
-      "finished_at": "2026-10-26T17:54:19-03:00"
+      "finished_at": "2026-10-26T17:54:19-03:00",
+      "review_started_at": "2026-10-26T18:49:07-03:00"
     },
     {
       "id": "ANA-TASK-05",

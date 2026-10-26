@@ -57,3 +57,4 @@ imports do madmom lazy); BPM = 60/mediana dos intervalos entre beats.
     - `M tabgen/core/analysis/__init__.py`
     - `A tabgen/core/analysis/beats.py`
     - `A tests/test_analysis_beats.py`
+- **Reviewed** (2026-10-26) at `efc5089`: no finding
