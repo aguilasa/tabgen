@@ -51,3 +51,4 @@ Forma do contrato mudou → cache do estágio de análise (ANA-TASK-05) deve ver
   - Files (`git show --name-status 3cc2424`):
     - `M tabgen/core/models.py`
     - `M tests/test_models.py`
+- **Reviewed** (2026-10-26) at `c252df5`: no finding
