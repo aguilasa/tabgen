@@ -54,3 +54,8 @@ depois.
   "Analyze a song (key, tempo, chords)" e duas linhas de runtimes medidos.
 
 ## Execution Log
+
+- **Closed** — commit `80b72ba` (2026-10-26): docs(readme): document analyze command with measured runtimes
+  - Files (`git show --name-status 80b72ba`):
+    - `M README.md`
+    - `M docs/rite/cycles/analise-musical/06-fechar-fase-2.md`
