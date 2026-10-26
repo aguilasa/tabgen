@@ -137,14 +137,15 @@ the `.tabgen/` directories (and `stems/`) to force a re-run.
 ### Expected runtimes
 
 Indicative numbers on a 6 GB NVIDIA GPU (RTX 3060 Laptop), measured with a
-synthetic 10-second sample; real-music timings will be added once Phase 1 is
-validated end to end:
+synthetic 10-second sample and with a real 4 min 08 s song during the Phase 1
+end-to-end validation:
 
 | Scenario                              | Time            |
 | ------------------------------------- | --------------- |
 | `transcribe`, cold (no cache)         | ~10 s (≈5 s separation, ≈2 s transcription + export) |
 | `transcribe`, warm (cache hit)        | < 1 s           |
-| 4-minute song, separation (estimate)  | ~1–2 min        |
+| 4-minute song, cold (no cache)        | ~61 s total (≈47 s separation, ≈6 s guitar + ≈4 s bass transcription) |
+| 4-minute song, warm (cache hit)       | ~1.5 s          |
 
 The very first run also downloads the Demucs model weights (~1 GB). On CPU,
 expect separation to be 10–20× slower.
