@@ -36,14 +36,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágios-23--tom-acordes-beats-e-compassos",
       "files": ["tabgen/core/models.py", "tests/test_models.py"],
       "resources": [],
-      "status": "in-progress",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "3cc2424",
+      "reviewed_on": "pending",
       "review_commit": null,
-      "active_since": "2026-10-26T17:02:18-03:00",
+      "active_since": null,
       "started_at": "2026-10-26T17:02:18-03:00",
-      "active_s": 0
+      "active_s": 389,
+      "finished_at": "2026-10-26T17:08:47-03:00"
     },
     {
       "id": "ANA-TASK-03",

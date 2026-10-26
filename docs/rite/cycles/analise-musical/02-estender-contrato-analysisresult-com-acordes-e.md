@@ -31,4 +31,23 @@ testado.
 Seguir o padrão de `NoteEvents.from_dict` para listas de dataclasses aninhadas. Mudança de
 contrato: qualquer cache futuro do estágio de análise deve versionar a chave (TASK-05).
 
+Verificação (venv `.venv/`):
+
+- `pytest -q tests/test_models.py` → `15 passed` (round-trip com 3 acordes; backward-compat:
+  JSON antigo sem `chords`/`key_confidence` carrega com lista vazia / 0.0).
+- `json.dumps(r.to_dict())` com 2 acordes → ok sem encoder custom; `from_json(to_json()) == r`
+  → True (medido na thread principal).
+- `pytest -q` → `58 passed` · `ruff check .` → limpo · grep core puro → vazio, exit 1.
+
+Desenho: `ChordSegment(start_s, end_s, label)` — nomes seguem o padrão de `Note` (`_s`);
+label estilo Harte ("A:min", "N"). `key` continua string "<tônica> <modo>" ("A minor");
+novo `key_confidence: float = 0.0` ([0,1]). `chords: list[ChordSegment]` com default vazio;
+`from_dict` reconstrói via padrão do `NoteEvents`. `tuning_offset_cents` intacto.
+Forma do contrato mudou → cache do estágio de análise (ANA-TASK-05) deve versionar a chave.
+
 ## Execution Log
+
+- **Closed** — commit `3cc2424` (2026-10-26): feat(core): extend AnalysisResult with chord segments and key confidence
+  - Files (`git show --name-status 3cc2424`):
+    - `M tabgen/core/models.py`
+    - `M tests/test_models.py`
