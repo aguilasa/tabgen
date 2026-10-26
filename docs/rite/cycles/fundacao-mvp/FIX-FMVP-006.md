@@ -49,4 +49,34 @@ $ ! grep -q "real-music timings will be added" README.md
 
 Falha hoje; deve passar depois do fix.
 
+Medido após o fix (2026-10-26):
+
+```text
+$ ! grep -q "real-music timings will be added" README.md; echo "exit=$?"
+exit=0
+```
+
+## Notas
+
+Seção "Expected runtimes" atualizada: intro menciona a música real de 4 min 08 s do e2e da
+Fase 1; linha de estimativa substituída por medidos — frio ~61 s total (≈47 s separação,
+≈6 s guitar + ≈4 s bass) e quente ~1,5 s. Linhas da amostra sintética e notas (download ~1 GB,
+CPU 10–20×) mantidas.
+
+Encaminhamento do sweep (fora do escopo): `docs/planejamento/audio-para-tablatura.md:343` ainda
+diz "separação ~1–2 min" (estimativa do plano vs ~47 s medido) — documento de planejamento,
+não corrigido aqui.
+
 ## Execution Log
+
+- 2026-10-26 — Triagem (`rite reproduce FIX-FMVP-006`): REPRODUCED.
+
+  ```text
+  $ sed -n '136,150p' README.md
+  ...synthetic 10-second sample; real-music timings will be added once Phase 1 is
+  validated end to end:
+  | 4-minute song, separation (estimate)  | ~1–2 min        |
+  ```
+- **Closed** — commit `8b39081` (2026-10-26): docs(readme): replace runtime estimates with measured Phase 1 e2e timings
+  - Files (`git show --name-status 8b39081`):
+    - `M README.md`
