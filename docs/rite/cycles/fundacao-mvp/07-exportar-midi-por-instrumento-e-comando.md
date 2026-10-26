@@ -32,4 +32,33 @@ instrumento — abrível no TuxGuitar — mais um resumo no terminal (nº de not
 Este é o entregável que já tem valor para o usuário final: ouvir no TuxGuitar o que foi
 detectado. Divulgável como pré-release 0.1.
 
+Verificação (venv `.venv/`, amostra sine 220 Hz 10 s em scratchpad, caches quentes):
+
+- `tabgen transcribe sample.mp3` → exit 0; grava `sample.guitar.mid` e `sample.bass.mid`;
+  resumo: `guitar: 1 notes` · `bass: 1 notes` (MIDI 57 = A3 = 220 Hz — pitch correto).
+- `mido.MidiFile` reabre ambos sem erro; ≥1 nota em cada; bends presentes como pitch-wheel
+  (859/858 mensagens).
+- Cache quente: `cache hit: stems reused, Demucs skipped.` + `(cache hit)` por instrumento,
+  0,237 s total — medido na thread principal.
+- Teste de progresso: ordem separation → transcription:guitar → export:guitar →
+  transcription:bass → export:bass, cada estágio chegando a 100.0.
+- `pytest -q` → `51 passed` · `ruff check .` → limpo · grep core puro → vazio, exit 1.
+
+Notas: export usa pretty_midi (mido só nos testes de releitura; mido 1.3.3 já estava na venv
+como dependência do pretty_midi); bends do Basic Pitch (bins de 1/3 de semitom por frame)
+viram pitch-wheel assumindo range ±2 semitons, com reset no fim da nota; `run_transcription`
+injeta separate/transcribe/export para testes; `TranscriptionSummary`/`InstrumentSummary`
+vivem em `pipeline.py` (models.py fora do escopo).
+
+Encaminhamento: adicionar `"mido"` explícito em `[project.optional-dependencies].dev`
+(testes importam direto; hoje é transitiva) — TASK-08.
+
 ## Execution Log
+
+- **Closed** — commit `db85cb3` (2026-10-26): feat(export): add per-instrument MIDI export, pipeline orchestration and transcribe command
+  - Files (`git show --name-status db85cb3`):
+    - `M tabgen/cli/main.py`
+    - `A tabgen/core/export/midi.py`
+    - `M tabgen/core/pipeline.py`
+    - `A tests/test_midi_export.py`
+    - `A tests/test_pipeline.py`

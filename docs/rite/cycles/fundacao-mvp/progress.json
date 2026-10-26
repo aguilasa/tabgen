@@ -144,11 +144,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-1--separar--midi-mvp-útil-desde-já",
       "files": ["tabgen/core/export/midi.py", "tabgen/core/pipeline.py", "tabgen/cli/main.py", "tests/test_midi_export.py", "tests/test_pipeline.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "db85cb3",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T11:53:46-03:00",
+      "active_s": 399,
+      "finished_at": "2026-10-26T12:00:25-03:00"
     },
     {
       "id": "FMVP-TASK-08",
