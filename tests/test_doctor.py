@@ -2,6 +2,7 @@
 
 import json
 import sys
+import types
 
 from typer.testing import CliRunner
 
@@ -12,7 +13,7 @@ runner = CliRunner()
 
 
 def _passing_report() -> doctor.DoctorReport:
-    names = ["ffmpeg", "python", "torch+cuda", "disk space"]
+    names = ["ffmpeg", "python", "torch+cuda", "madmom", "disk space"]
     return doctor.DoctorReport(
         checks=[
             doctor.CheckResult(name=name, ok=True, essential=True, detail="ok")
@@ -55,6 +56,23 @@ def test_check_torch_missing(monkeypatch):
     result = doctor.check_torch_cuda()
     assert result.ok is False
     assert "not installed" in result.detail
+
+
+def test_check_madmom_missing(monkeypatch):
+    monkeypatch.setitem(sys.modules, "madmom", None)
+    result = doctor.check_madmom()
+    assert result.ok is False
+    assert result.essential is True
+    assert "not installed" in result.detail
+
+
+def test_check_madmom_present(monkeypatch):
+    fake = types.SimpleNamespace(__version__="0.17.dev0")
+    monkeypatch.setitem(sys.modules, "madmom", fake)
+    result = doctor.check_madmom()
+    assert result.ok is True
+    assert result.data["version"] == "0.17.dev0"
+    assert "0.17.dev0" in result.detail
 
 
 def test_check_disk_space_insufficient(tmp_path):
@@ -101,5 +119,6 @@ def test_cli_doctor_json_output(monkeypatch):
         "ffmpeg",
         "python",
         "torch+cuda",
+        "madmom",
         "disk space",
     ]

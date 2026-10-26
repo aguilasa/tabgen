@@ -175,6 +175,32 @@ def check_disk_space(
     )
 
 
+def check_madmom() -> CheckResult:
+    """Check that madmom is installed (key/chord/beat analysis, Phase 2)."""
+    try:
+        import madmom
+    except ImportError:
+        return CheckResult(
+            name="madmom",
+            ok=False,
+            essential=True,
+            detail=(
+                "madmom is not installed "
+                "(pip install -e . pulls the pinned GitHub commit; "
+                "needs git and a C compiler)"
+            ),
+        )
+
+    version = getattr(madmom, "__version__", "unknown")
+    return CheckResult(
+        name="madmom",
+        ok=True,
+        essential=True,
+        detail=f"madmom {version}",
+        data={"version": version},
+    )
+
+
 def run_checks() -> DoctorReport:
     """Run every environment check and aggregate the results."""
     return DoctorReport(
@@ -182,6 +208,7 @@ def run_checks() -> DoctorReport:
             check_ffmpeg(),
             check_python_version(),
             check_torch_cuda(),
+            check_madmom(),
             check_disk_space(),
         ]
     )

@@ -44,6 +44,7 @@ the pipeline. Stage results are JSON-serializable and cached on disk.
 - Linux
 - Python 3.10–3.11 (upper bound set by the madmom dependency)
 - ffmpeg on the `PATH`
+- git and a C compiler (gcc) at install time — madmom is built from source
 - NVIDIA GPU with ≥6 GB VRAM recommended; CPU works but is 10–20× slower
 
 ## Installation
@@ -62,6 +63,13 @@ wheel metadata pulls in tensorflow, which forces numpy<2 and conflicts with the
 torch stack — tabgen uses its ONNX backend, whose actual dependencies
 (onnxruntime, librosa, pretty-midi, ...) are already listed in `pyproject.toml`.
 Without this step the `transcribe` command will not work.
+
+**madmom note:** `pip install -e ".[dev]"` installs madmom from a pinned commit
+of the [CPJKU/madmom](https://github.com/CPJKU/madmom) GitHub repository (no
+extra step needed). The last PyPI release (0.16.1, from 2018) does not build on
+Python 3.11 / numpy 2, while upstream HEAD does — without downgrading numpy or
+torch. Because it is built from source, git and a C compiler must be available
+at install time.
 
 **PyTorch / CUDA note:** the default `pip install torch` (which the command
 above runs for you) pulls the CUDA-enabled Linux wheel from PyPI. If you need a
@@ -84,8 +92,8 @@ tabgen --version
 ```
 
 Check that your environment can run tabgen (ffmpeg, Python version,
-torch + CUDA/GPU, free disk space). Exit code is 0 when all essential checks
-pass:
+torch + CUDA/GPU, madmom, free disk space). Exit code is 0 when all essential
+checks pass:
 
 ```bash
 tabgen doctor

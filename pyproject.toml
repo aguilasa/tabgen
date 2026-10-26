@@ -31,6 +31,14 @@ dependencies = [
     # below. With onnxruntime present (and no tensorflow), basic-pitch
     # auto-selects its bundled nmp.onnx model.
     "onnxruntime",
+    # Key/chord/beat analysis (Phase 2): madmom. The last PyPI release
+    # (0.16.1, 2018) does not build on Python 3.11 / numpy 2: its setup.py
+    # imports Cython without declaring it as a build requirement, and the
+    # code still uses the np.float/np.int aliases removed in numpy 1.24.
+    # Upstream GitHub HEAD fixes both and builds/imports cleanly against
+    # numpy 2.4 without downgrading numpy or torch, so we pin that commit.
+    # Building from source needs git and a C compiler at install time.
+    "madmom @ git+https://github.com/CPJKU/madmom@27f032e8947204902c675e5e341a3faf5dc86dae",
     "librosa",
     "pretty-midi",
     "mir-eval",
