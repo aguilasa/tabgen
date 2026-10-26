@@ -4,7 +4,7 @@ id: FIX-FMVP-002
 
 # FIX-FMVP-002 — Medir espaço em disco no diretório do cache de modelos, não no cwd
 
-Origin: [FMVP-TASK-03](/docs/rite/cycles/fundacao-mvp/03-criar-comando-tabgen-doctor-de-verificacao-de.md)
+Origin: [FMVP-TASK-03](/docs/rite/cycles/archive/fundacao-mvp/03-criar-comando-tabgen-doctor-de-verificacao-de.md)
 
 ## Problem
 

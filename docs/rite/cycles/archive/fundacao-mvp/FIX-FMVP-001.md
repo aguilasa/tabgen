@@ -4,7 +4,7 @@ id: FIX-FMVP-001
 
 # FIX-FMVP-001 — Corrigir padrão .tabgen/ no .gitignore (comentário inline quebra o match)
 
-Origin: [FMVP-TASK-02](/docs/rite/cycles/fundacao-mvp/02-implementar-contratos-de-estagio-e-cache-em.md)
+Origin: [FMVP-TASK-02](/docs/rite/cycles/archive/fundacao-mvp/02-implementar-contratos-de-estagio-e-cache-em.md)
 
 ## Problem
 

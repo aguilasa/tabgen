@@ -4,7 +4,7 @@ id: FIX-FMVP-004
 
 # FIX-FMVP-004 — Validação de cache hit devolve stems de outra música após colisão
 
-Origin: [FMVP-TASK-05](/docs/rite/cycles/fundacao-mvp/05-implementar-separacao-de-fontes-com-demucs-e.md)
+Origin: [FMVP-TASK-05](/docs/rite/cycles/archive/fundacao-mvp/05-implementar-separacao-de-fontes-com-demucs-e.md)
 
 ## Problem
 

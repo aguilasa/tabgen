@@ -4,7 +4,7 @@ id: FIX-FMVP-005
 
 # FIX-FMVP-005 — Registrar comando de geração da amostra por trás dos números de verificação
 
-Origin: [FMVP-TASK-07](/docs/rite/cycles/fundacao-mvp/07-exportar-midi-por-instrumento-e-comando.md)
+Origin: [FMVP-TASK-07](/docs/rite/cycles/archive/fundacao-mvp/07-exportar-midi-por-instrumento-e-comando.md)
 
 ## Problem
 

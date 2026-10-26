@@ -4,7 +4,7 @@ id: FIX-FMVP-006
 
 # FIX-FMVP-006 — Atualizar README com tempos reais medidos no e2e da Fase 1
 
-Origin: [FMVP-TASK-08](/docs/rite/cycles/fundacao-mvp/08-fechar-fase-1.md)
+Origin: [FMVP-TASK-08](/docs/rite/cycles/archive/fundacao-mvp/08-fechar-fase-1.md)
 
 ## Problem
 

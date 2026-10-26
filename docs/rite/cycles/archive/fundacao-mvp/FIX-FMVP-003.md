@@ -4,7 +4,7 @@ id: FIX-FMVP-003
 
 # FIX-FMVP-003 — Gates do profile (pytest, ruff) falham fora do venv do projeto
 
-Origin: [FIX-FMVP-001](/docs/rite/cycles/fundacao-mvp/FIX-FMVP-001.md)
+Origin: [FIX-FMVP-001](/docs/rite/cycles/archive/fundacao-mvp/FIX-FMVP-001.md)
 
 ## Problem
 

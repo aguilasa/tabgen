@@ -4,7 +4,7 @@ id: FIX-FMVP-007
 
 # FIX-FMVP-007 — Registrar pyproject.toml nos files declarados da FMVP-TASK-08
 
-Origin: [FMVP-TASK-08](/docs/rite/cycles/fundacao-mvp/08-fechar-fase-1.md)
+Origin: [FMVP-TASK-08](/docs/rite/cycles/archive/fundacao-mvp/08-fechar-fase-1.md)
 
 ## Problem
 
