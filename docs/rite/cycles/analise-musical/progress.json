@@ -16,11 +16,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-2--análise-musical",
       "files": ["pyproject.toml", "README.md", "tabgen/core/doctor.py", "tests/test_doctor.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "1affbca",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T17:02:02-03:00",
+      "active_s": 375,
+      "finished_at": "2026-10-26T17:08:17-03:00"
     },
     {
       "id": "ANA-TASK-02",
@@ -32,11 +36,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágios-23--tom-acordes-beats-e-compassos",
       "files": ["tabgen/core/models.py", "tests/test_models.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-26T17:02:18-03:00",
+      "started_at": "2026-10-26T17:02:18-03:00",
+      "active_s": 0
     },
     {
       "id": "ANA-TASK-03",
