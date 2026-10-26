@@ -44,7 +44,7 @@ graph TD
 <!-- rite:begin tasks -->
 | ID | Title | Phase | Type | Depends on | Status | Done on | Reviewed on | Review |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [FMVP-TASK-01](/docs/rite/cycles/fundacao-mvp/01-criar-estrutura-do-pacote-pyproject-e-esqueleto.md) | Criar estrutura do pacote, pyproject e esqueleto da CLI | 0 | feature | — | pending | — | — | — |
+| [FMVP-TASK-01](/docs/rite/cycles/fundacao-mvp/01-criar-estrutura-do-pacote-pyproject-e-esqueleto.md) | Criar estrutura do pacote, pyproject e esqueleto da CLI | 0 | feature | — | done | 2026-10-26 | pending | awaiting |
 | [FMVP-TASK-02](/docs/rite/cycles/fundacao-mvp/02-implementar-contratos-de-estagio-e-cache-em.md) | Implementar contratos de estágio e cache em disco | 0 | feature | FMVP-TASK-01 | pending | — | — | — |
 | [FMVP-TASK-03](/docs/rite/cycles/fundacao-mvp/03-criar-comando-tabgen-doctor-de-verificacao-de.md) | Criar comando tabgen doctor de verificação de ambiente | 0 | tool | FMVP-TASK-01 | pending | — | — | — |
 | [FMVP-TASK-04](/docs/rite/cycles/fundacao-mvp/04-fechar-fase-0.md) | Fechar Fase 0 | 0 | closing | FMVP-TASK-01, FMVP-TASK-02, FMVP-TASK-03 | pending | — | — | — |

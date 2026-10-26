@@ -16,11 +16,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-0--fundação-12-fins-de-semana",
       "files": ["pyproject.toml", "tabgen/__init__.py", "tabgen/core/__init__.py", "tabgen/cli/main.py", "tests/test_smoke.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "f102f43",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T10:35:18-03:00",
+      "active_s": 193,
+      "finished_at": "2026-10-26T10:38:31-03:00"
     },
     {
       "id": "FMVP-TASK-02",
