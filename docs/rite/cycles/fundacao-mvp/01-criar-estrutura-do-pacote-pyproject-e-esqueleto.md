@@ -69,3 +69,4 @@ fez `ruff check` falhar com T201; removido, árvore limpa. `requires-python = ">
     - `tabgen/core/fretting/__init__.py`
     - `tabgen/core/separation/__init__.py`
     - `tabgen/core/transcription/__init__.py`
+- **Reviewed** (2026-10-26) at `262c740`: no finding

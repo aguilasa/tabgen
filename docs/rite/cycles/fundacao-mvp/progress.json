@@ -19,12 +19,14 @@
       "status": "done",
       "done_on": "2026-10-26",
       "done_commit": "f102f43",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-26",
+      "review_commit": "262c740",
       "active_since": null,
       "started_at": "2026-10-26T10:35:18-03:00",
       "active_s": 193,
-      "finished_at": "2026-10-26T10:38:31-03:00"
+      "finished_at": "2026-10-26T10:38:31-03:00",
+      "review_started_at": "2026-10-26T11:04:25-03:00",
+      "review_s": 374
     },
     {
       "id": "FMVP-TASK-02",
@@ -44,7 +46,8 @@
       "active_since": null,
       "started_at": "2026-10-26T10:38:45-03:00",
       "active_s": 253,
-      "finished_at": "2026-10-26T10:42:58-03:00"
+      "finished_at": "2026-10-26T10:42:58-03:00",
+      "review_started_at": "2026-10-26T11:04:25-03:00"
     },
     {
       "id": "FMVP-TASK-03",
@@ -64,7 +67,8 @@
       "active_since": null,
       "started_at": "2026-10-26T10:38:45-03:00",
       "active_s": 296,
-      "finished_at": "2026-10-26T10:43:41-03:00"
+      "finished_at": "2026-10-26T10:43:41-03:00",
+      "review_started_at": "2026-10-26T11:04:25-03:00"
     },
     {
       "id": "FMVP-TASK-04",
@@ -84,7 +88,8 @@
       "active_since": null,
       "started_at": "2026-10-26T10:43:49-03:00",
       "active_s": 164,
-      "finished_at": "2026-10-26T10:46:33-03:00"
+      "finished_at": "2026-10-26T10:46:33-03:00",
+      "review_started_at": "2026-10-26T11:04:25-03:00"
     },
     {
       "id": "FMVP-TASK-05",
