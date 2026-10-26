@@ -6,6 +6,7 @@ import pytest
 
 from tabgen.core.models import (
     AnalysisResult,
+    ChordSegment,
     Note,
     NoteEvents,
     SeparationResult,
@@ -23,8 +24,14 @@ SAMPLES = [
         beat_times=[0.5, 1.0, 1.5],
         downbeat_times=[0.5],
         key="E minor",
+        key_confidence=0.92,
+        chords=[
+            ChordSegment(start_s=0.0, end_s=2.0, label="E:min"),
+            ChordSegment(start_s=2.0, end_s=4.0, label="A:min"),
+        ],
         tuning_offset_cents=-12.3,
     ),
+    ChordSegment(start_s=1.5, end_s=3.0, label="C:maj"),
     Note(pitch_midi=64, start_s=0.25, end_s=0.75, velocity=0.9, confidence=0.87),
     NoteEvents(
         notes=[
@@ -53,6 +60,36 @@ def test_to_dict_is_json_dumpable_without_custom_encoder(obj):
     # Must not raise: fields are builtins only (no torch/numpy objects).
     payload = json.dumps(obj.to_dict())
     assert json.loads(payload) == obj.to_dict()
+
+
+def test_analysis_result_round_trip_rebuilds_chord_segments():
+    result = AnalysisResult(
+        tempo_bpm=98.0,
+        key="A minor",
+        key_confidence=0.81,
+        chords=[
+            ChordSegment(start_s=0.0, end_s=1.75, label="A:min"),
+            ChordSegment(start_s=1.75, end_s=3.5, label="F:maj"),
+            ChordSegment(start_s=3.5, end_s=5.25, label="G:maj"),
+        ],
+    )
+    restored = AnalysisResult.from_json(result.to_json())
+    assert all(isinstance(chord, ChordSegment) for chord in restored.chords)
+    assert restored == result
+
+
+def test_analysis_result_from_dict_defaults_chords_when_absent():
+    # Backward compatibility: old payloads predate the ``chords`` field.
+    old_payload = {
+        "tempo_bpm": 120.0,
+        "beat_times": [0.5],
+        "downbeat_times": [0.5],
+        "key": "E minor",
+        "tuning_offset_cents": -3.0,
+    }
+    restored = AnalysisResult.from_dict(old_payload)
+    assert restored.chords == []
+    assert restored.key_confidence == 0.0
 
 
 def test_note_events_round_trip_rebuilds_note_instances():

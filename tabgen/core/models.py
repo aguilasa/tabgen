@@ -45,14 +45,35 @@ class SeparationResult(_JsonMixin):
 
 
 @dataclass
+class ChordSegment(_JsonMixin):
+    """A chord detected over a time span of the audio."""
+
+    start_s: float
+    end_s: float
+    # Chord label in Harte-style notation, e.g. "A:min", "C:maj", "N" (none).
+    label: str
+
+
+@dataclass
 class AnalysisResult(_JsonMixin):
-    """Output of the musical-analysis stage (tempo, beats, key, tuning)."""
+    """Output of the musical-analysis stage (tempo, beats, key, chords, tuning)."""
 
     tempo_bpm: float = 0.0
     beat_times: list[float] = field(default_factory=list)
     downbeat_times: list[float] = field(default_factory=list)
+    # Global key as "<tonic> <mode>", e.g. "A minor"; empty when unknown.
     key: str = ""
+    # Confidence of the key estimate in [0.0, 1.0].
+    key_confidence: float = 0.0
+    chords: list[ChordSegment] = field(default_factory=list)
+    # Not computed in this phase; kept for the tuning-estimation stage.
     tuning_offset_cents: float = 0.0
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AnalysisResult:
+        data = dict(data)
+        data["chords"] = [ChordSegment.from_dict(c) for c in data.get("chords", [])]
+        return cls(**data)
 
 
 @dataclass
