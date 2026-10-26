@@ -53,6 +53,14 @@ vivem em `pipeline.py` (models.py fora do escopo).
 Encaminhamento: adicionar `"mido"` explícito em `[project.optional-dependencies].dev`
 (testes importam direto; hoje é transitiva) — TASK-08.
 
+Adendo (FIX-FMVP-005): a amostra da verificação acima foi gerada com
+`ffmpeg -y -f lavfi -i "sine=frequency=220:duration=10" -q:a 2 sample.mp3`. As contagens
+exatas de notas variam com artefatos do encode mp3 (guitar mediu 1/3/4 em execuções
+distintas); estáveis são: exit 0, os dois `.mid` gravados e reabríveis com `mido`, e o
+baixo com ≥1 nota incluindo pitch 57 (A3 = 220 Hz). A medição agora é reconstruível via
+`scripts/probe_e2e_sample.py` (`.venv/bin/python scripts/probe_e2e_sample.py`), que
+assere só esses fatos estáveis.
+
 ## Execution Log
 
 - **Closed** — commit `db85cb3` (2026-10-26): feat(export): add per-instrument MIDI export, pipeline orchestration and transcribe command
