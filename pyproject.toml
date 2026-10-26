@@ -17,6 +17,10 @@ dependencies = [
     # Default PyPI wheel (includes CUDA on Linux). For a specific CUDA build use
     # the PyTorch index, e.g. --index-url https://download.pytorch.org/whl/cu121
     "torch",
+    # Source separation (adefossez's Demucs fork, published on PyPI as `demucs`).
+    "demucs",
+    # Reads/writes the stem wav files.
+    "soundfile",
 ]
 
 [project.optional-dependencies]
