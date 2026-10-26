@@ -77,3 +77,6 @@ da task já documentava a divergência; nenhuma edição manual de `progress.jso
   ```
 
   Campo `files` da FMVP-TASK-08 segue só com `README.md`.
+- **Closed** — commit `8137580` (2026-10-26): docs(cycle): record FMVP-TASK-08 declared-files amendment for FIX-FMVP-007
+  - Files (`git show --name-status 8137580`):
+    - `M docs/rite/cycles/fundacao-mvp/FIX-FMVP-007.md`

@@ -112,13 +112,14 @@
       "severity": "low",
       "files": ["docs/rite/cycles/fundacao-mvp/08-fechar-fase-1.md"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-26T16:24:08-03:00",
+      "done_on": "2026-10-26",
+      "done_commit": "8137580",
+      "active_since": null,
       "started_at": "2026-10-26T16:24:08-03:00",
-      "active_s": 0
+      "active_s": 172,
+      "finished_at": "2026-10-26T16:27:00-03:00"
     }
   ]
 }
