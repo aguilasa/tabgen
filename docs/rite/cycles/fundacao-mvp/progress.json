@@ -124,11 +124,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-4--transcrição-áudio--notas-o-coração",
       "files": ["tabgen/core/transcription/__init__.py", "tabgen/core/transcription/basic_pitch.py", "tests/test_transcription.py", "pyproject.toml"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "698b17d",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T11:44:16-03:00",
+      "active_s": 562,
+      "finished_at": "2026-10-26T11:53:38-03:00"
     },
     {
       "id": "FMVP-TASK-07",
