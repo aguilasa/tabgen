@@ -49,3 +49,10 @@ invalidação por bytes do input, callbacks até 100). Verificação real na amo
 execução roda madmom e detecta "D minor"/62.5 BPM; a segunda sai em ~0,2 s com `cache hit`.
 
 ## Execution Log
+
+- **Closed** — commit `1455cf0` (2026-10-26): feat(analysis): orchestrate run_analysis with cache and analyze command
+  - Files (`git show --name-status 1455cf0`):
+    - `M docs/rite/cycles/analise-musical/05-orquestrar-analise-no-pipeline-com-cache-e.md`
+    - `M tabgen/cli/main.py`
+    - `M tabgen/core/pipeline.py`
+    - `A tests/test_analysis_pipeline.py`
