@@ -62,4 +62,38 @@ $ grep -n "doctor.run_checks()" tests/test_doctor.py
 Sai 1 hoje (nenhum teste toca o `run_checks` real); deve sair 0 depois do fix, e o novo teste
 deve passar em `.venv/bin/pytest -q tests/test_doctor.py`.
 
+Medido após o fix (2026-10-26):
+
+```text
+$ .venv/bin/pytest -q tests/test_doctor.py
+14 passed
+$ <probe de defeito plantado, cópia scratch do HEAD + teste novo, check_madmom() comentado>
+FAILED tests/test_doctor.py::test_run_checks_includes_essential_madmom_check
+1 failed, 13 passed  (probe_exit=1)
+```
+
+## Notas
+
+Teste novo `test_run_checks_includes_essential_madmom_check` chama o `doctor.run_checks()` real
+(sem monkeypatch) e assere check "madmom" presente e essencial — seguro com madmom ausente
+(`check_madmom` sempre retorna `CheckResult`). Probe de defeito plantado: verde antes do fix
+(13 passed com o check desligado), vermelho depois exatamente no teste novo. O grep da
+Verificação original era fraco (já casava 1 ocorrência no HEAD); o probe é o critério decisivo.
+
 ## Execution Log
+
+- 2026-10-26 — Triagem: runner inline não decide (cada linha da Evidência roda em shell
+  separado, `$T` não persiste). Agente reprodutor rodou como script único: REPRODUCED.
+
+  ```text
+  sed: linha 211 vira `# check_madmom(),` (mutação aplicada)
+  tabgen from: /tmp/tmp.h0btdCTC7p/tabgen/__init__.py (cópia scratch, sem sombra do editable)
+  pytest: 13 passed in 1.24s (exit 0) na cópia mutada — sem guarda de regressão
+  ```
+
+  Nota: `grep -c "doctor.run_checks()" tests/test_doctor.py` = 1 já no HEAD — o comando da
+  Verificação deste fix é fraco (já casa hoje); o critério decisivo é o probe de defeito
+  plantado passar a falhar depois do fix.
+- **Closed** — commit `2296b4a` (2026-10-26): test(doctor): guard check_madmom wiring in run_checks
+  - Files (`git show --name-status 2296b4a`):
+    - `M tests/test_doctor.py`
