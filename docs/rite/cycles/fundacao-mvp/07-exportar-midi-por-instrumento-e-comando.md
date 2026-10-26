@@ -62,3 +62,4 @@ Encaminhamento: adicionar `"mido"` explícito em `[project.optional-dependencies
     - `M tabgen/core/pipeline.py`
     - `A tests/test_midi_export.py`
     - `A tests/test_pipeline.py`
+- **Reviewed** (2026-10-26) at `5dcd1e4`: FIX-FMVP-005

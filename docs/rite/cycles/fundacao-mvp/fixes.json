@@ -65,6 +65,19 @@
       "depends_on": [],
       "done_on": null,
       "done_commit": null
+    },
+    {
+      "id": "FIX-FMVP-005",
+      "file": "FIX-FMVP-005.md",
+      "title": "Registrar comando de geração da amostra por trás dos números de verificação",
+      "origin": "FMVP-TASK-07",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
