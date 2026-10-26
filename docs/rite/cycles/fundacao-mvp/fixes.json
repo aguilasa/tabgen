@@ -42,12 +42,16 @@
       "title": "Gates do profile (pytest, ruff) falham fora do venv do projeto",
       "origin": "FIX-FMVP-001",
       "severity": "high",
-      "files": [],
+      "files": ["docs/rite/profiles/fundacao-mvp.md"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-26",
+      "done_commit": "5e90a46",
+      "active_since": null,
+      "started_at": "2026-10-26T11:31:30-03:00",
+      "active_s": 143,
+      "finished_at": "2026-10-26T11:33:53-03:00"
     }
   ]
 }

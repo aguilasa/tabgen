@@ -54,4 +54,39 @@ $ sh "$RITE_HOME/bin/rite" gates --cycle fundacao-mvp --json
 Hoje `"passed": false` sem venv no PATH (vermelho); depois do fix, `"passed": true` em shell
 limpo (verde).
 
+Medido após o fix (2026-10-26, shell sem venv no PATH):
+
+```text
+$ sh "$RITE_HOME/bin/rite" gates --cycle fundacao-mvp --json
+"command": ".venv/bin/pytest -q",  "passed": true   # 29 passed, 1 warning
+"command": ".venv/bin/ruff check .",  "passed": true # All checks passed!
+"passed": true
+```
+
+## Notas
+
+Causa raiz: os gates do profile usavam `pytest`/`ruff` nus, resolvidos pelo PATH; fora do venv do
+projeto o pytest caía no Python 3.13 do mise (sem tabgen/typer) e o ruff nem existia (exit 127).
+Correção: gates apontam para `.venv/bin/pytest` e `.venv/bin/ruff`, tornando-os autossuficientes.
+Pressupõe execução a partir da raiz do repositório (caminho relativo `.venv/bin/...`), que é como
+`rite gates` roda (`"where": "."`).
+
+Encaminhamentos do sweep (fora do escopo deste fix, sem edição): `docs/rite/COMMANDS.md:116` e os
+done-criteria das tasks 01, 03–08 ainda citam `pytest -q`/`ruff check .` nus (lidos como "rodar no
+venv", provavelmente intencional); profile § Phase-specific checks (Fase 0) idem.
+
 ## Execution Log
+
+- 2026-10-26 — Triagem (`rite reproduce FIX-FMVP-003`): REPRODUCED.
+
+  ```text
+  $ sh "$RITE_HOME/bin/rite" gates --cycle fundacao-mvp --json   # PATH sem .venv/bin
+  "command": "pytest -q", "exit_code": 2, "passed": false   # ModuleNotFoundError: tabgen / typer
+  "command": "ruff check .", "exit_code": 127, "passed": false  # ruff: command not found
+  "passed": false
+  $ PATH="$PWD/.venv/bin:$PATH" sh "$RITE_HOME/bin/rite" gates --cycle fundacao-mvp --json
+  "passed": true   # pytest: 29 passed, 1 warning; ruff: All checks passed!
+  ```
+- **Closed** — commit `5e90a46` (2026-10-26): fix(rite): use .venv binaries in cycle gates so they pass without venv on PATH
+  - Files (`git show --name-status 5e90a46`):
+    - `M docs/rite/profiles/fundacao-mvp.md`
