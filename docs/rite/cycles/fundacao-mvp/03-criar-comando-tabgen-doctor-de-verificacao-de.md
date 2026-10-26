@@ -54,3 +54,4 @@ específico) — dica deixada como comentário no `pyproject.toml`; README fica 
     - `M tabgen/cli/main.py`
     - `A tabgen/core/doctor.py`
     - `A tests/test_doctor.py`
+- **Reviewed** (2026-10-26) at `ab65dd4`: FIX-FMVP-002
