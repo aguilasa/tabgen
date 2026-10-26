@@ -78,13 +78,14 @@
       "severity": "low",
       "files": ["docs/rite/cycles/fundacao-mvp/07-exportar-midi-por-instrumento-e-comando.md", "scripts/probe_e2e_sample.py"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-26T13:26:01-03:00",
+      "done_on": "2026-10-26",
+      "done_commit": "c0ec1bc",
+      "active_since": null,
       "started_at": "2026-10-26T13:26:01-03:00",
-      "active_s": 0
+      "active_s": 8228,
+      "finished_at": "2026-10-26T15:43:09-03:00"
     }
   ]
 }
