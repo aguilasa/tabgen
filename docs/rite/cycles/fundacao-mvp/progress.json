@@ -56,14 +56,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#8",
       "files": ["tabgen/core/doctor.py", "tabgen/cli/main.py", "tests/test_doctor.py", "pyproject.toml"],
       "resources": [],
-      "status": "in-progress",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "48913ae",
+      "reviewed_on": "pending",
       "review_commit": null,
-      "active_since": "2026-10-26T10:38:45-03:00",
+      "active_since": null,
       "started_at": "2026-10-26T10:38:45-03:00",
-      "active_s": 0
+      "active_s": 296,
+      "finished_at": "2026-10-26T10:43:41-03:00"
     },
     {
       "id": "FMVP-TASK-04",
