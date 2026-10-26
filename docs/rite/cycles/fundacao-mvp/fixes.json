@@ -59,12 +59,16 @@
       "title": "Validação de cache hit devolve stems de outra música após colisão",
       "origin": "FMVP-TASK-05",
       "severity": "high",
-      "files": [],
+      "files": ["tabgen/core/separation/demucs.py", "tests/test_separation.py"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-26",
+      "done_commit": "e085035",
+      "active_since": null,
+      "started_at": "2026-10-26T13:24:53-03:00",
+      "active_s": 8255,
+      "finished_at": "2026-10-26T15:42:28-03:00"
     },
     {
       "id": "FIX-FMVP-005",
@@ -72,12 +76,15 @@
       "title": "Registrar comando de geração da amostra por trás dos números de verificação",
       "origin": "FMVP-TASK-07",
       "severity": "low",
-      "files": [],
+      "files": ["docs/rite/cycles/fundacao-mvp/07-exportar-midi-por-instrumento-e-comando.md", "scripts/probe_e2e_sample.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-26T13:26:01-03:00",
+      "started_at": "2026-10-26T13:26:01-03:00",
+      "active_s": 0
     }
   ]
 }

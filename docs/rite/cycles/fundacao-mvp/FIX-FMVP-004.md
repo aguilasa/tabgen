@@ -79,4 +79,32 @@ Mesmo heredoc da Evidência, com a asserção final invertida —
 `assert abs(guitar.mean() - 0.1) < 0.05, "song A got song B's stems"` (e aceitando `hit` False).
 Hoje falha (guitar mean 0.90); deve passar depois do fix.
 
+Medido após o fix (2026-10-26):
+
+```text
+cache_hit=False, guitar mean=0.10 (A wrote 0.1, B wrote 0.9)
+OK: song A's rerun returns song A's stems
+```
+
+## Notas
+
+Causa raiz: a chave do cache é por hash do input, mas os stems vivem no `stems/` compartilhado e
+`_cached_result_is_valid` só verificava existência (`Path(path).is_file()`); separar B
+sobrescrevia os stems de A e o hit de A devolvia o áudio de B. Correção conservadora (layout
+compartilhado mantido, exigido pela spec): o payload cacheado grava a identidade de cada stem
+(tamanho + mtime_ns) e a validação compara com o disco; sobrescrita invalida e recomputa.
+Entradas de cache no formato antigo (sem identidade) viram miss — seguro, um recômputo a mais.
+Regressão: `tests/test_separation.py::test_cache_hit_after_sibling_input_overwrites_shared_stems`.
+
 ## Execution Log
+
+- 2026-10-26 — Triagem (`rite reproduce FIX-FMVP-004`): REPRODUCED.
+
+  ```text
+  cache_hit=True, guitar mean=0.90 (A wrote 0.1, B wrote 0.9)
+  CONFIRMED: cache hit for song A returns song B's stems
+  ```
+- **Closed** — commit `e085035` (2026-10-26): fix(separation): invalidate cache when shared stems are overwritten by another input
+  - Files (`git show --name-status e085035`):
+    - `M tabgen/core/separation/demucs.py`
+    - `M tests/test_separation.py`
