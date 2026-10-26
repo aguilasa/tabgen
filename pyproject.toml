@@ -14,6 +14,9 @@ requires-python = ">=3.10,<3.12"
 dependencies = [
     "typer",
     "rich",
+    # Default PyPI wheel (includes CUDA on Linux). For a specific CUDA build use
+    # the PyTorch index, e.g. --index-url https://download.pytorch.org/whl/cu121
+    "torch",
 ]
 
 [project.optional-dependencies]
