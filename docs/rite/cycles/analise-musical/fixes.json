@@ -1,5 +1,19 @@
 {
   "schema": 1,
   "cycle": "analise-musical",
-  "fixes": []
+  "fixes": [
+    {
+      "id": "FIX-ANA-001",
+      "file": "FIX-ANA-001.md",
+      "title": "Adicionar teste que guarda o wiring do check madmom em run_checks",
+      "origin": "ANA-TASK-01",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    }
+  ]
 }

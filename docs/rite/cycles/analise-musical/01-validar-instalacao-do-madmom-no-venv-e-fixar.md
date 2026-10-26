@@ -72,3 +72,4 @@ Verificação na thread principal (venv `.venv/`):
     - `M pyproject.toml`
     - `M tabgen/core/doctor.py`
     - `M tests/test_doctor.py`
+- **Reviewed** (2026-10-26) at `49585e0`: FIX-ANA-001
