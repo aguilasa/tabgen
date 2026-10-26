@@ -54,7 +54,14 @@ From a clone of this repository:
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
+pip install --no-deps basic-pitch==0.4.0
 ```
+
+The last step is required: Basic Pitch is installed with `--no-deps` because its
+wheel metadata pulls in tensorflow, which forces numpy<2 and conflicts with the
+torch stack — tabgen uses its ONNX backend, whose actual dependencies
+(onnxruntime, librosa, pretty-midi, ...) are already listed in `pyproject.toml`.
+Without this step the `transcribe` command will not work.
 
 **PyTorch / CUDA note:** the default `pip install torch` (which the command
 above runs for you) pulls the CUDA-enabled Linux wheel from PyPI. If you need a
@@ -90,8 +97,57 @@ Machine-readable output:
 tabgen doctor --json
 ```
 
-The pipeline commands (separation, transcription, export) are under
-development.
+### Separate a song into stems
+
+```bash
+tabgen separate song.mp3
+```
+
+Runs Demucs (`htdemucs_ft` + `htdemucs_6s`) and writes
+`stems/{vocals,drums,bass,other,guitar}.wav` next to the input. Use
+`--device cuda|cpu` to override the autodetected device.
+
+### Transcribe a song to MIDI
+
+```bash
+tabgen transcribe song.mp3
+```
+
+Runs the full Phase 1 pipeline: separation, then Basic Pitch transcription of
+each stem, then MIDI export. It writes one Standard MIDI File per instrument —
+`song.guitar.mid` and `song.bass.mid` by default — next to the input (override
+with `--output-dir`). Options:
+
+- `--instruments guitar,bass` — comma-separated subset of `guitar`, `bass`.
+- `--output-dir DIR` — where the `.mid` files go.
+- `--device cuda|cpu` — device for Demucs (default: autodetect).
+
+Each `.mid` file contains a single track with the detected notes (pitch, onset,
+duration, velocity) plus the pitch bends Basic Pitch reports, under a General
+MIDI program (steel guitar / fingered bass). Timestamps are absolute seconds —
+no quantization to a bar grid yet (that is a later pipeline stage). The files
+open in any MIDI player or editor; [TuxGuitar](https://tuxguitar.app) is the
+reference target, since it shows them directly as tablature.
+
+**Caching:** stage results are cached in `.tabgen/` directories next to the
+audio files (keyed by content hash, model and parameters). Re-running a command
+on an unchanged input reuses the cache and finishes in under a second — delete
+the `.tabgen/` directories (and `stems/`) to force a re-run.
+
+### Expected runtimes
+
+Indicative numbers on a 6 GB NVIDIA GPU (RTX 3060 Laptop), measured with a
+synthetic 10-second sample; real-music timings will be added once Phase 1 is
+validated end to end:
+
+| Scenario                              | Time            |
+| ------------------------------------- | --------------- |
+| `transcribe`, cold (no cache)         | ~10 s (≈5 s separation, ≈2 s transcription + export) |
+| `transcribe`, warm (cache hit)        | < 1 s           |
+| 4-minute song, separation (estimate)  | ~1–2 min        |
+
+The very first run also downloads the Demucs model weights (~1 GB). On CPU,
+expect separation to be 10–20× slower.
 
 ## Development
 

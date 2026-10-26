@@ -41,6 +41,9 @@ dependencies = [
 dev = [
     "pytest",
     "ruff",
+    # Tests open the exported .mid files directly with mido (it is already a
+    # transitive dependency via pretty_midi; listed here to make it explicit).
+    "mido",
 ]
 
 [project.scripts]
