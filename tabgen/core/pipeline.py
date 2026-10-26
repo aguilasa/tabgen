@@ -1,10 +1,12 @@
 """Pipeline primitives and stage orchestration.
 
-Holds the progress-reporting contract shared by every stage and
-:func:`run_transcription`, which chains separation → per-instrument
-transcription → MIDI export. Heavy stage modules are imported lazily so
-importing this module stays cheap; the stage functions are injectable
-for tests.
+Holds the progress-reporting contract shared by every stage and the two
+orchestrators: :func:`run_transcription`, which chains separation →
+per-instrument transcription → MIDI export, and :func:`run_analysis`,
+which chains separation → beats → harmony into one
+:class:`~tabgen.core.models.AnalysisResult`. Heavy stage modules are
+imported lazily so importing this module stays cheap; the stage
+functions are injectable for tests.
 
 This module is pure core: no print/typer/rich.
 """
@@ -13,7 +15,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Optional, Protocol, Sequence
+from typing import Callable, Mapping, Optional, Protocol, Sequence
+
+from tabgen.core.cache import StageCache
+from tabgen.core.models import AnalysisResult
 
 # Called as on_progress(stage, pct) with pct in [0.0, 100.0].
 ProgressCallback = Callable[[str, float], None]
@@ -47,6 +52,22 @@ class _TranscribeFn(Protocol):
 
 class _ExportFn(Protocol):
     def __call__(self, note_events, output_path: Path, bends=None) -> Path: ...
+
+
+class _BeatsFn(Protocol):
+    def __call__(
+        self,
+        audio_path: Path,
+        on_progress: ProgressCallback = null_progress,
+    ): ...
+
+
+class _HarmonyFn(Protocol):
+    def __call__(
+        self,
+        stems: Mapping[str, str],
+        on_progress: ProgressCallback = null_progress,
+    ): ...
 
 
 @dataclass
@@ -153,3 +174,127 @@ def run_transcription(
         )
 
     return summary
+
+
+ANALYSIS_STAGE = "analysis"
+
+# Revision of the AnalysisResult contract as cached by run_analysis. Bump it
+# whenever the schema changes; revision 2 added ``chords`` and
+# ``key_confidence`` (ANA-TASK-02).
+ANALYSIS_CONTRACT_REVISION = 2
+
+# Stage names reported by run_analysis, in pipeline order.
+ANALYSIS_STAGES = ("separation", "analysis:beats", "analysis:harmony")
+
+
+def analysis_version() -> str:
+    """Cache version string of the analysis stage.
+
+    Combines the installed madmom distribution version (both the beats
+    and the harmony models come from it), the Demucs model version (the
+    harmony stage consumes its stems) and the AnalysisResult contract
+    revision, so upgrading any of them invalidates cached analyses.
+    """
+    from importlib.metadata import PackageNotFoundError, version
+
+    from tabgen.core.separation.demucs import MODEL_VERSION
+
+    try:
+        madmom_version = version("madmom")
+    except PackageNotFoundError:  # pragma: no cover - env without madmom
+        madmom_version = "unknown"
+    return (
+        f"madmom-{madmom_version}+{MODEL_VERSION}"
+        f"+contract-{ANALYSIS_CONTRACT_REVISION}"
+    )
+
+
+@dataclass
+class AnalysisSummary:
+    """Overall outcome of :func:`run_analysis`."""
+
+    input_path: str
+    # True when the stems came from the separation cache. Also True on an
+    # analysis cache hit: the stems were not even needed then.
+    separation_cache_hit: bool
+    # True when the whole AnalysisResult came from the analysis cache.
+    analysis_cache_hit: bool
+    result: AnalysisResult
+
+
+def run_analysis(
+    input_path: str | Path,
+    device: str | None = None,
+    on_progress: ProgressCallback = null_progress,
+    cache: StageCache | None = None,
+    separate_fn: _SeparateFn | None = None,
+    beats_fn: _BeatsFn | None = None,
+    harmony_fn: _HarmonyFn | None = None,
+) -> AnalysisSummary:
+    """Analyze the input: tempo/beats plus key/chords, with caching.
+
+    Beats run on the original audio (madmom's downbeat tracker wants the
+    percussion); harmony runs on the separation stems (it sums every
+    non-drums stem). The merged :class:`AnalysisResult` is cached in
+    ``.tabgen/`` next to the input under stage ``analysis`` and
+    :func:`analysis_version`, so a second run touches neither Demucs nor
+    madmom. The cache key hashes the input bytes and pins every model
+    version, which fully determines the stems, so stem files need no
+    separate validation here.
+
+    Progress is reported on the stages in :data:`ANALYSIS_STAGES`, each
+    reaching 100.0 (immediately, on a cache hit). ``separate_fn`` /
+    ``beats_fn`` / ``harmony_fn`` default to the real stages and exist
+    for dependency injection in tests.
+    """
+    input_path = Path(input_path)
+    if not input_path.is_file():
+        raise PipelineError(f"input audio not found: {input_path}")
+    if cache is None:
+        cache = StageCache(input_path)
+
+    version = analysis_version()
+    cached = cache.get(ANALYSIS_STAGE, version)
+    if cached is not None:
+        try:
+            result = AnalysisResult.from_dict(cached)
+        except (TypeError, KeyError):
+            result = None  # malformed entry: treat as a miss and recompute
+        if result is not None:
+            for stage in ANALYSIS_STAGES:
+                on_progress(stage, 100.0)
+            return AnalysisSummary(
+                input_path=str(input_path),
+                separation_cache_hit=True,
+                analysis_cache_hit=True,
+                result=result,
+            )
+
+    if separate_fn is None:
+        from tabgen.core.separation.demucs import separate as separate_fn
+    if beats_fn is None:
+        from tabgen.core.analysis.beats import analyze_beats as beats_fn
+    if harmony_fn is None:
+        from tabgen.core.analysis.harmony import analyze_harmony as harmony_fn
+
+    separation, separation_hit = separate_fn(
+        input_path, device=device, on_progress=on_progress
+    )
+    beats = beats_fn(input_path, on_progress=on_progress)
+    harmony = harmony_fn(separation.stems, on_progress=on_progress)
+
+    result = AnalysisResult(
+        tempo_bpm=beats.tempo_bpm,
+        beat_times=list(beats.beat_times),
+        downbeat_times=list(beats.downbeat_times),
+        key=harmony.key,
+        key_confidence=harmony.key_confidence,
+        chords=list(harmony.chords),
+    )
+    cache.put(ANALYSIS_STAGE, version, result.to_dict())
+    return AnalysisSummary(
+        input_path=str(input_path),
+        separation_cache_hit=separation_hit,
+        analysis_cache_hit=False,
+        result=result,
+    )

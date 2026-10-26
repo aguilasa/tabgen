@@ -187,5 +187,89 @@ def transcribe(
         )
 
 
+@app.command()
+def analyze(
+    audio: Path = typer.Argument(
+        ...,
+        exists=True,
+        dir_okay=False,
+        readable=True,
+        help="Audio file to analyze (mp3, flac, wav, ...).",
+    ),
+    output: Optional[Path] = typer.Option(
+        None,
+        "--output",
+        dir_okay=False,
+        help="Path for the analysis JSON (default: <input>.analysis.json "
+        "next to the input).",
+    ),
+    device: Optional[str] = typer.Option(
+        None,
+        "--device",
+        help="Device for Demucs: cuda or cpu (default: autodetect).",
+    ),
+) -> None:
+    """Analyze the audio: key, tempo/beats and chord sequence."""
+    from tabgen.core.analysis.beats import BeatAnalysisError
+    from tabgen.core.analysis.harmony import HarmonyError
+    from tabgen.core.pipeline import PipelineError, run_analysis
+    from tabgen.core.separation.demucs import SeparationError
+
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        TimeElapsedColumn(),
+        console=console,
+    ) as progress:
+        tasks: dict[str, Any] = {}
+
+        def on_progress(stage: str, pct: float) -> None:
+            if stage not in tasks:
+                tasks[stage] = progress.add_task(stage, total=100.0)
+            progress.update(tasks[stage], completed=pct)
+
+        try:
+            summary = run_analysis(audio, device=device, on_progress=on_progress)
+        except (
+            PipelineError,
+            SeparationError,
+            BeatAnalysisError,
+            HarmonyError,
+        ) as err:
+            progress.stop()
+            console.print(f"[red]Analysis failed:[/red] {err}")
+            raise typer.Exit(1) from err
+
+    result = summary.result
+    out_path = (
+        output if output is not None else audio.parent / f"{audio.stem}.analysis.json"
+    )
+    out_path.write_text(result.to_json(), encoding="utf-8")
+
+    if summary.analysis_cache_hit:
+        console.print("[yellow]cache hit[/yellow]: analysis reused, madmom skipped.")
+    elif summary.separation_cache_hit:
+        console.print("[yellow]cache hit[/yellow]: stems reused, Demucs skipped.")
+    console.print(
+        f"Key: [bold]{result.key or 'unknown'}[/bold] "
+        f"(confidence {result.key_confidence:.2f})"
+    )
+    console.print(
+        f"Tempo: [bold]{result.tempo_bpm:.1f} BPM[/bold] "
+        f"({len(result.beat_times)} beats, "
+        f"{len(result.downbeat_times)} downbeats)"
+    )
+    if result.chords:
+        console.print("Chords:")
+        for segment in result.chords:
+            console.print(
+                f"  {segment.start_s:7.2f}s - {segment.end_s:7.2f}s  {segment.label}"
+            )
+    else:
+        console.print("Chords: none detected.")
+    console.print(f"Analysis written to [bold]{out_path}[/bold]")
+
+
 if __name__ == "__main__":
     app()
