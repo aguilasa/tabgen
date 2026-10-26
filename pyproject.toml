@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tabgen"
+version = "0.1.0"
+description = "Audio-to-guitar-tablature generator"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Ingmar Aguiar", email = "ingmar.aguiar@gmail.com" }]
+# Upper bound <3.12 because of the madmom dependency planned for later stages.
+requires-python = ">=3.10,<3.12"
+dependencies = [
+    "typer",
+    "rich",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+tabgen = "tabgen.cli.main:app"
+
+[tool.setuptools.packages.find]
+include = ["tabgen*"]
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+# T20 (flake8-print) forbids print/pprint; enforced everywhere, relaxed outside core below.
+select = ["E", "F", "I", "W", "T20"]
+
+[tool.ruff.lint.per-file-ignores]
+# print is forbidden in tabgen/core/ (pure library); allowed in CLI and tests.
+"tabgen/cli/**" = ["T201"]
+"tests/**" = ["T201"]
