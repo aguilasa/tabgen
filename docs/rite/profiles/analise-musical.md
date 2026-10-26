@@ -10,9 +10,18 @@ which commands search instead of reading whole.
 
 <!-- Decisions the user confirmed. One line each, with the date and where it was decided. -->
 
+- 2026-10-25 — Linguagem Python 3.10–3.11 (madmom limita versão) — plano, seção 1.
+- 2026-10-25 — Arquitetura em camadas: `core/` biblioteca pura (sem print/HTTP/GUI; progresso via callbacks), `cli/` camada fina — plano, seção 2.
+- 2026-10-25 — Contratos entre estágios são dataclasses serializáveis em JSON, com cache em disco (`.tabgen/`) — plano, seção 2.
+- 2026-10-25 — Estágios 2–3 (tom, acordes, beats/downbeats/BPM) com madmom; alternativas (Beat This!, Essentia, Chordino) só se o madmom falhar — plano, seção 3.
+- 2026-10-25 — Licença MIT; modelos non-commercial (madmom CC BY-NC-SA) aceitos — plano, seção 4.
+- 2026-10-25 — Idiomas: código e commits em en-US (conventional), documentação do Rite em pt-BR — definido pelo usuário na adoção do Rite.
+
 ## Sources of truth
 
 <!-- Plan sections, specs, reference outputs. Items point here through `source_of_truth`. -->
+
+- Plano do projeto: [/docs/planejamento/audio-para-tablatura.md](/docs/planejamento/audio-para-tablatura.md) — estágios 2–3 (seção 3), roadmap Fase 2 (seção 5), arquitetura (seção 2), licenças (seção 4).
 
 ## Generated artifacts
 
