@@ -36,11 +36,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#2",
       "files": ["tabgen/core/models.py", "tabgen/core/cache.py", "tabgen/core/pipeline.py", "tests/test_models.py", "tests/test_cache.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "db3c462",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T10:38:45-03:00",
+      "active_s": 253,
+      "finished_at": "2026-10-26T10:42:58-03:00"
     },
     {
       "id": "FMVP-TASK-03",
@@ -52,11 +56,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#8",
       "files": ["tabgen/core/doctor.py", "tabgen/cli/main.py", "tests/test_doctor.py", "pyproject.toml"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-26T10:38:45-03:00",
+      "started_at": "2026-10-26T10:38:45-03:00",
+      "active_s": 0
     },
     {
       "id": "FMVP-TASK-04",

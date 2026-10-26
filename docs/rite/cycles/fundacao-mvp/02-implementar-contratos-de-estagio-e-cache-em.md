@@ -33,4 +33,25 @@ que grava e recupera resultados por estágio + hash do arquivo de entrada.
 Contratos são a fronteira para a futura versão web (jobs por estágio) — manter campos simples
 (listas, floats, strings), sem objetos torch/numpy nos contratos (converter antes).
 
+Verificação (venv `.venv/`, Python 3.11.15):
+
+- `.venv/bin/pytest -q tests/test_models.py tests/test_cache.py` → `16 passed in 0.02s`
+- `.venv/bin/ruff check .` → `All checks passed!`
+- `grep -rE "import typer|import rich|print\(" tabgen/core/` → sem saída, exit 1 (core puro)
+
+Desenho: dataclasses `SeparationResult`, `AnalysisResult`, `Note`, `NoteEvents`, `TabScore`
+(esqueleto) com mixin `to_dict`/`to_json`/`from_dict`/`from_json`; só builtins nos campos —
+`test_to_dict_is_json_dumpable_without_custom_encoder` cobre as cinco com `json.dumps` padrão.
+Cache: `StageCache(input_path)`, dir `.tabgen/` ao lado do áudio, entrada
+`{stage}-{sha256}-{version}.json`; versão no nome ⇒ bump de versão é miss natural; JSON corrompido
+tratado como miss. `pipeline.py`: `ProgressCallback = Callable[[str, float], None]` + `null_progress`.
+
 ## Execution Log
+
+- **Closed** — commit `db3c462` (2026-10-26): feat(core): add stage contract dataclasses, disk cache, and progress callback
+  - Files (`git show --name-status db3c462`):
+    - `A tabgen/core/cache.py`
+    - `A tabgen/core/models.py`
+    - `A tabgen/core/pipeline.py`
+    - `A tests/test_cache.py`
+    - `A tests/test_models.py`
