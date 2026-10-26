@@ -60,11 +60,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágios-23--tom-acordes-beats-e-compassos",
       "files": ["tabgen/core/analysis/__init__.py", "tabgen/core/analysis/beats.py", "tests/test_analysis_beats.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "d63564f",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T17:46:32-03:00",
+      "active_s": 424,
+      "finished_at": "2026-10-26T17:53:36-03:00"
     },
     {
       "id": "ANA-TASK-04",
@@ -76,11 +80,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágios-23--tom-acordes-beats-e-compassos",
       "files": ["tabgen/core/analysis/harmony.py", "tests/test_analysis_harmony.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-26T17:46:42-03:00",
+      "started_at": "2026-10-26T17:46:42-03:00",
+      "active_s": 0
     },
     {
       "id": "ANA-TASK-05",
