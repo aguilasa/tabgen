@@ -85,13 +85,14 @@
       "status": "done",
       "done_on": "2026-10-26",
       "done_commit": "796284b",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-26",
+      "review_commit": "49d1ebb",
       "active_since": null,
       "started_at": "2026-10-26T10:43:49-03:00",
       "active_s": 164,
       "finished_at": "2026-10-26T10:46:33-03:00",
-      "review_started_at": "2026-10-26T11:04:25-03:00"
+      "review_started_at": "2026-10-26T11:04:25-03:00",
+      "review_s": 433
     },
     {
       "id": "FMVP-TASK-05",

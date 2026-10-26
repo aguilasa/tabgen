@@ -44,3 +44,4 @@ reporta 5.7 GB utilizáveis vs ≥6 GB nominais recomendados no README.
 - **Closed** — commit `796284b` (2026-10-26): docs: expand README with install, usage, dev, and license sections
   - Files (`git show --name-status 796284b`):
     - `M README.md`
+- **Reviewed** (2026-10-26) at `49d1ebb`: no finding
