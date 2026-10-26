@@ -142,6 +142,35 @@ audio files (keyed by content hash, model and parameters). Re-running a command
 on an unchanged input reuses the cache and finishes in under a second — delete
 the `.tabgen/` directories (and `stems/`) to force a re-run.
 
+### Analyze a song (key, tempo, chords)
+
+```bash
+tabgen analyze song.mp3
+```
+
+Runs the Phase 2 pipeline: separation (reusing the cache when warm), then
+madmom beat/downbeat tracking on the original audio and key/chord recognition
+on a drum-free mix of the stems. It prints a report and writes
+`song.analysis.json` next to the input (override with `--output`):
+
+```text
+Key: F# major (confidence 0.86)
+Tempo: 139.5 BPM (580 beats, 145 downbeats)
+Chords:
+     1.60s -    5.30s  F#:maj
+     5.30s -    8.80s  B:maj
+     8.80s -   12.20s  D#:min
+     ...
+```
+
+Chord labels use the [Harte](https://ismir2005.ismir.net/proceedings/1080.pdf)
+syntax (`F#:maj`, `D#:min`, `N` for no chord). The JSON file is an
+`AnalysisResult` (key, confidence, BPM, beat/downbeat times, chord segments)
+that later pipeline stages consume. Options:
+
+- `--output FILE` — where the JSON report goes.
+- `--device cuda|cpu` — device for Demucs (default: autodetect).
+
 ### Expected runtimes
 
 Indicative numbers on a 6 GB NVIDIA GPU (RTX 3060 Laptop), measured with a
@@ -154,6 +183,8 @@ end-to-end validation:
 | `transcribe`, warm (cache hit)        | < 1 s           |
 | 4-minute song, cold (no cache)        | ~61 s total (≈47 s separation, ≈6 s guitar + ≈4 s bass transcription) |
 | 4-minute song, warm (cache hit)       | ~1.5 s          |
+| `analyze`, 4-minute song, cold        | ~140 s total (≈45 s separation, ≈27 s beats, ≈64 s key + chords; madmom runs on CPU) |
+| `analyze`, 4-minute song, warm        | < 1 s           |
 
 The very first run also downloads the Demucs model weights (~1 GB). On CPU,
 expect separation to be 10–20× slower.
