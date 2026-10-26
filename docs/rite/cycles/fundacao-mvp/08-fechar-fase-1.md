@@ -70,3 +70,4 @@ cumprido; task desbloqueada e fechada.
     - `M pyproject.toml`
   - **Outside declared files** (`README.md`):
     - `pyproject.toml`
+- **Reviewed** (2026-10-26) at `4056ad2`: FIX-FMVP-006, FIX-FMVP-007

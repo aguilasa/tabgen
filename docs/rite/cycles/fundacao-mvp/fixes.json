@@ -86,6 +86,32 @@
       "started_at": "2026-10-26T13:26:01-03:00",
       "active_s": 8228,
       "finished_at": "2026-10-26T15:43:09-03:00"
+    },
+    {
+      "id": "FIX-FMVP-006",
+      "file": "FIX-FMVP-006.md",
+      "title": "Atualizar README com tempos reais medidos no e2e da Fase 1",
+      "origin": "FMVP-TASK-08",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-FMVP-007",
+      "file": "FIX-FMVP-007.md",
+      "title": "Registrar pyproject.toml nos files declarados da FMVP-TASK-08",
+      "origin": "FMVP-TASK-08",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
