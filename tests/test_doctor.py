@@ -85,6 +85,13 @@ def test_check_disk_space_sufficient(tmp_path):
     assert result.ok is True
 
 
+def test_run_checks_includes_essential_madmom_check():
+    report = doctor.run_checks()
+    by_name = {check.name: check for check in report.checks}
+    assert "madmom" in by_name
+    assert by_name["madmom"].essential is True
+
+
 def test_report_fails_when_essential_check_fails(monkeypatch):
     monkeypatch.setattr(doctor.shutil, "which", lambda name: None)
     report = doctor.run_checks()
