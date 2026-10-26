@@ -7,9 +7,11 @@ the CLI layer renders.
 
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 
 #: Approximate disk space needed for the model weights, in bytes (~4 GB).
 REQUIRED_DISK_BYTES = 4 * 1024**3
@@ -120,11 +122,47 @@ def check_torch_cuda() -> CheckResult:
     )
 
 
+def _model_cache_dir() -> str:
+    """Return the directory where model weights are downloaded.
+
+    Uses ``torch.hub.get_dir()`` when PyTorch is installed; otherwise falls
+    back to the equivalent default location under the user's cache dir.
+    """
+    try:
+        import torch
+
+        return torch.hub.get_dir()
+    except ImportError:
+        xdg_cache = os.environ.get("XDG_CACHE_HOME") or os.path.join(
+            os.path.expanduser("~"), ".cache"
+        )
+        return os.path.join(xdg_cache, "torch", "hub")
+
+
+def _nearest_existing(path: str) -> str:
+    """Return ``path`` or its nearest existing ancestor.
+
+    The model cache dir may not exist yet on a fresh machine; measuring the
+    closest existing ancestor keeps :func:`shutil.disk_usage` from raising.
+    """
+    candidate = Path(path)
+    for ancestor in (candidate, *candidate.parents):
+        if ancestor.exists():
+            return str(ancestor)
+    return str(candidate)
+
+
 def check_disk_space(
-    path: str = ".", required_bytes: int = REQUIRED_DISK_BYTES
+    path: str | None = None, required_bytes: int = REQUIRED_DISK_BYTES
 ) -> CheckResult:
-    """Check that there is enough free disk space for the model weights."""
-    usage = shutil.disk_usage(path)
+    """Check that there is enough free disk space for the model weights.
+
+    By default measures the filesystem holding the model cache directory
+    (``torch.hub.get_dir()``), not the current working directory.
+    """
+    if path is None:
+        path = _model_cache_dir()
+    usage = shutil.disk_usage(_nearest_existing(path))
     free_gb = usage.free / 1024**3
     required_gb = required_bytes / 1024**3
     ok = usage.free >= required_bytes
