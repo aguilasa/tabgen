@@ -68,3 +68,4 @@ basic-pitch+onnxruntime importáveis e ausência de tensorflow (opcional).
     - `M tabgen/core/transcription/__init__.py`
     - `A tabgen/core/transcription/basic_pitch.py`
     - `A tests/test_transcription.py`
+- **Reviewed** (2026-10-26) at `c61b22f`: no finding
