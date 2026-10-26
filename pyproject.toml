@@ -21,6 +21,20 @@ dependencies = [
     "demucs",
     # Reads/writes the stem wav files.
     "soundfile",
+    # Transcription: Basic Pitch (ICASSP 2022 model) via the ONNX backend.
+    # Tested pin: basic-pitch==0.4.0. Its wheel metadata hard-requires
+    # tensorflow<2.15.1 on Linux + Python 3.11, which forces numpy<2 and
+    # conflicts with the torch stack, so it is NOT listed here; install it
+    # without its dependency chain instead:
+    #   pip install --no-deps basic-pitch==0.4.0
+    # The dependencies its ONNX inference path actually needs are listed
+    # below. With onnxruntime present (and no tensorflow), basic-pitch
+    # auto-selects its bundled nmp.onnx model.
+    "onnxruntime",
+    "librosa",
+    "pretty-midi",
+    "mir-eval",
+    "resampy>=0.2.2,<0.4.3",
 ]
 
 [project.optional-dependencies]
