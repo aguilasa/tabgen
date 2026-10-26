@@ -104,11 +104,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-1--separação-de-fontes",
       "files": ["tabgen/core/separation/__init__.py", "tabgen/core/separation/demucs.py", "tabgen/cli/main.py", "tests/test_separation.py", "pyproject.toml"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "9b243dc",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-26T11:36:02-03:00",
+      "active_s": 485,
+      "finished_at": "2026-10-26T11:44:07-03:00"
     },
     {
       "id": "FMVP-TASK-06",
