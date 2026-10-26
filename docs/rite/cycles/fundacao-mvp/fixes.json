@@ -52,6 +52,19 @@
       "started_at": "2026-10-26T11:31:30-03:00",
       "active_s": 143,
       "finished_at": "2026-10-26T11:33:53-03:00"
+    },
+    {
+      "id": "FIX-FMVP-004",
+      "file": "FIX-FMVP-004.md",
+      "title": "Validação de cache hit devolve stems de outra música após colisão",
+      "origin": "FMVP-TASK-05",
+      "severity": "high",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }

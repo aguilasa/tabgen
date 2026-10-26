@@ -65,3 +65,4 @@ vem da lib, inofensivo.
     - `M tabgen/core/separation/__init__.py`
     - `A tabgen/core/separation/demucs.py`
     - `A tests/test_separation.py`
+- **Reviewed** (2026-10-26) at `00a11af`: FIX-FMVP-004
