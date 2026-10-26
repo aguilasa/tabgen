@@ -16,7 +16,8 @@ venv/
 htmlcov/
 
 # Project
-.tabgen/        # cached intermediate stage results
+# cached intermediate stage results
+.tabgen/
 *.wav
 *.mp3
 *.flac
