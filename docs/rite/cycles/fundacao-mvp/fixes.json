@@ -27,13 +27,14 @@
       "severity": "low",
       "files": ["tabgen/core/doctor.py"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-26T11:18:52-03:00",
+      "done_on": "2026-10-26",
+      "done_commit": "cb42a89",
+      "active_since": null,
       "started_at": "2026-10-26T11:18:52-03:00",
-      "active_s": 0
+      "active_s": 264,
+      "finished_at": "2026-10-26T11:23:16-03:00"
     }
   ]
 }
