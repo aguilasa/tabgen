@@ -19,12 +19,12 @@ verdes, README atualizado com o uso real do MVP.
 
 ## Done criteria
 
-- [ ] `tabgen transcribe <música real>.mp3` completa sem erro na GPU; tempos por estágio
+- [x] `tabgen transcribe <música real>.mp3` completa sem erro na GPU; tempos por estágio
       anotados no Execution Log.
-- [ ] `.mid` resultante abre no TuxGuitar (verificação manual confirmada pelo usuário ou
+- [x] `.mid` resultante abre no TuxGuitar (verificação manual confirmada pelo usuário ou
       screenshot anexado).
-- [ ] Todos os checks da Fase 1 do profile passam.
-- [ ] `pytest -q` e `ruff check .` verdes em venv limpa.
+- [x] Todos os checks da Fase 1 do profile passam.
+- [x] `pytest -q` e `ruff check .` verdes em venv limpa.
 
 ## Notes
 
@@ -56,7 +56,17 @@ para não poluir a pasta de música) — `tabgen transcribe`, GPU RTX 3060 Lapto
 
 `.mid` enviados ao usuário para a verificação manual no TuxGuitar (último critério pendente).
 
+2026-10-26 — Usuário confirmou nesta conversa que `You and I.guitar.mid` e `You and I.bass.mid`
+(copiados para ~/Documents/diversos/musica/) abrem corretamente no TuxGuitar — último critério
+cumprido; task desbloqueada e fechada.
+
 ## Execution Log
 
 - **blocked** (2026-10-26): Trabalho coerente commitado em 1d4bdd3 (README, mido dev dep, venv limpa verde) e e2e com música real medido (61,3 s frio / 1,5 s quente, tempos no Notes). Falta só a verificação manual: usuário abrir You and I.{guitar,bass}.mid no TuxGuitar e confirmar.
 - **pending** (2026-10-26): Usuário confirmou nesta conversa: You and I.{guitar,bass}.mid abrem corretamente no TuxGuitar — última pendência da task
+- **Closed** — commit `1d4bdd3` (2026-10-26): docs(readme): document transcribe usage, basic-pitch install step and runtimes
+  - Files (`git show --name-status 1d4bdd3`):
+    - `M README.md`
+    - `M pyproject.toml`
+  - **Outside declared files** (`README.md`):
+    - `pyproject.toml`

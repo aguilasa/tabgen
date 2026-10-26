@@ -170,14 +170,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-1--separar--midi-mvp-útil-desde-já",
       "files": ["README.md"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
+      "status": "done",
+      "done_on": "2026-10-26",
+      "done_commit": "1d4bdd3",
+      "reviewed_on": "pending",
       "review_commit": null,
       "active_since": null,
       "started_at": "2026-10-26T12:00:38-03:00",
-      "active_s": 461
+      "active_s": 478,
+      "finished_at": "2026-10-26T16:15:52-03:00"
     }
   ]
 }
