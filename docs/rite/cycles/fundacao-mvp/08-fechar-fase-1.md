@@ -59,3 +59,4 @@ para não poluir a pasta de música) — `tabgen transcribe`, GPU RTX 3060 Lapto
 ## Execution Log
 
 - **blocked** (2026-10-26): Trabalho coerente commitado em 1d4bdd3 (README, mido dev dep, venv limpa verde) e e2e com música real medido (61,3 s frio / 1,5 s quente, tempos no Notes). Falta só a verificação manual: usuário abrir You and I.{guitar,bass}.mid no TuxGuitar e confirmar.
+- **pending** (2026-10-26): Usuário confirmou nesta conversa: You and I.{guitar,bass}.mid abrem corretamente no TuxGuitar — última pendência da task
