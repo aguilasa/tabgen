@@ -134,6 +134,50 @@ def test_missing_stem_file_invalidates_the_cache(tmp_path: Path) -> None:
     assert Path(result.stems["guitar"]).is_file()
 
 
+def make_constant_factory(fill: float):
+    """A separator factory whose every stem is filled with one constant."""
+
+    def factory(model: str, device: str, segment: int, callback):
+        return FakeSeparator(
+            {
+                "vocals": fill,
+                "drums": fill,
+                "bass": fill,
+                "other": fill,
+                "guitar": fill,
+                "piano": fill,
+            }
+        )
+
+    return factory
+
+
+def test_cache_hit_after_sibling_input_overwrites_shared_stems(
+    tmp_path: Path,
+) -> None:
+    """Two inputs in the same directory share stems/: separating song B
+    overwrites song A's stems, so re-running song A must not report a cache
+    hit that returns song B's audio (regression for FIX-FMVP-004)."""
+    song_a = tmp_path / "song_a.wav"
+    song_b = tmp_path / "song_b.wav"
+    soundfile.write(str(song_a), np.full((SR, 2), 0.1, dtype=np.float32), SR)
+    soundfile.write(str(song_b), np.full((SR, 2), 0.9, dtype=np.float32), SR)
+
+    demucs_core.separate(
+        song_a, device="cpu", separator_factory=make_constant_factory(0.1)
+    )
+    demucs_core.separate(
+        song_b, device="cpu", separator_factory=make_constant_factory(0.9)
+    )
+    result, cache_hit = demucs_core.separate(
+        song_a, device="cpu", separator_factory=make_constant_factory(0.1)
+    )
+
+    assert not cache_hit  # song B invalidated song A's cached stems
+    guitar, _ = soundfile.read(result.stems["guitar"])
+    assert abs(float(guitar.mean()) - 0.1) < 0.05, "song A got song B's stems"
+
+
 def test_progress_reaches_100_and_stays_in_range(tmp_path: Path) -> None:
     sample = write_sample(tmp_path / "song.wav")
     progress: list[float] = []

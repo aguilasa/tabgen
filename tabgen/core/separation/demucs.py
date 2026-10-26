@@ -199,12 +199,33 @@ def _compute_stems(
     )
 
 
+# Payload key holding each stem file's identity at cache-write time. The
+# stems/ directory is shared by every input in the folder, so a later run on
+# another song overwrites the files; existence alone cannot prove the stems
+# on disk are still the ones this entry was cached for.
+_STEM_IDENTITY_KEY = "stem_identity"
+
+
+def _stem_identity(path: Path) -> dict[str, int]:
+    """Cheap identity fingerprint (size + mtime) of one stem file."""
+    stat = path.stat()
+    return {"size": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+
+
 def _cached_result_is_valid(payload: dict[str, Any]) -> bool:
-    """A cached entry is only a hit if every stem file still exists."""
+    """A cached entry is a hit only if every stem file still exists and
+    still matches the identity recorded when the entry was written."""
     stems = payload.get("stems", {})
+    identities = payload.get(_STEM_IDENTITY_KEY, {})
     if set(stems) != set(STEM_NAMES):
         return False
-    return all(Path(path).is_file() for path in stems.values())
+    for name, path in stems.items():
+        stem_path = Path(path)
+        if not stem_path.is_file():
+            return False
+        if identities.get(name) != _stem_identity(stem_path):
+            return False
+    return True
 
 
 def separate(
@@ -229,7 +250,8 @@ def separate(
     cached = cache.get(STAGE, MODEL_VERSION)
     if cached is not None and _cached_result_is_valid(cached):
         on_progress(STAGE, 100.0)
-        return SeparationResult.from_dict(cached), True
+        data = {k: v for k, v in cached.items() if k != _STEM_IDENTITY_KEY}
+        return SeparationResult.from_dict(data), True
 
     result = _compute_stems(
         input_path=input_path,
@@ -239,5 +261,9 @@ def separate(
         on_progress=on_progress,
         separator_factory=separator_factory,
     )
-    cache.put(STAGE, MODEL_VERSION, result.to_dict())
+    payload = result.to_dict()
+    payload[_STEM_IDENTITY_KEY] = {
+        name: _stem_identity(Path(path)) for name, path in result.stems.items()
+    }
+    cache.put(STAGE, MODEL_VERSION, payload)
     return result, False
