@@ -50,4 +50,30 @@ $ sh "$RITE_HOME/bin/rite" context FMVP-TASK-08 --json | grep -q '"pyproject.tom
 Falha hoje contra o campo `files`; deve passar quando os files declarados incluírem
 `pyproject.toml` — ou o fix é descartado se a divergência registrada for aceita.
 
+Medido após o fix (2026-10-26):
+
+```text
+$ sh "$RITE_HOME/bin/rite" context FMVP-TASK-08 --json | grep -c '"pyproject.toml"'   # antes
+0
+$ sh "$RITE_HOME/bin/rite" set FMVP-TASK-08 --files README.md,pyproject.toml
+$ sh "$RITE_HOME/bin/rite" context FMVP-TASK-08 --json | grep -q '"pyproject.toml"'; echo "exit=$?"
+exit=0
+```
+
+## Notas
+
+Escopo declarado da FMVP-TASK-08 emendado via CLI (`rite set FMVP-TASK-08 --files
+README.md,pyproject.toml`), fechando o descasamento com o diff entregue em `1d4bdd3`. O arquivo
+da task já documentava a divergência; nenhuma edição manual de `progress.json`.
+
 ## Execution Log
+
+- 2026-10-26 — Triagem (`rite reproduce FIX-FMVP-007`): REPRODUCED.
+
+  ```text
+  $ git show --stat 1d4bdd3
+   README.md      | 60 ++++++++...
+   pyproject.toml |  3 +++
+  ```
+
+  Campo `files` da FMVP-TASK-08 segue só com `README.md`.
