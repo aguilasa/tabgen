@@ -35,6 +35,19 @@
       "started_at": "2026-10-26T11:18:52-03:00",
       "active_s": 264,
       "finished_at": "2026-10-26T11:23:16-03:00"
+    },
+    {
+      "id": "FIX-FMVP-003",
+      "file": "FIX-FMVP-003.md",
+      "title": "Gates do profile (pytest, ruff) falham fora do venv do projeto",
+      "origin": "FIX-FMVP-001",
+      "severity": "high",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
