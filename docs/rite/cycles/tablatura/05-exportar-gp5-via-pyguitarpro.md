@@ -84,3 +84,4 @@ Verificação (2026-10-27, thread principal, árvore do commit):
     - `M pyproject.toml`
     - `A tabgen/core/export/gp5.py`
     - `A tests/test_gp5_export.py`
+- **Reviewed** (2026-10-27) at `c229551`: FIX-TAB-003

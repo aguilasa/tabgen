@@ -35,6 +35,45 @@
       "started_at": "2026-10-27T14:41:39-03:00",
       "active_s": 274,
       "finished_at": "2026-10-27T14:46:13-03:00"
+    },
+    {
+      "id": "FIX-TAB-003",
+      "file": "FIX-TAB-003.md",
+      "title": "Correct quoted version-command output in TAB-TASK-05 verification",
+      "origin": "TAB-TASK-05",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-TAB-004",
+      "file": "FIX-TAB-004.md",
+      "title": "Declare golden ascii_guitar_riff.txt in TAB-TASK-06 files metadata",
+      "origin": "TAB-TASK-06",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-TAB-005",
+      "file": "FIX-TAB-005.md",
+      "title": "Version a deterministic e2e probe for tabgen export",
+      "origin": "TAB-TASK-07",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
