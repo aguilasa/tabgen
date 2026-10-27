@@ -36,4 +36,13 @@ atribui corda/casa (TASK-03) para guitarra e baixo, cacheia as `TabScore` em `.t
 Hot files: `tabgen/core/pipeline.py`, `tabgen/cli/main.py`. Pitfall herdado: conferir `files`
 contra o diff nos dois sentidos antes do `rite finish`.
 
+Encaminhado pelas TASK-05/06 (2026-10-27): os três exporters têm assinatura uniforme —
+`export_gp5(scores, output_path, beat_grids=None, default_subdivisions_in_beat=4, title="")`,
+`export_musicxml(scores, output_path, beat_grids=None, default_subdivisions_in_beat=4, title="")`,
+`export_ascii_tab(scores, output_path, beat_grids=None, default_subdivisions_in_beat=4, measures_per_line=4)`.
+`beat_grids` = por score, lista de `subdivisions_in_beat` (4 reto / 3 tercina) **paralela aos
+`events` que sobrevivem ao fretting** (descartar entradas das notas em `unassigned`). Todas as
+`TabScore` devem compartilhar a mesma `time_signature` (senão `Gp5ExportError` /
+`MusicXmlExportError`).
+
 ## Execution Log

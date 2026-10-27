@@ -44,6 +44,9 @@ dependencies = [
     # Tablature export to Guitar Pro 5 (.gp5). Pinned: the gp5 writer is
     # sensitive to model-layout changes between releases.
     "pyguitarpro==0.11",
+    # Tablature export to MusicXML. Pinned: the musicxml writer relies on
+    # music21's makeNotation/tuplet handling, which shifts between releases.
+    "music21==10.5.1",
     "mir-eval",
     "resampy>=0.2.2,<0.4.3",
 ]
