@@ -90,3 +90,7 @@ Falha agora (`No such file or directory`); deve sair 0 após o fix. Depois:
   (687 bytes); cached rerun mentioned 'cache hit' in 0.25 s.` (contagens/bytes variam entre
   execuções — por isso não são assertados); `.venv/bin/pytest -q` → 127 passed;
   `.venv/bin/ruff check .` → All checks passed!; `rite gates --id FIX-TAB-005` → passed.
+- **Closed** — commit `d660056` (2026-10-27): test(e2e): version deterministic probe for tabgen export
+  - Files (`git show --name-status d660056`):
+    - `M docs/rite/cycles/tablatura/FIX-TAB-005.md`
+    - `A scripts/probe_e2e_export.py`
