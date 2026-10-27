@@ -10,9 +10,19 @@ which commands search instead of reading whole.
 
 <!-- Decisions the user confirmed. One line each, with the date and where it was decided. -->
 
+- 2026-10-25 — Linguagem Python 3.10–3.11 (madmom limita versão) — plano, seção 1.
+- 2026-10-25 — Arquitetura em camadas: `core/` biblioteca pura (sem print/HTTP/GUI; progresso via callbacks), `cli/` camada fina — plano, seção 2.
+- 2026-10-25 — Contratos entre estágios são dataclasses serializáveis em JSON, com cache em disco (`.tabgen/`) — plano, seção 2.
+- 2026-10-25 — Técnicas: bends/slides a partir dos pitch bends do Basic Pitch; hammer-on/pull-off por heurística de onsets fracos; palm mute fora (precisa de classificador) — plano, seção 5 (Fase 4).
+- 2026-10-25 — Formato-alvo `.gp5` via PyGuitarPro; GPX/GP6+ fora — plano, seção 3 (Estágio 6).
+- 2026-10-25 — Licença MIT; modelos non-commercial aceitos; Essentia (AGPL) evitada — plano, seção 4.
+- 2026-10-25 — Idiomas: código e commits em en-US (conventional), documentação do Rite em pt-BR — definido pelo usuário na adoção do Rite.
+
 ## Sources of truth
 
 <!-- Plan sections, specs, reference outputs. Items point here through `source_of_truth`. -->
+
+- Plano do projeto: [/docs/planejamento/audio-para-tablatura.md](/docs/planejamento/audio-para-tablatura.md) — roadmap Fase 4 (seção 5), estágios 4–6 (seção 3), datasets de avaliação (seção 6), limitações (seção 7).
 
 ## Generated artifacts
 
