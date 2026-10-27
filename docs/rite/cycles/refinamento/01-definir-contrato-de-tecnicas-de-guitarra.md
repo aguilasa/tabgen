@@ -91,3 +91,4 @@ Verificação (2026-10-27, thread principal, árvore do commit):
     - `docs/rite/cycles/refinamento/03-detectar-hammer-on-e-pull-off-por-onsets-fracos.md`
     - `docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
     - `tests/fixtures/contracts_v1.json`
+- **Reviewed** (2026-10-27) at `864b6bd`: no finding
