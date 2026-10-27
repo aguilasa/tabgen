@@ -44,5 +44,11 @@ Format:
 ### Emendar files declarados antes de commitar fora do escopo
 - tags: bookkeeping, files, scope
 - paths: docs/rite/cycles/**
-- proven by: FIX-FMVP-007 (2026-10-26)
-- rule: ao tocar arquivo fora dos `files` do item, rodar `rite set <ID> --files ...` antes do `rite finish`.
+- proven by: FIX-FMVP-007 (2026-10-26), FIX-ANA-002 (2026-10-27)
+- rule: antes do `rite finish`, comparar os `files` do item com `git show --stat` do work commit nos dois sentidos (tocado fora da lista, listado e não tocado) e corrigir com `rite set <ID> --files ...`.
+
+### Teste da composição real, não só do stub
+- tags: tests, mocks, doctor, pipeline
+- paths: tests/**
+- proven by: FIX-ANA-001 (2026-10-26)
+- rule: ao adicionar um item a uma função que compõe uma lista (checks, estágios), ter um teste que chama a função real sem monkeypatch e assere o item; provar com defeito plantado.
