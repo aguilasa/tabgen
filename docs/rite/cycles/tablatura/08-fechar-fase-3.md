@@ -64,3 +64,11 @@ Verificação (2026-10-27, RTX 3060 Laptop, `torch.cuda.is_available()` → `Tru
   ASCII, limitações (plano, seção 7) e linhas `export` frio ~193 s / quente 0.35 s na tabela.
 
 ## Execution Log
+
+- **Closed** — commit `64f438b` (2026-10-27): docs(readme): document tabgen export with measured runtimes and limitations
+  - Files (`git show --name-status 64f438b`):
+    - `M .gitignore`
+    - `M README.md`
+    - `M docs/rite/cycles/tablatura/08-fechar-fase-3.md`
+  - **Outside declared files** (`README.md`):
+    - `.gitignore`
