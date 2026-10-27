@@ -41,7 +41,7 @@ graph TD
 | [ANA-TASK-02](/docs/rite/cycles/analise-musical/02-estender-contrato-analysisresult-com-acordes-e.md) | Estender contrato AnalysisResult com acordes e tom | 2 | feature | — | done | 2026-10-26 | 2026-10-26 | approved |
 | [ANA-TASK-03](/docs/rite/cycles/analise-musical/03-implementar-beats-downbeats-e-bpm-com.md) | Implementar beats, downbeats e BPM com DBNDownBeatTracker | 2 | feature | ANA-TASK-01, ANA-TASK-02 | done | 2026-10-26 | 2026-10-26 | approved |
 | [ANA-TASK-04](/docs/rite/cycles/analise-musical/04-implementar-deteccao-de-tom-e-acordes-sobre-mix.md) | Implementar detecção de tom e acordes sobre mix sem bateria | 2 | feature | ANA-TASK-01, ANA-TASK-02 | done | 2026-10-26 | 2026-10-26 | approved |
-| [ANA-TASK-05](/docs/rite/cycles/analise-musical/05-orquestrar-analise-no-pipeline-com-cache-e.md) | Orquestrar análise no pipeline com cache e comando analyze | 2 | feature | ANA-TASK-03, ANA-TASK-04 | done | 2026-10-26 | 2026-10-27 | changes |
+| [ANA-TASK-05](/docs/rite/cycles/analise-musical/05-orquestrar-analise-no-pipeline-com-cache-e.md) | Orquestrar análise no pipeline com cache e comando analyze | 2 | feature | ANA-TASK-03, ANA-TASK-04 | done | 2026-10-26 | 2026-10-27 | approved |
 | [ANA-TASK-06](/docs/rite/cycles/analise-musical/06-fechar-fase-2.md) | Fechar Fase 2 | 2 | closing | ANA-TASK-01, ANA-TASK-02, ANA-TASK-03, ANA-TASK-04, ANA-TASK-05 | done | 2026-10-26 | 2026-10-27 | approved |
 <!-- rite:end -->
 
