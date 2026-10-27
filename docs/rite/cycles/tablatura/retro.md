@@ -91,4 +91,4 @@ Nenhuma. Profile em 3260 bytes; pitfalls herdados ainda aplicáveis.
 
 - Keep: 3 pitfalls novos (FIX-TAB-001, FIX-TAB-002, FIX-TAB-003) e 2 entradas atualizadas (files: FIX-TAB-004, FIX-TAB-006; probe: FIX-TAB-005) em `docs/rite/profiles/tablatura.pitfalls.md`.
 - Report: comentário em https://github.com/aguilasa/rite/issues/23#issuecomment-6452493078 (FIX-TAB-004, FIX-TAB-006).
-- Não aplicados (decisão do usuário): Promote files = diff e Promote probe e2e no `CLAUDE.md`.
+- Promote: files = diff e probe e2e adicionados ao `CLAUDE.md` depois da retro, a pedido do usuário (FIX-FMVP-007, FIX-ANA-002, FIX-TAB-004/005/006, FIX-FMVP-005/006).
