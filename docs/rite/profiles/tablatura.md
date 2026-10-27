@@ -49,3 +49,11 @@ which commands search instead of reading whole.
 ## Phase-specific checks
 
 <!-- One entry per phase used by tasks ("### Phase 1 — ..."). The reviewer runs these; a phase without an entry is a finding. -->
+
+### Fase 3 — Tablatura
+
+- `.venv/bin/tabgen export <amostra>.mp3 -o out.gp5` sai 0 e `guitarpro.parse` reabre o arquivo com faixas guitarra e baixo.
+- `-o out.musicxml` reabre no `music21.converter.parse`; `-o out.txt` gera tab ASCII não vazia.
+- Segunda execução reusa o cache `.tabgen/` (`cache hit`, sem Demucs, Basic Pitch, madmom nem DP; <5 s).
+- Compassos do .gp5 relido somam exatamente a fórmula de compasso (sem compasso incompleto).
+- `grep -rnE "import typer|import rich|print\(" tabgen/core/` não retorna nada.
