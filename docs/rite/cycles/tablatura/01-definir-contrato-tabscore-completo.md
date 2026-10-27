@@ -38,7 +38,12 @@ tempo_bpm, key, time_signature como `[num, den]`, events/chords tipados com `fro
 no padrão de `AnalysisResult`). Presets `GUITAR_STANDARD_TUNING` (40,45,50,55,59,64) e
 `BASS_STANDARD_TUNING` (28,33,38,43), ordem grave→agudo documentada em comentário. Constante
 `TAB_FORMAT_VERSION = 1` já definida para a chave de cache do TASK-07 (cache em si fora do escopo).
-Convenção de corda: 1-based, corda 1 = mais grave (mesma ordem de `tuning_midi`).
+Convenção de corda: 1-based, convenção de guitarrista — corda 1 = mais **aguda**, corda N = mais
+grave/grossa (ordem **inversa** de `tuning_midi`, que segue grave→agudo).
+
+Adendo (FIX-TAB-001): a convenção original aqui registrada ("corda 1 = mais grave") conflitava com
+o estágio de fretting (`tabgen/core/fretting/dp.py`); o contrato foi reconciliado adotando a
+convenção de guitarrista já implementada e testada no fretting.
 
 Evidências:
 - `.venv/bin/pytest -q tests/test_models.py` → `21 passed in 0.02s` (inclui

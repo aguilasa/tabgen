@@ -116,8 +116,10 @@ BASS_STANDARD_TUNING = [28, 33, 38, 43]  # E1 A1 D2 G2
 class TabNote(_JsonMixin):
     """A single note placed on the fretboard, quantized to the measure grid."""
 
-    # String index, 1-based, where 1 is the lowest-pitched string
-    # (same order as ``TabScore.tuning_midi``).
+    # String index, 1-based, guitarist convention: 1 is the highest-pitched
+    # string and N (= len(tuning_midi)) the lowest-pitched/thickest one.
+    # Note: this is the REVERSE of the low-to-high ``TabScore.tuning_midi``
+    # order (open pitch of string ``s`` is ``tuning_midi[len(tuning_midi) - s]``).
     string: int
     fret: int
     # Quantized position: measure and beat are 1-based; subdivision is the
