@@ -99,3 +99,13 @@ quentes; scratchpad da sessão):
   `grep -rnE "import typer|import rich|print\(" tabgen/core/` → vazio (exit 1).
 
 ## Execution Log
+
+- **Closed** — commit `e07b62d` (2026-10-27): feat(pipeline): orchestrate tablature with caching and add export command
+  - Files (`git show --name-status e07b62d`):
+    - `M docs/rite/cycles/tablatura/07-orquestrar-tablatura-no-pipeline-com-cache-e.md`
+    - `M docs/rite/cycles/tablatura/08-fechar-fase-3.md`
+    - `M tabgen/cli/main.py`
+    - `M tabgen/core/pipeline.py`
+    - `A tests/test_tablature_pipeline.py`
+  - **Outside declared files** (`tabgen/core/pipeline.py`, `tabgen/cli/main.py`, `tests/test_tablature_pipeline.py`):
+    - `docs/rite/cycles/tablatura/08-fechar-fase-3.md`
