@@ -129,13 +129,14 @@
       "status": "done",
       "done_on": "2026-10-26",
       "done_commit": "80b72ba",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-27",
+      "review_commit": "b10b300",
       "active_since": null,
       "started_at": "2026-10-26T19:07:28-03:00",
       "active_s": 1618,
       "finished_at": "2026-10-26T19:34:26-03:00",
-      "review_started_at": "2026-10-27T11:46:42-03:00"
+      "review_started_at": "2026-10-27T11:46:42-03:00",
+      "review_s": 320
     }
   ]
 }
