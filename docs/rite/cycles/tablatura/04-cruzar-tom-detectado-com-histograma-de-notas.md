@@ -62,3 +62,9 @@ pipeline (consumir `AnalysisResult` + `NoteEvents` e usar `KeyCheckResult.key` n
 para TASK-05/07.
 
 ## Execution Log
+
+- **Closed** — commit `7d89f45` (2026-10-27): feat(analysis): cross-check madmom key against note histogram
+  - Files (`git show --name-status 7d89f45`):
+    - `M docs/rite/cycles/tablatura/04-cruzar-tom-detectado-com-histograma-de-notas.md`
+    - `A tabgen/core/analysis/key_check.py`
+    - `A tests/test_key_check.py`
