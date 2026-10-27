@@ -124,7 +124,7 @@
       "phase": 3,
       "depends_on": ["TAB-TASK-02", "TAB-TASK-03"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-6--quantização-e-exportação",
-      "files": ["pyproject.toml", "tabgen/core/export/musicxml.py", "tabgen/core/export/ascii_tab.py", "tests/test_musicxml_export.py", "tests/test_ascii_tab.py"],
+      "files": ["pyproject.toml", "tabgen/core/export/musicxml.py", "tabgen/core/export/ascii_tab.py", "tests/test_musicxml_export.py", "tests/test_ascii_tab.py", "tests/golden/ascii_guitar_riff.txt"],
       "resources": [],
       "status": "done",
       "done_on": "2026-10-27",

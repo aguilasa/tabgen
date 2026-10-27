@@ -54,3 +54,13 @@ Falha agora (`AssertionError`); deve passar após o fix. Depois:
 `sh "$RITE_HOME/bin/rite" check --quick --json` com 0 erros.
 
 ## Execution Log
+
+- 2026-10-27 — Triagem inline (`rite reproduce --all --cycle tablatura`): REPRODUCED.
+  `git show --name-status ee5892e` lista `A tests/golden/ascii_guitar_riff.txt` e
+  `M docs/.../07-orquestrar...md`; `rite context TAB-TASK-06 | grep -c ascii_guitar_riff.txt` → 1
+  (só no texto do log, não em `item.files`). Metadado segue incompleto no HEAD.
+- 2026-10-27 — Fix aplicado inline (trabalho é bookkeeping via CLI, vedado a workers):
+  `rite set TAB-TASK-06 --files pyproject.toml,tabgen/core/export/musicxml.py,tabgen/core/export/ascii_tab.py,tests/test_musicxml_export.py,tests/test_ascii_tab.py,tests/golden/ascii_guitar_riff.txt`.
+  Antes: `item.files` com 5 entradas, sem o golden. Depois: assert da Verificação passa
+  (`tests/golden/ascii_guitar_riff.txt` presente em `item.files`); `rite check --quick` →
+  errors: 0, warnings: 0. Nota cruzada no doc da TASK-07 deixada fora de `files`, conforme o Fix.
