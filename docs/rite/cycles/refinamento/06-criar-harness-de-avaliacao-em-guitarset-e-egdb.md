@@ -38,4 +38,9 @@ caminho do dataset é parâmetro. Referência de números do plano: Basic Pitch 
 gravação real; TabCNN tab-F1 ~0,75 no GuitarSet. Download é ação que exige confirmação do
 usuário.
 
+Encaminhado pela REF-TASK-03 (2026-10-27): a qualidade de hammer-on/pull-off só se mede se o dataset
+tiver anotação de técnica. Pelo que se sabe dos artigos (não conferido, sem download): EGDB tem só
+notas por corda, sem rótulo de técnica; Guitar-TECHS é organizado por técnica (rótulo ao menos por
+arquivo). Confirmar aqui e registrar.
+
 ## Execution Log
