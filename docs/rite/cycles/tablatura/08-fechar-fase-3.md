@@ -32,4 +32,11 @@ medidos, checks e gates da fase verdes, README atualizado com uso e tempos do `e
 
 Pitfall herdado (FIX-FMVP-006): números medidos no e2e vão para o README neste mesmo item.
 
+Encaminhado pela TASK-07 (2026-10-27): opções do `export` para o README —
+`-o FILE` (formato pelo sufixo `.gp5`/`.musicxml`/`.xml`/`.txt`), `--format gp5|musicxml|ascii`,
+`--instruments guitar,bass`, `--tuning`/`--bass-tuning` (preset ou notas low-to-high, ex.
+`D2,A2,D3,G3,B3,E4`), `--capo N` (só guitarra), `--device`. Medida parcial com caches
+upstream quentes (`You and I.flac`): estágio tablatura frio 0.58 s, cache hit 0.35 s — o tempo
+frio completo (separação + análise + transcrição + tablatura) ainda precisa ser medido aqui.
+
 ## Execution Log

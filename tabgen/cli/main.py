@@ -271,5 +271,143 @@ def analyze(
     console.print(f"Analysis written to [bold]{out_path}[/bold]")
 
 
+@app.command()
+def export(
+    audio: Path = typer.Argument(
+        ...,
+        exists=True,
+        dir_okay=False,
+        readable=True,
+        help="Audio file to turn into tablature (mp3, flac, wav, ...).",
+    ),
+    output: Optional[Path] = typer.Option(
+        None,
+        "--output",
+        "-o",
+        dir_okay=False,
+        help="Output file (default: <input>.gp5 next to the input). The "
+        "suffix picks the format: .gp5, .musicxml/.xml or .txt (ASCII tab).",
+    ),
+    fmt: Optional[str] = typer.Option(
+        None,
+        "--format",
+        help="Force the format: gp5, musicxml or ascii (default: from the "
+        "output suffix).",
+    ),
+    instruments: str = typer.Option(
+        "guitar,bass",
+        "--instruments",
+        help="Comma-separated instruments to include (guitar, bass).",
+    ),
+    tuning: Optional[str] = typer.Option(
+        None,
+        "--tuning",
+        help="Guitar tuning: a preset (standard, drop-d, half-step-down, "
+        "d-standard) or notes low-to-high, e.g. D2,A2,D3,G3,B3,E4.",
+    ),
+    bass_tuning: Optional[str] = typer.Option(
+        None,
+        "--bass-tuning",
+        help="Bass tuning: a preset (standard, drop-d, half-step-down) or "
+        "notes low-to-high, e.g. E1,A1,D2,G2.",
+    ),
+    capo: int = typer.Option(
+        0,
+        "--capo",
+        min=0,
+        max=12,
+        help="Guitar capo fret (frets in the tab are relative to it).",
+    ),
+    device: Optional[str] = typer.Option(
+        None,
+        "--device",
+        help="Device for Demucs: cuda or cpu (default: autodetect).",
+    ),
+) -> None:
+    """Generate tablature (Guitar Pro 5, MusicXML or ASCII) from the audio."""
+    from tabgen.core.analysis.beats import BeatAnalysisError
+    from tabgen.core.analysis.harmony import HarmonyError
+    from tabgen.core.pipeline import (
+        PipelineError,
+        resolve_export_format,
+        resolve_tuning,
+        run_tablature,
+    )
+    from tabgen.core.separation.demucs import SeparationError
+    from tabgen.core.transcription.basic_pitch import TranscriptionError
+
+    wanted = tuple(name.strip() for name in instruments.split(",") if name.strip())
+    try:
+        out_path = (
+            output if output is not None else audio.parent / f"{audio.stem}.gp5"
+        )
+        out_format = resolve_export_format(out_path, fmt)
+        tunings = {}
+        if "guitar" in wanted:
+            tunings["guitar"] = resolve_tuning(tuning, "guitar")
+        if "bass" in wanted:
+            tunings["bass"] = resolve_tuning(bass_tuning, "bass")
+    except PipelineError as err:
+        console.print(f"[red]Invalid option:[/red] {err}")
+        raise typer.Exit(2) from err
+
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        TimeElapsedColumn(),
+        console=console,
+    ) as progress:
+        tasks: dict[str, Any] = {}
+
+        def on_progress(stage: str, pct: float) -> None:
+            if stage not in tasks:
+                tasks[stage] = progress.add_task(stage, total=100.0)
+            progress.update(tasks[stage], completed=pct)
+
+        try:
+            summary = run_tablature(
+                audio,
+                output_path=out_path,
+                fmt=out_format,
+                instruments=wanted,
+                tunings=tunings,
+                capos={"guitar": capo},
+                device=device,
+                on_progress=on_progress,
+            )
+        except (
+            PipelineError,
+            SeparationError,
+            TranscriptionError,
+            BeatAnalysisError,
+            HarmonyError,
+        ) as err:
+            progress.stop()
+            console.print(f"[red]Export failed:[/red] {err}")
+            raise typer.Exit(1) from err
+
+    if summary.cache_hit:
+        console.print(
+            "[yellow]cache hit[/yellow]: tablature reused, Demucs, Basic Pitch, "
+            "madmom and fretting skipped."
+        )
+    check = summary.key_check
+    switched = " (switched from the analysis key by the note histogram)" if (
+        check.get("switched")
+    ) else ""
+    console.print(f"Key: [bold]{check.get('key') or 'unknown'}[/bold]{switched}")
+    for score in summary.scores:
+        dropped = summary.unassigned.get(score.instrument, 0)
+        extra = f", {dropped} unplayable note(s) left out" if dropped else ""
+        console.print(
+            f"  {score.instrument}: {len(score.events)} notes, "
+            f"tuning {score.tuning_midi}, capo {score.capo_fret}{extra}"
+        )
+    console.print(
+        f"Tablature ({summary.format}) written to [bold]{summary.output_path}[/bold]"
+    )
+
+
 if __name__ == "__main__":
     app()
