@@ -8,12 +8,16 @@
       "title": "Reconcile TabNote string numbering with fretting stage convention",
       "origin": "TAB-TASK-01",
       "severity": "high",
-      "files": [],
+      "files": ["tabgen/core/models.py", "tests/test_models.py", "tabgen/core/fretting/dp.py", "docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-27",
+      "done_commit": "909100e",
+      "active_since": null,
+      "started_at": "2026-10-27T14:40:48-03:00",
+      "active_s": 281,
+      "finished_at": "2026-10-27T14:45:29-03:00"
     },
     {
       "id": "FIX-TAB-002",
@@ -21,12 +25,15 @@
       "title": "Align key spellings with madmom minor labels and compare match by pitch class",
       "origin": "TAB-TASK-04",
       "severity": "medium",
-      "files": [],
+      "files": ["tabgen/core/analysis/key_check.py", "tests/test_key_check.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-27T14:41:39-03:00",
+      "started_at": "2026-10-27T14:41:39-03:00",
+      "active_s": 0
     }
   ]
 }

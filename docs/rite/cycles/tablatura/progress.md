@@ -44,7 +44,7 @@ graph TD
 <!-- rite:begin tasks -->
 | ID | Title | Phase | Type | Depends on | Status | Done on | Reviewed on | Review |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [TAB-TASK-01](/docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md) | Definir contrato TabScore completo | 3 | feature | — | done | 2026-10-27 | 2026-10-27 | changes |
+| [TAB-TASK-01](/docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md) | Definir contrato TabScore completo | 3 | feature | — | done | 2026-10-27 | 2026-10-27 | approved |
 | [TAB-TASK-02](/docs/rite/cycles/tablatura/02-quantizar-notas-na-grade-de-beats.md) | Quantizar notas na grade de beats | 3 | feature | TAB-TASK-01 | done | 2026-10-27 | 2026-10-27 | approved |
 | [TAB-TASK-03](/docs/rite/cycles/tablatura/03-atribuir-corda-e-casa-por-programacao-dinamica.md) | Atribuir corda e casa por programação dinâmica | 3 | feature | TAB-TASK-01 | done | 2026-10-27 | 2026-10-27 | approved |
 | [TAB-TASK-04](/docs/rite/cycles/tablatura/04-cruzar-tom-detectado-com-histograma-de-notas.md) | Cruzar tom detectado com histograma de notas transcritas | 3 | feature | — | done | 2026-10-27 | 2026-10-27 | changes |

@@ -103,3 +103,8 @@ Depois: `.venv/bin/pytest -q` verde e `sh "$RITE_HOME/bin/rite" check --quick --
   `! grep -q "1 is the lowest-pitched string" tabgen/core/models.py` passa;
   `.venv/bin/pytest -q` → 105 passed; `.venv/bin/ruff check .` → All checks passed!;
   `rite gates --id FIX-TAB-001` → passed (0 gates configurados no profile).
+- **Closed** — commit `909100e` (2026-10-27): fix(models): adopt guitarist string-numbering convention in TabNote contract
+  - Files (`git show --name-status 909100e`):
+    - `M docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md`
+    - `M docs/rite/cycles/tablatura/FIX-TAB-001.md`
+    - `M tabgen/core/models.py`
