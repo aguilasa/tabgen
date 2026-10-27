@@ -41,6 +41,9 @@ dependencies = [
     "madmom @ git+https://github.com/CPJKU/madmom@27f032e8947204902c675e5e341a3faf5dc86dae",
     "librosa",
     "pretty-midi",
+    # Tablature export to Guitar Pro 5 (.gp5). Pinned: the gp5 writer is
+    # sensitive to model-layout changes between releases.
+    "pyguitarpro==0.11",
     "mir-eval",
     "resampy>=0.2.2,<0.4.3",
 ]
