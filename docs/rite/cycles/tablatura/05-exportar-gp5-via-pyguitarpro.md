@@ -74,7 +74,7 @@ Verificação (2026-10-27, thread principal, árvore do commit):
 - `.venv/bin/ruff check .` → `All checks passed!`
 - `grep -rnE "import typer|import rich|print\(" tabgen/core/` → vazio (exit 1)
 - `.venv/bin/python -c "import importlib.metadata; print(importlib.metadata.version('pyguitarpro'))"`
-  → `pyguitarpro 0.11`; pin em `pyproject.toml`: `"pyguitarpro==0.11"`
+  → `0.11`; pin em `pyproject.toml`: `"pyguitarpro==0.11"`
 
 ## Execution Log
 

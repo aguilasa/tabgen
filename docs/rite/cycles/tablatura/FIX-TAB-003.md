@@ -48,3 +48,15 @@ Sai 0 agora (linha 61 encontrada); deve sair 1 (nada encontrado) após o fix. De
 `sh "$RITE_HOME/bin/rite" check --quick --json` com 0 erros.
 
 ## Execution Log
+
+- 2026-10-27 — Triagem inline (`rite reproduce --all --cycle tablatura`): REPRODUCED. Comando de
+  versão imprime `0.11`; `grep -n "pyguitarpro 0.11"` acha a citação errada (agora na linha 77 —
+  o doc cresceu desde a Evidência, mesmo texto). Sintoma presente no HEAD.
+- 2026-10-27 — Fix aplicado (worker). Reproduzido antes da edição: comando de versão imprime
+  `0.11`; o grep da Verificação encontrou a citação errada na linha 77. Editada a linha 77 de
+  `05-exportar-gp5-via-pyguitarpro.md`: citação "pyguitarpro 0.11" corrigida para a saída real
+  "0.11", mantendo o pin `"pyguitarpro==0.11"`. Depois da edição o grep da Verificação sai 1
+  (nada encontrado) e a saída correta aparece nas linhas 43 e 77.
+  `rite check --quick --json` → 0 erros, 0 warnings.
+- 2026-10-27 — Verificação final na árvore do commit: `grep -n '\`pyguitarpro 0.11\`' docs/rite/cycles/tablatura/05-exportar-gp5-via-pyguitarpro.md` → exit 1 (nada encontrado);
+  `rite gates --id FIX-TAB-003` → passed.
