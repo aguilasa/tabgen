@@ -59,3 +59,7 @@ Sai 1 agora (nada encontrado); deve sair 0 após o fix. Depois:
 - 2026-10-27 — Fix aplicado inline (trabalho é bookkeeping via CLI, vedado a workers):
   `rite set TAB-TASK-08 --files README.md,.gitignore`. Verificação: grep de `".gitignore"` no
   context da TAB-TASK-08 agora sai 0 (encontrado); `rite check --quick` → errors: 0, warnings: 0.
+- **Closed** — commit `1900607` (2026-10-27): chore(cycle): declare .gitignore in TAB-TASK-08 files
+  - Files (`git show --name-status 1900607`):
+    - `M docs/rite/cycles/tablatura/FIX-TAB-006.md`
+    - `M docs/rite/cycles/tablatura/progress.json`
