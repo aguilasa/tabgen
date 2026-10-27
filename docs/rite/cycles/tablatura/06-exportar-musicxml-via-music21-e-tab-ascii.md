@@ -83,3 +83,4 @@ Verificação (2026-10-27, thread principal, árvore do commit):
   - **Outside declared files** (`pyproject.toml`, `tabgen/core/export/musicxml.py`, `tabgen/core/export/ascii_tab.py`, `tests/test_musicxml_export.py`, `tests/test_ascii_tab.py`):
     - `docs/rite/cycles/tablatura/07-orquestrar-tablatura-no-pipeline-com-cache-e.md`
     - `tests/golden/ascii_guitar_riff.txt`
+- **Reviewed** (2026-10-27) at `6fce49b`: FIX-TAB-004
