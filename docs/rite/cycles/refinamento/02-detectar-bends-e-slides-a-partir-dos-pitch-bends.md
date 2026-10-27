@@ -135,3 +135,4 @@ Verificação (2026-10-27, thread principal, árvore do commit sem os arquivos d
     - `A tests/test_techniques_bends.py`
   - **Files amended** — added to `files`:
     - `docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
+- **Reviewed** (2026-10-27) at `a9544ad`: no finding

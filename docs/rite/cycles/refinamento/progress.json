@@ -41,12 +41,14 @@
       "status": "done",
       "done_on": "2026-10-27",
       "done_commit": "8283950",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-27",
+      "review_commit": "a9544ad",
       "active_since": null,
       "started_at": "2026-10-27T20:12:33-03:00",
       "active_s": 303,
-      "finished_at": "2026-10-27T20:17:36-03:00"
+      "finished_at": "2026-10-27T20:17:36-03:00",
+      "review_started_at": "2026-10-27T20:22:48-03:00",
+      "review_s": 212
     },
     {
       "id": "REF-TASK-03",
@@ -66,7 +68,8 @@
       "active_since": null,
       "started_at": "2026-10-27T20:12:40-03:00",
       "active_s": 331,
-      "finished_at": "2026-10-27T20:18:11-03:00"
+      "finished_at": "2026-10-27T20:18:11-03:00",
+      "review_started_at": "2026-10-27T20:22:48-03:00"
     },
     {
       "id": "REF-TASK-04",
