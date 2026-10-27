@@ -15,9 +15,11 @@ from tabgen.core.models import Note, NoteEvents
 
 # MIDI pitch classes used below (octave 4-ish).
 C4, D4, E4, F4, G3, A3, B3, FS4 = 60, 62, 64, 65, 55, 57, 59, 66
+CS4, DS4, GS4, A4, B4 = 61, 63, 68, 69, 71
 
 G_MAJOR_SCALE = (G3, A3, B3, C4, D4, E4, FS4)
 C_MAJOR_SCALE = (C4, D4, E4, F4, G3, A3, B3)
+CS_MINOR_SCALE = (CS4, DS4, E4, FS4, GS4, A4, B4)
 
 
 def _events(
@@ -47,6 +49,19 @@ def test_g_major_scale_with_emphasized_tonic_scores_g_major_first() -> None:
     assert result.histogram_key == "G major"
     assert result.agreement and not result.switched
     assert result.key == "G major"
+    assert result.reason == "match"
+
+
+def test_sharp_minor_key_matches_by_pitch_class() -> None:
+    # madmom spells sharp minors with sharps ("C# minor"); the histogram
+    # must agree as a "match", not a "relative", whatever the spelling.
+    events = _events(CS_MINOR_SCALE, emphasized=CS4)
+
+    result = check_key("C# minor", 0.9, [events])
+
+    assert result.histogram_key == "C# minor"
+    assert result.agreement and not result.switched
+    assert result.key == "C# minor"
     assert result.reason == "match"
 
 
@@ -114,5 +129,7 @@ def test_missing_madmom_key_adopts_histogram_key() -> None:
 def test_relative_key_mapping() -> None:
     assert relative_key("C major") == "A minor"
     assert relative_key("A minor") == "C major"
-    assert relative_key("F# major") == "Eb minor"
-    assert relative_key("Gb major") == "Eb minor"
+    # Minor spellings follow madmom's KEY_LABELS (sharps, except Bb).
+    assert relative_key("F# major") == "D# minor"
+    assert relative_key("Gb major") == "D# minor"
+    assert relative_key("C# minor") == "E major"

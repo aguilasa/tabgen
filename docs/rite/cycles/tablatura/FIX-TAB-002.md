@@ -81,3 +81,28 @@ Falha agora (`AssertionError: relative`); deve passar após o fix. Depois:
 `.venv/bin/pytest tests/test_key_check.py -q` verde.
 
 ## Execution Log
+
+- 2026-10-27 — Triagem inline (`rite reproduce --all --cycle tablatura`): REPRODUCED. Script da
+  Evidência imprime `Db minor relative True C# minor` e `relative_key("F# major")` → `Eb minor`,
+  igual ao registrado: `reason` sai "relative" onde deveria ser "match" e a grafia não casa com
+  os KEY_LABELS do madmom (menores com sustenido).
+- 2026-10-27 — Fix aplicado. Reproduzi antes: script da Evidência imprimiu
+  `Db minor relative True C# minor` / `Eb minor` e o script de Verificação falhou com
+  `AssertionError: relative`. Mudanças em `tabgen/core/analysis/key_check.py`: tabela única
+  `_TONIC_NAMES` substituída por `_TONIC_NAMES_BY_MODE` com grafias por modo casando exatamente
+  com os KEY_LABELS do madmom (maiores com bemóis exceto F#; menores com sustenidos exceto Bb),
+  comentário corrigido, `key_name` passou a escolher a tabela pelo modo, e a distinção
+  match/relative em `check_key` agora compara `parse_key(...)` (pitch class + modo) em vez de
+  strings renderizadas. Regressão em `tests/test_key_check.py`:
+  `test_sharp_minor_key_matches_by_pitch_class` (C# menor → `reason == "match"`,
+  `histogram_key == "C# minor"`) e `test_relative_key_mapping` atualizado
+  (`relative_key("F# major") == "D# minor"`, `relative_key("C# minor") == "E major"`).
+  Medido após o fix: Evidência imprime `C# minor match True C# minor` e `D# minor`;
+  Verificação passa; `.venv/bin/pytest tests/test_key_check.py -q` → 8 passed;
+  `.venv/bin/pytest -q` → 106 passed; `.venv/bin/ruff check .` → All checks passed.
+  API pública (`check_key`, `relative_key`, campos de `KeyCheckResult`) inalterada; decisão
+  final (`key`/`agreement`/`switched`) preservada.
+- 2026-10-27 — Verificação final na árvore do commit: script da Verificação passa
+  (`C# minor match True C# minor` | `relative_key("F# major")` → `D# minor`);
+  `.venv/bin/pytest -q` → 106 passed; `.venv/bin/ruff check .` → All checks passed!;
+  `rite gates --id FIX-TAB-002` → passed (0 gates configurados no profile).

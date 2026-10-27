@@ -52,11 +52,17 @@ MIN_MADMOM_CONFIDENCE = 0.7
 # madmom estimate. Correlations live in [-1, 1].
 MIN_MARGIN = 0.10
 
-# Canonical tonic spellings, matching madmom's KEY_LABELS (flats except
-# F#), so histogram-suggested keys look exactly like analysis-stage ones.
-_TONIC_NAMES: tuple[str, ...] = (
-    "C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
-)
+# Canonical tonic spellings per mode, matching madmom's KEY_LABELS
+# exactly (majors use flats except F#; minors use sharps except Bb), so
+# histogram-suggested keys look exactly like analysis-stage ones.
+_TONIC_NAMES_BY_MODE: dict[str, tuple[str, ...]] = {
+    "major": (
+        "C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
+    ),
+    "minor": (
+        "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B",
+    ),
+}
 _MODES: tuple[str, ...] = ("major", "minor")
 
 # Accepted tonic spellings (sharps and flats) -> pitch class.
@@ -130,7 +136,7 @@ def parse_key(key: str) -> tuple[int, str]:
 
 def key_name(pitch_class: int, mode: str) -> str:
     """Return the canonical ``"<tonic> <mode>"`` name of a key."""
-    return f"{_TONIC_NAMES[pitch_class % 12]} {mode}"
+    return f"{_TONIC_NAMES_BY_MODE[mode][pitch_class % 12]} {mode}"
 
 
 def relative_key(key: str) -> str:
@@ -243,7 +249,11 @@ def check_key(
         )
 
     if _keys_compatible(madmom_key, histogram_key):
-        reason = "match" if histogram_key == madmom_key else "relative"
+        # Same key when the parsed (pitch_class, mode) pairs are equal;
+        # string equality would miss enharmonic spellings (Db vs C#).
+        reason = (
+            "match" if parse_key(histogram_key) == parse_key(madmom_key) else "relative"
+        )
         return KeyCheckResult(
             key=madmom_key,
             key_confidence=madmom_confidence,
