@@ -36,11 +36,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-6--quantização-e-exportação",
       "files": ["tabgen/core/export/quantize.py", "tests/test_quantize.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-27",
+      "done_commit": "f84b965",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-27T13:20:07-03:00",
+      "active_s": 730,
+      "finished_at": "2026-10-27T13:32:17-03:00"
     },
     {
       "id": "TAB-TASK-03",
@@ -52,11 +56,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-5--atribuição-cordacasa-o-problema-difícil",
       "files": ["tabgen/core/fretting/__init__.py", "tabgen/core/fretting/dp.py", "tests/test_fretting.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-27T13:20:07-03:00",
+      "started_at": "2026-10-27T13:20:07-03:00",
+      "active_s": 0
     },
     {
       "id": "TAB-TASK-04",

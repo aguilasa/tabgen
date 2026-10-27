@@ -59,3 +59,9 @@ Comandos decisivos (saídas escopadas a este item):
 - `.venv/bin/ruff check .` → `All checks passed!`; `.venv/bin/pytest -q` → suíte verde.
 
 ## Execution Log
+
+- **Closed** — commit `f84b965` (2026-10-27): feat(export): quantize note times onto the beat grid with triplet detection
+  - Files (`git show --name-status f84b965`):
+    - `M docs/rite/cycles/tablatura/02-quantizar-notas-na-grade-de-beats.md`
+    - `A tabgen/core/export/quantize.py`
+    - `A tests/test_quantize.py`
