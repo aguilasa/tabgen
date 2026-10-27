@@ -35,4 +35,23 @@ para desligar (`--no-techniques`).
 Hot files: `tabgen/core/pipeline.py`, `tabgen/cli/main.py`, `tabgen/core/export/*`. Regra do
 `CLAUDE.md`: conferir `files` contra o diff antes do `rite finish`.
 
+### Áudio de teste (YouTube)
+
+Pode baixar áudio de músicas conhecidas no YouTube com `yt-dlp` (instalado, 2026.08.19)
+para conferir a detecção em gravação real.
+
+Para conferir no TuxGuitar que os efeitos exportados batem com o que se ouve, reutilizar o
+áudio das TASK-02/03 (um trecho de "Comfortably Numb" para bend e "Back in Black" para legato).
+
+O áudio fica fora do repositório (`out/` ou scratchpad, ambos ignorados; nunca versionar), é
+usado só para conferência e não vira número de done criterion: pela regra do `CLAUDE.md`, arquivo
+baixado não é evidência reproduzível — os critérios continuam nos testes e probes sintéticos.
+Baixar só o trecho necessário (`--download-sections`) quando possível. Se o `yt-dlp` falhar ou o
+vídeo não existir, trocar por outra música da lista e registrar nas Notes.
+
+```sh
+yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+```
+
 ## Execution Log

@@ -31,4 +31,29 @@ avaliação existe com números reproduzíveis; checks e gates da fase verdes; R
 
 Pitfall herdado (FIX-FMVP-006): números medidos vão ao README neste mesmo item.
 
+### Áudio de teste (YouTube)
+
+Pode baixar áudio de músicas conhecidas no YouTube com `yt-dlp` (instalado, 2026.08.19)
+para conferir a detecção em gravação real.
+
+Para o e2e de fechamento, uma música por elemento (o usuário pode trocar):
+
+- Técnicas: Pink Floyd — "Comfortably Numb" (bends) e AC/DC — "Back in Black" (legato).
+- Baixo de 5 cordas: Korn — "Freak on a Leash".
+- Violão: Oasis — "Wonderwall" (aço) ou "Garota de Ipanema" (nylon).
+
+Tempos e contagens que forem para o README vêm dos probes versionados; a música real serve à
+confirmação manual no TuxGuitar.
+
+O áudio fica fora do repositório (`out/` ou scratchpad, ambos ignorados; nunca versionar), é
+usado só para conferência e não vira número de done criterion: pela regra do `CLAUDE.md`, arquivo
+baixado não é evidência reproduzível — os critérios continuam nos testes e probes sintéticos.
+Baixar só o trecho necessário (`--download-sections`) quando possível. Se o `yt-dlp` falhar ou o
+vídeo não existir, trocar por outra música da lista e registrar nas Notes.
+
+```sh
+yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+```
+
 ## Execution Log

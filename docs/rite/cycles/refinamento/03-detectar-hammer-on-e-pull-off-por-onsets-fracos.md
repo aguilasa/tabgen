@@ -31,4 +31,26 @@ sobe) ou pull-off (pitch desce), preenchendo a técnica da `TabNote` (plano, Fas
 Heurística sem ground truth local; a qualidade real é medida pelo harness (TASK-06) se o dataset
 tiver anotação de técnica (EGDB/Guitar-TECHS) — registrar se não tiver.
 
+### Áudio de teste (YouTube)
+
+Pode baixar áudio de músicas conhecidas no YouTube com `yt-dlp` (instalado, 2026.08.19)
+para conferir a detecção em gravação real.
+
+Candidatas com hammer-on e pull-off claros:
+
+- AC/DC — "Back in Black" (riff principal: hammer-ons e pull-offs na corda solta).
+- Jimi Hendrix — "Little Wing" (intro: hammer-ons em formas de acorde).
+- Led Zeppelin — "Stairway to Heaven" (solo: sequências de pull-off).
+
+O áudio fica fora do repositório (`out/` ou scratchpad, ambos ignorados; nunca versionar), é
+usado só para conferência e não vira número de done criterion: pela regra do `CLAUDE.md`, arquivo
+baixado não é evidência reproduzível — os critérios continuam nos testes e probes sintéticos.
+Baixar só o trecho necessário (`--download-sections`) quando possível. Se o `yt-dlp` falhar ou o
+vídeo não existir, trocar por outra música da lista e registrar nas Notes.
+
+```sh
+yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+```
+
 ## Execution Log

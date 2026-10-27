@@ -32,4 +32,27 @@ preenchendo a técnica da `TabNote`. Vibrato curto e ruído de pitch não viram 
 Basic Pitch reporta bends em bins de ⅓ de semitom (ver `tabgen/core/transcription/basic_pitch.py`).
 Registrar nas Notes os limiares escolhidos e por quê.
 
+### Áudio de teste (YouTube)
+
+Pode baixar áudio de músicas conhecidas no YouTube com `yt-dlp` (instalado, 2026.08.19)
+para conferir a detecção em gravação real.
+
+Candidatas com bends e slides bem audíveis (guitarra em destaque):
+
+- Pink Floyd — "Comfortably Numb" (solos finais: bends de 1 tom e ½ tom sustentados).
+- Eagles — "Hotel California" (solo final: bends e slides).
+- Stevie Ray Vaughan — "Pride and Joy" (bends de blues).
+- Gary Moore — "Still Got the Blues" (bends lentos, vibrato — bom para testar que vibrato não vira bend).
+
+O áudio fica fora do repositório (`out/` ou scratchpad, ambos ignorados; nunca versionar), é
+usado só para conferência e não vira número de done criterion: pela regra do `CLAUDE.md`, arquivo
+baixado não é evidência reproduzível — os critérios continuam nos testes e probes sintéticos.
+Baixar só o trecho necessário (`--download-sections`) quando possível. Se o `yt-dlp` falhar ou o
+vídeo não existir, trocar por outra música da lista e registrar nas Notes.
+
+```sh
+yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+```
+
 ## Execution Log

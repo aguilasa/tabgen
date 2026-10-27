@@ -31,4 +31,28 @@ cordas) e escolha do violão: `--guitar-type electric|nylon|steel` define o prog
 Afinações alternativas e capo já existem (`--tuning`, `--bass-tuning`, `--capo`, Fase 3); esta
 tarefa cobre só o que falta do item do plano.
 
+### Áudio de teste (YouTube)
+
+Pode baixar áudio de músicas conhecidas no YouTube com `yt-dlp` (instalado, 2026.08.19)
+para conferir a detecção em gravação real.
+
+Candidatas por elemento:
+
+- Baixo de 5 cordas (corda B grave): Korn — "Freak on a Leash"; Korn — "Blind".
+- Violão nylon: Antônio Carlos Jobim / João Gilberto — "Garota de Ipanema"; "Romance Anónimo"
+  (violão clássico solo); Isaac Albéniz — "Asturias" (violão).
+- Violão de aço: Oasis — "Wonderwall"; The Beatles — "Blackbird"; Eric Clapton — "Tears in
+  Heaven" (unplugged).
+
+O áudio fica fora do repositório (`out/` ou scratchpad, ambos ignorados; nunca versionar), é
+usado só para conferência e não vira número de done criterion: pela regra do `CLAUDE.md`, arquivo
+baixado não é evidência reproduzível — os critérios continuam nos testes e probes sintéticos.
+Baixar só o trecho necessário (`--download-sections`) quando possível. Se o `yt-dlp` falhar ou o
+vídeo não existir, trocar por outra música da lista e registrar nas Notes.
+
+```sh
+yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
+```
+
 ## Execution Log
