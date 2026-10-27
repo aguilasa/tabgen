@@ -122,3 +122,12 @@ Verificação (2026-10-27, thread principal, árvore do commit, sobre a REF-TASK
 - Anotação de técnica nos datasets não conferida aqui (sem download); encaminhado à REF-TASK-06.
 
 ## Execution Log
+
+- **Closed** — commit `6c21279` (2026-10-27): feat(core): detect hammer-on and pull-off from weak legato onsets
+  - Files (`git show --name-status 6c21279`):
+    - `M docs/rite/cycles/refinamento/03-detectar-hammer-on-e-pull-off-por-onsets-fracos.md`
+    - `M docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md`
+    - `A tabgen/core/techniques/legato.py`
+    - `A tests/test_techniques_legato.py`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md`
