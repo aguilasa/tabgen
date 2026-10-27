@@ -89,3 +89,10 @@ Verificação (comandos e saída decisiva):
   0 falhas.
 
 ## Execution Log
+
+- **Closed** — commit `a9012b3` (2026-10-27): feat(fretting): assign string/fret via hand-position Viterbi with chord priors
+  - Files (`git show --name-status a9012b3`):
+    - `M docs/rite/cycles/tablatura/03-atribuir-corda-e-casa-por-programacao-dinamica.md`
+    - `M tabgen/core/fretting/__init__.py`
+    - `A tabgen/core/fretting/dp.py`
+    - `A tests/test_fretting.py`

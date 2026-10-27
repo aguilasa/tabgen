@@ -56,14 +56,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-5--atribuição-cordacasa-o-problema-difícil",
       "files": ["tabgen/core/fretting/__init__.py", "tabgen/core/fretting/dp.py", "tests/test_fretting.py"],
       "resources": [],
-      "status": "in-progress",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
+      "status": "done",
+      "done_on": "2026-10-27",
+      "done_commit": "a9012b3",
+      "reviewed_on": "pending",
       "review_commit": null,
-      "active_since": "2026-10-27T13:20:07-03:00",
+      "active_since": null,
       "started_at": "2026-10-27T13:20:07-03:00",
-      "active_s": 0
+      "active_s": 757,
+      "finished_at": "2026-10-27T13:32:44-03:00"
     },
     {
       "id": "TAB-TASK-04",
