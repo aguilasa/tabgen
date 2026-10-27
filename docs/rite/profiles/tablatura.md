@@ -10,9 +10,21 @@ which commands search instead of reading whole.
 
 <!-- Decisions the user confirmed. One line each, with the date and where it was decided. -->
 
+- 2026-10-25 — Linguagem Python 3.10–3.11 (madmom limita versão) — plano, seção 1.
+- 2026-10-25 — Arquitetura em camadas: `core/` biblioteca pura (sem print/HTTP/GUI; progresso via callbacks), `cli/` camada fina — plano, seção 2.
+- 2026-10-25 — Contratos entre estágios são dataclasses serializáveis em JSON, com cache em disco (`.tabgen/`) — plano, seção 2.
+- 2026-10-25 — Estágio 5 v1: atribuição corda/casa por programação dinâmica sobre heurísticas, sem ML; afinação e nº de cordas configuráveis; acordes do estágio 2 como prior — plano, seção 3 (Estágio 5).
+- 2026-10-25 — Estágio 6: quantização na grade de beats (semicolcheia padrão), music21 para partitura/MusicXML, PyGuitarPro para .gp5 — plano, seção 3 (Estágio 6).
+- 2026-10-25 — Formato-alvo `.gp5`; MusicXML, MIDI e tab ASCII secundários — plano, seção 3 (compatibilidade de formatos).
+- 2026-10-25 — Licença MIT; modelos non-commercial (madmom, pesos Demucs) aceitos — plano, seção 4.
+- 2026-10-25 — Idiomas: código e commits em en-US (conventional), documentação do Rite em pt-BR — definido pelo usuário na adoção do Rite.
+- 2026-10-26 — Cruzamento do tom com o histograma de notas transcritas fica na Fase 3 — decidido pelo usuário no planejamento do ciclo analise-musical.
+
 ## Sources of truth
 
 <!-- Plan sections, specs, reference outputs. Items point here through `source_of_truth`. -->
+
+- Plano do projeto: [/docs/planejamento/audio-para-tablatura.md](/docs/planejamento/audio-para-tablatura.md) — estágios 5–6 (seção 3), roadmap Fase 3 (seção 5), arquitetura (seção 2), limitações (seção 7).
 
 ## Generated artifacts
 
