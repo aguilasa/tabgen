@@ -74,3 +74,20 @@ Verificação (2026-10-27, thread principal, árvore do commit):
   critério 2) e as notas encaminhadas nas REF-TASK-02/03/04.
 
 ## Execution Log
+
+- **Closed** — commit `cb6063d` (2026-10-27): feat(core): add guitar technique contract and move pitch bends onto Note
+  - Files (`git show --name-status cb6063d`):
+    - `M docs/rite/cycles/refinamento/01-definir-contrato-de-tecnicas-de-guitarra.md`
+    - `M docs/rite/cycles/refinamento/02-detectar-bends-e-slides-a-partir-dos-pitch-bends.md`
+    - `M docs/rite/cycles/refinamento/03-detectar-hammer-on-e-pull-off-por-onsets-fracos.md`
+    - `M docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
+    - `M tabgen/core/models.py`
+    - `M tabgen/core/pipeline.py`
+    - `M tabgen/core/transcription/basic_pitch.py`
+    - `A tests/fixtures/contracts_v1.json`
+    - `M tests/test_models.py`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/refinamento/02-detectar-bends-e-slides-a-partir-dos-pitch-bends.md`
+    - `docs/rite/cycles/refinamento/03-detectar-hammer-on-e-pull-off-por-onsets-fracos.md`
+    - `docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
+    - `tests/fixtures/contracts_v1.json`

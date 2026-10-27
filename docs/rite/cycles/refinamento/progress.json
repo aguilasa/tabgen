@@ -14,13 +14,17 @@
       "phase": 4,
       "depends_on": [],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-4--refinamento",
-      "files": ["tabgen/core/models.py", "tabgen/core/transcription/basic_pitch.py", "tabgen/core/pipeline.py", "tests/test_models.py"],
+      "files": ["tabgen/core/models.py", "tabgen/core/transcription/basic_pitch.py", "tabgen/core/pipeline.py", "tests/test_models.py", "docs/rite/cycles/refinamento/02-detectar-bends-e-slides-a-partir-dos-pitch-bends.md", "docs/rite/cycles/refinamento/03-detectar-hammer-on-e-pull-off-por-onsets-fracos.md", "docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md", "tests/fixtures/contracts_v1.json"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-27",
+      "done_commit": "cb6063d",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-27T19:51:05-03:00",
+      "active_s": 333,
+      "finished_at": "2026-10-27T19:56:38-03:00"
     },
     {
       "id": "REF-TASK-02",
