@@ -66,3 +66,27 @@ Falha agora (`No such file or directory`); deve sair 0 após o fix. Depois:
 `.venv/bin/pytest -q` verde e `sh "$RITE_HOME/bin/rite" check --quick --json` com 0 erros.
 
 ## Execution Log
+
+- 2026-10-27 — Triagem inline (`rite reproduce --all --cycle tablatura`): REPRODUCED.
+  `git ls-files scripts` → só `probe_e2e_sample.py`; `grep -c "export"` nele → 0; nenhum
+  .flac/.mp3 versionado. Probe de export inexistente no HEAD.
+- 2026-10-27 — Fix aplicado: adicionado `scripts/probe_e2e_export.py` (standalone, não coletado
+  pelo pytest; espelha a estrutura e os helpers de `probe_e2e_sample.py`, inclusive
+  `sys.stdout.write` por causa do ruff T20 em scripts/). O probe regenera a amostra determinística
+  (ffmpeg sine 220 Hz/10 s em tempdir), roda `tabgen export` para gp5/musicxml/txt e reroda o gp5
+  afirmando só fatos estáveis: exit 0, gp5 reaberto por guitarpro.parse com ≥1 nota em guitarra e
+  baixo, musicxml reaberto por music21.converter.parse, ASCII não vazio e "cache hit" no stdout da
+  2ª execução (tempo medido é informativo, não assert). Nada é escrito na árvore do repositório.
+  Controle antes do fix: `.venv/bin/python scripts/probe_e2e_export.py` → exit 2
+  (`No such file or directory`). Depois do fix: exit 0 — cauda medida:
+  `PASS: export exit 0 for gp5/musicxml/ascii; gp5 reopened by guitarpro with notes in both
+  tracks (bass: 4, guitar: 9; counts not asserted); musicxml reopened by music21; ASCII tab
+  non-empty (981 bytes); cached rerun mentioned 'cache hit' in 0.26 s.`
+  Gates: `.venv/bin/pytest -q` → 127 passed (probe não coletado); `.venv/bin/ruff check .` →
+  All checks passed!
+- 2026-10-27 — Verificação final na árvore do commit (demais itens em stash):
+  `.venv/bin/python scripts/probe_e2e_export.py` → exit 0, cauda: `PASS: export exit 0 for
+  gp5/musicxml/ascii; ... (bass: 4, guitar: 5; counts not asserted); ... ASCII tab non-empty
+  (687 bytes); cached rerun mentioned 'cache hit' in 0.25 s.` (contagens/bytes variam entre
+  execuções — por isso não são assertados); `.venv/bin/pytest -q` → 127 passed;
+  `.venv/bin/ruff check .` → All checks passed!; `rite gates --id FIX-TAB-005` → passed.
