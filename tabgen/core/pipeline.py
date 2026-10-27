@@ -170,7 +170,11 @@ def run_transcription(
         export_stage = f"export:{instrument}"
         on_progress(export_stage, 0.0)
         midi_path = target_dir / f"{input_path.stem}.{instrument}.mid"
-        export_fn(result.note_events, midi_path, bends=result.bends)
+        export_fn(
+            result.note_events,
+            midi_path,
+            bends=[note.bends for note in result.note_events.notes],
+        )
         on_progress(export_stage, 100.0)
 
         summary.instruments.append(
@@ -467,8 +471,9 @@ def _fretting_configs(
 def tablature_version(configs: Mapping[str, object]) -> str:
     """Cache version of the tablature stage for the given fretting configs.
 
-    Pins the TabScore contract, this assembly's revision, every upstream
-    model (analysis, Basic Pitch) and a digest of the per-instrument
+    Pins the TabScore contract (``TAB_FORMAT_VERSION``), this assembly's
+    revision, every upstream model (analysis, Basic Pitch), the Note
+    contract revision and a digest of the per-instrument
     fretting parameters (tuning, capo, weights), so changing any of them
     recomputes the tablature.
     """
@@ -476,6 +481,7 @@ def tablature_version(configs: Mapping[str, object]) -> str:
     import json
     from dataclasses import asdict
 
+    from tabgen.core.models import NOTE_CONTRACT_REVISION
     from tabgen.core.transcription.basic_pitch import MODEL_VERSION as BP_VERSION
 
     params = {name: asdict(cfg) for name, cfg in sorted(configs.items())}
@@ -484,7 +490,8 @@ def tablature_version(configs: Mapping[str, object]) -> str:
     ).hexdigest()[:12]
     return (
         f"tab-{TAB_FORMAT_VERSION}+rev-{TABLATURE_PIPELINE_REVISION}"
-        f"+{analysis_version()}+{BP_VERSION}+params-{digest}"
+        f"+{analysis_version()}+{BP_VERSION}+note-{NOTE_CONTRACT_REVISION}"
+        f"+params-{digest}"
     )
 
 

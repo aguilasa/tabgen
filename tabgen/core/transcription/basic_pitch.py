@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 
 from tabgen.core.cache import StageCache
-from tabgen.core.models import Note, NoteEvents
+from tabgen.core.models import NOTE_CONTRACT_REVISION, Note, NoteEvents
 from tabgen.core.pipeline import ProgressCallback, null_progress
 
 STAGE = "transcription"
@@ -66,19 +66,38 @@ class TranscriptionError(RuntimeError):
     """Raised when the transcription stage cannot run."""
 
 
+def transcription_version(instrument: str) -> str:
+    """Cache version of the transcription stage for one instrument.
+
+    Pins the model, the instrument profile and the Note contract revision,
+    so a schema change of :class:`~tabgen.core.models.Note` (e.g. the
+    ``bends`` field) turns old cache entries into misses.
+    """
+    return f"{MODEL_VERSION}-{instrument}+note-{NOTE_CONTRACT_REVISION}"
+
+
 @dataclass
 class TranscriptionResult:
-    """Note events plus the pitch-bend data Basic Pitch reports per note.
+    """Output of :func:`transcribe`: the note events (bends live on notes).
 
-    ``bends`` is parallel to ``note_events.notes``: each entry is Basic
-    Pitch's per-frame bend offsets (in 1/3-semitone bins) or ``None``
-    when the note carries no bend data. It lives here because the
-    :class:`~tabgen.core.models.Note` contract has no bends field yet;
-    once it grows one this wrapper should move the data there.
+    The pitch-bend data now lives on each :attr:`Note.bends
+    <tabgen.core.models.Note.bends>`. ``bends`` is kept as a compatibility
+    mirror parallel to ``note_events.notes``: when given at construction,
+    each non-``None`` entry is copied onto the matching note that has no
+    bends yet; afterwards it is always rebuilt from the notes.
     """
 
     note_events: NoteEvents
     bends: list[list[int] | None] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        notes = self.note_events.notes
+        for note, bend in zip(notes, self.bends):
+            if bend is not None and note.bends is None:
+                note.bends = [int(b) for b in bend]
+        self.bends = [
+            list(note.bends) if note.bends is not None else None for note in notes
+        ]
 
 
 def _default_predictor(
@@ -104,9 +123,9 @@ def _to_result(
     """Convert raw basic_pitch tuples (numpy scalars) to the stage contract."""
     ordered = sorted(raw_events, key=lambda ev: (float(ev[0]), int(ev[2])))
     notes: list[Note] = []
-    bends: list[list[int] | None] = []
     for start_s, end_s, pitch_midi, amplitude, *rest in ordered:
         amp = float(amplitude)
+        raw_bend = rest[0] if rest else None
         notes.append(
             Note(
                 pitch_midi=int(pitch_midi),
@@ -114,32 +133,24 @@ def _to_result(
                 end_s=float(end_s),
                 velocity=amp,
                 confidence=amp,
+                bends=[int(b) for b in raw_bend] if raw_bend else None,
             )
         )
-        raw_bend = rest[0] if rest else None
-        bends.append([int(b) for b in raw_bend] if raw_bend else None)
     return TranscriptionResult(
         note_events=NoteEvents(
             notes=notes, instrument=instrument, model_version=MODEL_VERSION
         ),
-        bends=bends,
     )
 
 
 def _payload_from_result(result: TranscriptionResult) -> dict[str, Any]:
-    return {
-        "note_events": result.note_events.to_dict(),
-        "bends": result.bends,
-    }
+    # Bends travel inside each note (Note.bends); no parallel list.
+    return {"note_events": result.note_events.to_dict()}
 
 
 def _result_from_payload(payload: dict[str, Any]) -> TranscriptionResult:
     return TranscriptionResult(
-        note_events=NoteEvents.from_dict(payload["note_events"]),
-        bends=[
-            list(bend) if bend is not None else None
-            for bend in payload.get("bends", [])
-        ],
+        note_events=NoteEvents.from_dict(payload["note_events"])
     )
 
 
@@ -168,7 +179,7 @@ def transcribe(
     if cache is None:
         cache = StageCache(input_path)
 
-    version = f"{MODEL_VERSION}-{instrument}"
+    version = transcription_version(instrument)
     cached = cache.get(STAGE, version)
     if cached is not None:
         on_progress(STAGE, 100.0)

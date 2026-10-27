@@ -54,4 +54,14 @@ yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artist
 yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
 ```
 
+Encaminhado pela REF-TASK-01 (2026-10-27): contrato pronto — `Note.bends` (bins de 1/3 de semitom
+relativos a `pitch_midi`, um por frame; `None` sem dados) e `TabNote.technique: Technique | None`
+(`kind` em `TECHNIQUE_KINDS`; `bend_semitones`, `bend_curve`, `slide_direction` `SLIDE_UP`/`SLIDE_DOWN`,
+`target_fret`). Convenção no docstring de `Technique`: a técnica fica na nota de ORIGEM; slide,
+hammer-on e pull-off ligam à próxima nota na mesma corda e `target_fret` é o traste dela. Hoje
+fretting/pipeline não copiam técnicas: toda `TabNote` sai com `technique=None`.
+Exportar a partir da nota de origem até a próxima na mesma corda (ASCII `5h7`, MusicXML
+start/stop, flags de efeito GP5). Comentário desatualizado em `tabgen/core/export/midi.py:38` (diz
+que os bends vêm de `TranscriptionResult.bends`; agora vêm de `Note.bends`) — corrigir aqui.
+
 ## Execution Log

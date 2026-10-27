@@ -1,0 +1,70 @@
+{
+  "format": "contracts-v1",
+  "tab_format_version": 1,
+  "tab_score": {
+    "instrument": "guitar",
+    "tuning_midi": [
+      40,
+      45,
+      50,
+      55,
+      59,
+      64
+    ],
+    "capo_fret": 0,
+    "tempo_bpm": 100.0,
+    "key": "E minor",
+    "time_signature": [
+      4,
+      4
+    ],
+    "events": [
+      {
+        "string": 1,
+        "fret": 0,
+        "measure": 1,
+        "beat": 1,
+        "subdivision": 0,
+        "duration_subdivisions": 2,
+        "start_s": 0.0,
+        "end_s": 0.3
+      },
+      {
+        "string": 2,
+        "fret": 5,
+        "measure": 1,
+        "beat": 2,
+        "subdivision": 0,
+        "duration_subdivisions": 4,
+        "start_s": 0.6,
+        "end_s": 1.2
+      }
+    ],
+    "chords": [
+      {
+        "measure": 1,
+        "label": "E:min"
+      }
+    ]
+  },
+  "note_events": {
+    "notes": [
+      {
+        "pitch_midi": 64,
+        "start_s": 0.0,
+        "end_s": 0.3,
+        "velocity": 0.8,
+        "confidence": 0.8
+      },
+      {
+        "pitch_midi": 64,
+        "start_s": 0.6,
+        "end_s": 1.2,
+        "velocity": 1.0,
+        "confidence": 1.0
+      }
+    ],
+    "instrument": "guitar",
+    "model_version": "basic-pitch-icassp2022-onnx"
+  }
+}
