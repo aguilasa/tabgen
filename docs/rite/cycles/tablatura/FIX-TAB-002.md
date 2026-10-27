@@ -106,3 +106,8 @@ Falha agora (`AssertionError: relative`); deve passar após o fix. Depois:
   (`C# minor match True C# minor` | `relative_key("F# major")` → `D# minor`);
   `.venv/bin/pytest -q` → 106 passed; `.venv/bin/ruff check .` → All checks passed!;
   `rite gates --id FIX-TAB-002` → passed (0 gates configurados no profile).
+- **Closed** — commit `a16fe06` (2026-10-27): fix(key-check): spell minor keys like madmom labels and match by pitch class
+  - Files (`git show --name-status a16fe06`):
+    - `M docs/rite/cycles/tablatura/FIX-TAB-002.md`
+    - `M tabgen/core/analysis/key_check.py`
+    - `M tests/test_key_check.py`
