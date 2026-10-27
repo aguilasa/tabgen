@@ -102,15 +102,65 @@ class NoteEvents(_JsonMixin):
         return cls(**data)
 
 
+# Version of the TabScore schema; bump on breaking changes so cache keys of
+# the tablature stage can invalidate stale payloads (consumed by caching).
+TAB_FORMAT_VERSION = 1
+
+# Tuning presets: open-string MIDI pitches ordered low-to-high
+# (index 0 = lowest-pitched/thickest string).
+GUITAR_STANDARD_TUNING = [40, 45, 50, 55, 59, 64]  # E2 A2 D3 G3 B3 E4
+BASS_STANDARD_TUNING = [28, 33, 38, 43]  # E1 A1 D2 G2
+
+
+@dataclass
+class TabNote(_JsonMixin):
+    """A single note placed on the fretboard, quantized to the measure grid."""
+
+    # String index, 1-based, where 1 is the lowest-pitched string
+    # (same order as ``TabScore.tuning_midi``).
+    string: int
+    fret: int
+    # Quantized position: measure and beat are 1-based; subdivision is the
+    # 0-based offset inside the beat, in units of the score's grid.
+    measure: int
+    beat: int
+    subdivision: int
+    # Duration in grid subdivisions (>= 1 once quantized).
+    duration_subdivisions: int
+    # Original (unquantized) times from the transcription stage, in seconds.
+    start_s: float
+    end_s: float
+
+
+@dataclass
+class MeasureChord(_JsonMixin):
+    """A chord annotation attached to a measure of the score."""
+
+    # Measure index, 1-based, matching ``TabNote.measure``.
+    measure: int
+    # Chord label in Harte-style notation, e.g. "A:min" (see ChordSegment).
+    label: str
+
+
 @dataclass
 class TabScore(_JsonMixin):
-    """Skeleton of the fretting-stage output: notes placed on string/fret.
+    """Output of the fretting stage: notes placed on string/fret over a grid."""
 
-    Each event is a plain dict with keys such as ``string`` (1-6),
-    ``fret``, ``start_s`` and ``duration_s``. The full schema will be
-    fleshed out when the fretting stage is implemented.
-    """
-
-    tuning_midi: list[int] = field(default_factory=lambda: [40, 45, 50, 55, 59, 64])
+    instrument: str = "guitar"
+    # Open-string MIDI pitches, low-to-high; length is the string count.
+    tuning_midi: list[int] = field(default_factory=lambda: list(GUITAR_STANDARD_TUNING))
     capo_fret: int = 0
-    events: list[dict[str, Any]] = field(default_factory=list)
+    tempo_bpm: float = 0.0
+    # Global key as "<tonic> <mode>", e.g. "A minor"; empty when unknown.
+    key: str = ""
+    # Time signature as [numerator, denominator], e.g. [4, 4].
+    time_signature: list[int] = field(default_factory=lambda: [4, 4])
+    events: list[TabNote] = field(default_factory=list)
+    chords: list[MeasureChord] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> TabScore:
+        data = dict(data)
+        data["events"] = [TabNote.from_dict(e) for e in data.get("events", [])]
+        data["chords"] = [MeasureChord.from_dict(c) for c in data.get("chords", [])]
+        return cls(**data)
