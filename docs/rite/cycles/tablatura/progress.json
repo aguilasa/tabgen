@@ -16,11 +16,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-5--atribuição-cordacasa-o-problema-difícil",
       "files": ["tabgen/core/models.py", "tests/test_models.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-27",
+      "done_commit": "c552741",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-27T13:14:21-03:00",
+      "active_s": 309,
+      "finished_at": "2026-10-27T13:19:30-03:00"
     },
     {
       "id": "TAB-TASK-02",
@@ -64,11 +68,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágios-23--tom-acordes-beats-e-compassos",
       "files": ["tabgen/core/analysis/key_check.py", "tests/test_key_check.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-27T13:14:21-03:00",
+      "started_at": "2026-10-27T13:14:21-03:00",
+      "active_s": 0
     },
     {
       "id": "TAB-TASK-05",

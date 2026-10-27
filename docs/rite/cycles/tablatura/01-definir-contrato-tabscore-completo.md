@@ -51,3 +51,9 @@ Evidências:
   (TASK-05/06/07), todas compatíveis com o novo esquema — nada desatualizado.
 
 ## Execution Log
+
+- **Closed** — commit `c552741` (2026-10-27): feat(core): flesh out TabScore contract with typed events and chord annotations
+  - Files (`git show --name-status c552741`):
+    - `M docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md`
+    - `M tabgen/core/models.py`
+    - `M tests/test_models.py`
