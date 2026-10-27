@@ -52,3 +52,10 @@ Sai 1 agora (nada encontrado); deve sair 0 após o fix. Depois:
 `sh "$RITE_HOME/bin/rite" check --quick --json` com 0 erros.
 
 ## Execution Log
+
+- 2026-10-27 — Triagem inline (`rite reproduce --all --cycle tablatura`): REPRODUCED.
+  `git show --name-status 64f438b` lista `M .gitignore` além de README.md e doc 08;
+  `rite context TAB-TASK-08 | grep -c '".gitignore"'` → 0 (ausente de `item.files`).
+- 2026-10-27 — Fix aplicado inline (trabalho é bookkeeping via CLI, vedado a workers):
+  `rite set TAB-TASK-08 --files README.md,.gitignore`. Verificação: grep de `".gitignore"` no
+  context da TAB-TASK-08 agora sai 0 (encontrado); `rite check --quick` → errors: 0, warnings: 0.

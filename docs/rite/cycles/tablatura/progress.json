@@ -168,7 +168,7 @@
       "phase": 3,
       "depends_on": ["TAB-TASK-01", "TAB-TASK-02", "TAB-TASK-03", "TAB-TASK-04", "TAB-TASK-05", "TAB-TASK-06", "TAB-TASK-07"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-3--tablatura-entregável-principal",
-      "files": ["README.md"],
+      "files": ["README.md", ".gitignore"],
       "resources": [],
       "status": "done",
       "done_on": "2026-10-27",
