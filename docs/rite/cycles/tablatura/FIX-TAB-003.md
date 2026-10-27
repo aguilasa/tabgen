@@ -60,3 +60,7 @@ Sai 0 agora (linha 61 encontrada); deve sair 1 (nada encontrado) após o fix. De
   `rite check --quick --json` → 0 erros, 0 warnings.
 - 2026-10-27 — Verificação final na árvore do commit: `grep -n '\`pyguitarpro 0.11\`' docs/rite/cycles/tablatura/05-exportar-gp5-via-pyguitarpro.md` → exit 1 (nada encontrado);
   `rite gates --id FIX-TAB-003` → passed.
+- **Closed** — commit `1bac54a` (2026-10-27): docs(cycle): correct quoted version-command output in TAB-TASK-05 verification
+  - Files (`git show --name-status 1bac54a`):
+    - `M docs/rite/cycles/tablatura/05-exportar-gp5-via-pyguitarpro.md`
+    - `M docs/rite/cycles/tablatura/FIX-TAB-003.md`
