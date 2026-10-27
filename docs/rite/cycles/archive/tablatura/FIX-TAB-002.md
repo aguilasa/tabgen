@@ -4,7 +4,7 @@ id: FIX-TAB-002
 
 # FIX-TAB-002 — Align key spellings with madmom minor labels and compare match by pitch class
 
-Origin: [TAB-TASK-04](/docs/rite/cycles/tablatura/04-cruzar-tom-detectado-com-histograma-de-notas.md)
+Origin: [TAB-TASK-04](/docs/rite/cycles/archive/tablatura/04-cruzar-tom-detectado-com-histograma-de-notas.md)
 
 ## Problem
 

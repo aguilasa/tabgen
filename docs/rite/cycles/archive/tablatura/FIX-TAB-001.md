@@ -4,7 +4,7 @@ id: FIX-TAB-001
 
 # FIX-TAB-001 — Reconcile TabNote string numbering with fretting stage convention
 
-Origin: [TAB-TASK-01](/docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md)
+Origin: [TAB-TASK-01](/docs/rite/cycles/archive/tablatura/01-definir-contrato-tabscore-completo.md)
 
 ## Problem
 

@@ -4,7 +4,7 @@ id: FIX-TAB-006
 
 # FIX-TAB-006 — Declare .gitignore in TAB-TASK-08 files metadata
 
-Origin: [TAB-TASK-08](/docs/rite/cycles/tablatura/08-fechar-fase-3.md)
+Origin: [TAB-TASK-08](/docs/rite/cycles/archive/tablatura/08-fechar-fase-3.md)
 
 ## Problem
 

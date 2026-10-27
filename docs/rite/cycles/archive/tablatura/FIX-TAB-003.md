@@ -4,7 +4,7 @@ id: FIX-TAB-003
 
 # FIX-TAB-003 — Correct quoted version-command output in TAB-TASK-05 verification
 
-Origin: [TAB-TASK-05](/docs/rite/cycles/tablatura/05-exportar-gp5-via-pyguitarpro.md)
+Origin: [TAB-TASK-05](/docs/rite/cycles/archive/tablatura/05-exportar-gp5-via-pyguitarpro.md)
 
 ## Problem
 

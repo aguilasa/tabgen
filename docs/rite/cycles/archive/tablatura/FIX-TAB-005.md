@@ -4,7 +4,7 @@ id: FIX-TAB-005
 
 # FIX-TAB-005 — Version a deterministic e2e probe for tabgen export
 
-Origin: [TAB-TASK-07](/docs/rite/cycles/tablatura/07-orquestrar-tablatura-no-pipeline-com-cache-e.md)
+Origin: [TAB-TASK-07](/docs/rite/cycles/archive/tablatura/07-orquestrar-tablatura-no-pipeline-com-cache-e.md)
 
 ## Problem
 

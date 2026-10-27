@@ -4,7 +4,7 @@ id: FIX-TAB-004
 
 # FIX-TAB-004 — Declare golden ascii_guitar_riff.txt in TAB-TASK-06 files metadata
 
-Origin: [TAB-TASK-06](/docs/rite/cycles/tablatura/06-exportar-musicxml-via-music21-e-tab-ascii.md)
+Origin: [TAB-TASK-06](/docs/rite/cycles/archive/tablatura/06-exportar-musicxml-via-music21-e-tab-ascii.md)
 
 ## Problem
 
