@@ -65,3 +65,4 @@ Comandos decisivos (saídas escopadas a este item):
     - `M docs/rite/cycles/tablatura/02-quantizar-notas-na-grade-de-beats.md`
     - `A tabgen/core/export/quantize.py`
     - `A tests/test_quantize.py`
+- **Reviewed** (2026-10-27) at `35fd101`: no finding
