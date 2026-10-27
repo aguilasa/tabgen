@@ -47,3 +47,11 @@ which commands search instead of reading whole.
 ## Phase-specific checks
 
 <!-- One entry per phase used by tasks ("### Phase 1 — ..."). The reviewer runs these; a phase without an entry is a finding. -->
+
+### Fase 4 — Refinamento
+
+- `.venv/bin/tabgen export <amostra>.mp3 -o out.gp5` sai 0; `guitarpro.parse` reabre e notas com técnica detectada carregam o efeito correspondente.
+- `--no-techniques` gera .gp5 sem efeitos; `--bass-tuning five-string` gera faixa de baixo com 5 cordas.
+- `.venv/bin/python scripts/probe_e2e_export.py` e `scripts/probe_e2e_sample.py` saem 0.
+- Relatório de avaliação reproduzível: o comando registrado em `scripts/eval/` regenera nota-F1 e tab-F1 do subset versionado.
+- `grep -rnE "import typer|import rich|print\(" tabgen/core/` não retorna nada.
