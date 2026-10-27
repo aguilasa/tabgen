@@ -4,7 +4,7 @@ id: FIX-ANA-002
 
 # FIX-ANA-002 — Remover tests/test_pipeline.py obsoleto dos files da ANA-TASK-05
 
-Origin: [ANA-TASK-05](/docs/rite/cycles/analise-musical/05-orquestrar-analise-no-pipeline-com-cache-e.md)
+Origin: [ANA-TASK-05](/docs/rite/cycles/archive/analise-musical/05-orquestrar-analise-no-pipeline-com-cache-e.md)
 
 ## Problem
 

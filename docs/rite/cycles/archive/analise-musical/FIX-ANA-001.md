@@ -4,7 +4,7 @@ id: FIX-ANA-001
 
 # FIX-ANA-001 — Adicionar teste que guarda o wiring do check madmom em run_checks
 
-Origin: [ANA-TASK-01](/docs/rite/cycles/analise-musical/01-validar-instalacao-do-madmom-no-venv-e-fixar.md)
+Origin: [ANA-TASK-01](/docs/rite/cycles/archive/analise-musical/01-validar-instalacao-do-madmom-no-venv-e-fixar.md)
 
 ## Problem
 
