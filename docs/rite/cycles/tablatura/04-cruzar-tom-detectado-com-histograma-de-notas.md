@@ -68,3 +68,4 @@ para TASK-05/07.
     - `M docs/rite/cycles/tablatura/04-cruzar-tom-detectado-com-histograma-de-notas.md`
     - `A tabgen/core/analysis/key_check.py`
     - `A tests/test_key_check.py`
+- **Reviewed** (2026-10-27) at `5dc3779`: FIX-TAB-002
