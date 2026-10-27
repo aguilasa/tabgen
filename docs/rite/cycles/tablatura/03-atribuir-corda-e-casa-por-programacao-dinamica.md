@@ -96,3 +96,4 @@ Verificação (comandos e saída decisiva):
     - `M tabgen/core/fretting/__init__.py`
     - `A tabgen/core/fretting/dp.py`
     - `A tests/test_fretting.py`
+- **Reviewed** (2026-10-27) at `aa550b3`: FIX-TAB-001
