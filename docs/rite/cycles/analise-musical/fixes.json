@@ -18,6 +18,19 @@
       "started_at": "2026-10-26T17:36:39-03:00",
       "active_s": 209,
       "finished_at": "2026-10-26T17:40:08-03:00"
+    },
+    {
+      "id": "FIX-ANA-002",
+      "file": "FIX-ANA-002.md",
+      "title": "Remover tests/test_pipeline.py obsoleto dos files da ANA-TASK-05",
+      "origin": "ANA-TASK-05",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }

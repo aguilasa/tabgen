@@ -56,3 +56,4 @@ execução roda madmom e detecta "D minor"/62.5 BPM; a segunda sai em ~0,2 s com
     - `M tabgen/cli/main.py`
     - `M tabgen/core/pipeline.py`
     - `A tests/test_analysis_pipeline.py`
+- **Reviewed** (2026-10-27) at `f464e7b`: FIX-ANA-002
