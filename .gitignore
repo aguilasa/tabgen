@@ -29,3 +29,6 @@ models-cache/
 .idea/
 *.swp
 .DS_Store
+
+# Local outputs (e.g. tabs generated from copyrighted songs)
+out/

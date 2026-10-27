@@ -171,11 +171,72 @@ that later pipeline stages consume. Options:
 - `--output FILE` — where the JSON report goes.
 - `--device cuda|cpu` — device for Demucs (default: autodetect).
 
+### Generate tablature (Guitar Pro, MusicXML, ASCII)
+
+```bash
+tabgen export song.mp3 -o song.gp5
+```
+
+Runs the whole Phase 3 pipeline: separation, analysis (key, beats, chords),
+transcription of the guitar and bass stems, a cross-check of the key against
+the transcribed notes, quantization on the detected bar grid and string/fret
+assignment by dynamic programming. The result is one file with a guitar and a
+bass track — tuning, BPM, key signature and chord names included — that opens
+in [TuxGuitar](https://tuxguitar.app) or Guitar Pro. The output suffix picks
+the format:
+
+- `.gp5` — Guitar Pro 5, the main target (string/fret, durations, ties).
+- `.musicxml` / `.xml` — MusicXML via music21 (notes carry string/fret marks).
+- `.txt` — plain ASCII tab, e.g.:
+
+```text
+Guitar
+Tuning: E2 A2 D3 G3 B3 E4 (low to high) | BPM: 139.535 | Key: F# major | Time: 4/4
+
+  F#:maj
+E|------------------------------------------------|
+B|------------------------------------------2-----|
+G|------------------------------------------------|
+D|3--4-----4-----4-----4-----4--------4-----4-----|
+A|---4--------------4--------4--------4--------4--|
+E|---2-----------2--2--------------2--2-----2-----|
+```
+
+Options:
+
+- `-o FILE` — output file (default: `<input>.gp5` next to the input).
+- `--format gp5|musicxml|ascii` — force the format regardless of the suffix.
+- `--instruments guitar,bass` — comma-separated subset of `guitar`, `bass`.
+- `--tuning` — guitar tuning: a preset (`standard`, `drop-d`,
+  `half-step-down`, `d-standard`) or notes low-to-high, e.g.
+  `D2,A2,D3,G3,B3,E4`.
+- `--bass-tuning` — bass tuning: a preset (`standard`, `drop-d`,
+  `half-step-down`) or notes low-to-high, e.g. `E1,A1,D2,G2`.
+- `--capo N` — guitar capo fret (frets in the tab are relative to it).
+- `--device cuda|cpu` — device for Demucs (default: autodetect).
+
+The tablature is cached in `.tabgen/` per input, tuning and capo: re-exporting
+the same song to another format finishes in under a second. Notes outside the
+instrument's range are left out and counted in the report.
+
+**What to expect.** The output is an **editable draft, not a finished
+score**: Basic Pitch reaches roughly 66% F-measure on real recordings, and
+audio-to-tab state of the art is around 54% end to end. Always review the tab
+in TuxGuitar or Guitar Pro before using it (true of commercial tools too).
+
+- Works best with a clean mix, a prominent guitar, little distortion and a
+  steady tempo.
+- Struggles with heavy distortion, several instruments in the same register,
+  rubato and unusual tunings that were not passed with `--tuning`.
+- Acoustic and electric guitar in the same mix are not told apart: the guitar
+  stem is treated as one track.
+- No playing techniques yet (bends, slides, hammer-ons): those are Phase 4.
+
 ### Expected runtimes
 
 Indicative numbers on a 6 GB NVIDIA GPU (RTX 3060 Laptop), measured with a
-synthetic 10-second sample and with a real 4 min 08 s song during the Phase 1
-end-to-end validation:
+synthetic 10-second sample and with a real 4 min 08 s song during the
+end-to-end validation of each phase (cold = no cache at all):
 
 | Scenario                              | Time            |
 | ------------------------------------- | --------------- |
@@ -185,6 +246,8 @@ end-to-end validation:
 | 4-minute song, warm (cache hit)       | ~1.5 s          |
 | `analyze`, 4-minute song, cold        | ~140 s total (≈45 s separation, ≈27 s beats, ≈64 s key + chords; madmom runs on CPU) |
 | `analyze`, 4-minute song, warm        | < 1 s           |
+| `export`, 4-minute song, cold         | ~193 s total (separation, analysis, transcription and tablature) |
+| `export`, 4-minute song, warm         | < 1 s (0.35 s)  |
 
 The very first run also downloads the Demucs model weights (~1 GB). On CPU,
 expect separation to be 10–20× slower.
