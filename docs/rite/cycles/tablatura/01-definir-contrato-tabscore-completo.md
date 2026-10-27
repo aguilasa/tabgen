@@ -57,3 +57,4 @@ Evidências:
     - `M docs/rite/cycles/tablatura/01-definir-contrato-tabscore-completo.md`
     - `M tabgen/core/models.py`
     - `M tests/test_models.py`
+- **Reviewed** (2026-10-27) at `b1a41a8`: FIX-TAB-001

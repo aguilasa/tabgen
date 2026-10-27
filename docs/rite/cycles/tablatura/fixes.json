@@ -1,5 +1,32 @@
 {
   "schema": 1,
   "cycle": "tablatura",
-  "fixes": []
+  "fixes": [
+    {
+      "id": "FIX-TAB-001",
+      "file": "FIX-TAB-001.md",
+      "title": "Reconcile TabNote string numbering with fretting stage convention",
+      "origin": "TAB-TASK-01",
+      "severity": "high",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-TAB-002",
+      "file": "FIX-TAB-002.md",
+      "title": "Align key spellings with madmom minor labels and compare match by pitch class",
+      "origin": "TAB-TASK-04",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    }
+  ]
 }
