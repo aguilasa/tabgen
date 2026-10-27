@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "cycle": "refinamento",
+  "prefix": "REF",
+  "plan": "/docs/planejamento/audio-para-tablatura.md",
+  "ticket": null,
+  "local": false,
+  "tasks": []
+}
