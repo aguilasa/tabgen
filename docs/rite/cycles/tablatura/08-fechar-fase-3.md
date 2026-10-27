@@ -72,3 +72,4 @@ Verificação (2026-10-27, RTX 3060 Laptop, `torch.cuda.is_available()` → `Tru
     - `M docs/rite/cycles/tablatura/08-fechar-fase-3.md`
   - **Outside declared files** (`README.md`):
     - `.gitignore`
+- **Reviewed** (2026-10-27) at `76e89ab`: FIX-TAB-006

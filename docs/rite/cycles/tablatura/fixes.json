@@ -86,6 +86,19 @@
       "started_at": "2026-10-27T16:13:59-03:00",
       "active_s": 328,
       "finished_at": "2026-10-27T16:19:27-03:00"
+    },
+    {
+      "id": "FIX-TAB-006",
+      "file": "FIX-TAB-006.md",
+      "title": "Declare .gitignore in TAB-TASK-08 files metadata",
+      "origin": "TAB-TASK-08",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }

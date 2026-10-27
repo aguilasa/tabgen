@@ -8,4 +8,5 @@
 | [FIX-TAB-003](/docs/rite/cycles/tablatura/FIX-TAB-003.md) | Correct quoted version-command output in TAB-TASK-05 verification | TAB-TASK-05 | low | done | 2026-10-27 |
 | [FIX-TAB-004](/docs/rite/cycles/tablatura/FIX-TAB-004.md) | Declare golden ascii_guitar_riff.txt in TAB-TASK-06 files metadata | TAB-TASK-06 | low | done | 2026-10-27 |
 | [FIX-TAB-005](/docs/rite/cycles/tablatura/FIX-TAB-005.md) | Version a deterministic e2e probe for tabgen export | TAB-TASK-07 | medium | done | 2026-10-27 |
+| [FIX-TAB-006](/docs/rite/cycles/tablatura/FIX-TAB-006.md) | Declare .gitignore in TAB-TASK-08 files metadata | TAB-TASK-08 | low | pending | — |
 <!-- rite:end -->
