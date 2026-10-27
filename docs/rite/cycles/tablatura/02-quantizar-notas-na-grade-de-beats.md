@@ -21,18 +21,41 @@ duração em subdivisões. É a etapa que define se a tab "parece certa" (plano,
 
 ## Done criteria
 
-- [ ] Teste: notas exatamente em semicolcheias a 120 BPM 4/4 (com jitter aleatório ±20 ms, seed
+- [x] Teste: notas exatamente em semicolcheias a 120 BPM 4/4 (com jitter aleatório ±20 ms, seed
       fixa) voltam nas posições originais (compasso, tempo, subdivisão) em 100% dos casos.
-- [ ] Teste: três notas igualmente espaçadas num beat são quantizadas como tercina, não como
+- [x] Teste: três notas igualmente espaçadas num beat são quantizadas como tercina, não como
       semicolcheias.
-- [ ] Teste: grade com andamento variável (beats com intervalos crescentes) mantém cada nota no
+- [x] Teste: grade com andamento variável (beats com intervalos crescentes) mantém cada nota no
       beat correto.
-- [ ] `grep -rnE "import typer|import rich|print\(" tabgen/core/` não retorna nada.
-- [ ] `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes.
+- [x] `grep -rnE "import typer|import rich|print\(" tabgen/core/` não retorna nada.
+- [x] `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes.
 
 ## Notes
 
 Pitfall herdado: afirmar fatos estáveis (posições), não contagens frágeis. Referência para
 comparação: MuseScore CLI (plano, seção 6) — opcional.
+
+Implementação: `tabgen/core/export/quantize.py`, entrada principal
+`quantize_notes(notes, beat_times, downbeat_times, subdivisions_per_beat=4,
+triplet_subdivisions=3, beats_per_measure=None, detect_triplets=True)` →
+`list[QuantizedNote]` (dataclass pura, sem string/fret — o fretting do TASK-03 atribui à parte).
+
+Convenções documentadas no docstring do módulo:
+- Posição contínua em unidades de beat calculada sobre os `beat_times` reais (tempo variável
+  respeitado); fora da grade, extrapola o primeiro/último intervalo entre beats.
+- Tercina decidida por beat: grade de 3 vence quando o erro total de snap dos onsets do beat é
+  estritamente menor que o da grade de 4; `subdivisions_in_beat` registra a grade vencedora.
+- Anacruse: notas antes do primeiro downbeat caem no compasso 0 (beats contando para trás a
+  partir do primeiro downbeat; ex.: pickup de 1 beat em 4/4 = compasso 0, beat 4).
+- Onset arredondado para a linha do próximo beat "carrega" (beat seguinte, subdivisão 0).
+- Duração = offset snapado − onset snapado na grade do próprio beat da nota, piso 1 subdivisão.
+- `beats_per_measure` inferido da mediana do espaçamento (em beats) entre downbeats; fallback 4
+  com downbeat único/ausente; fórmula de compasso constante (variável fica para a Fase 4).
+
+Comandos decisivos (saídas escopadas a este item):
+- `.venv/bin/pytest tests/test_quantize.py -q` → `8 passed` (cobre jitter ±20 ms com
+  `random.Random(42)`, tercina, tempo variável, anacruse, extrapolação, carry e duração mínima).
+- `grep -rnE "import typer|import rich|print\(" tabgen/core/` → sem saída (exit 1).
+- `.venv/bin/ruff check .` → `All checks passed!`; `.venv/bin/pytest -q` → suíte verde.
 
 ## Execution Log
