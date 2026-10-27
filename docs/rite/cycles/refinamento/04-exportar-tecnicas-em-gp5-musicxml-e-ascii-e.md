@@ -64,4 +64,15 @@ Exportar a partir da nota de origem até a próxima na mesma corda (ASCII `5h7`,
 start/stop, flags de efeito GP5). Comentário desatualizado em `tabgen/core/export/midi.py:38` (diz
 que os bends vêm de `TranscriptionResult.bends`; agora vêm de `Note.bends`) — corrigir aqui.
 
+Encaminhado pelas REF-TASK-02/03 (2026-10-27): detectores com assinatura comum
+`detect_bends_and_slides(events, notes, config=None)` (`tabgen/core/techniques/bends.py`, `BendConfig`) e
+`detect_legato(events, notes, config=None)` (`tabgen/core/techniques/legato.py`, `LegatoConfig`): puros,
+devolvem cópias, nunca sobrescrevem técnica existente — a ordem de chamada define a precedência
+(sugerido: bends/slides, depois legato). `notes` precisa ser paralelo aos eventos do fretting, e o
+fretting/pipeline hoje não guarda esse vínculo (o pipeline mapeia por `id(note)` em `_fretting_input`).
+Exportar as legato no `__init__.py` de `tabgen/core/techniques/` (a REF-03 não podia editá-lo).
+`bend_curve` sai com 5 pontos em passos de 0,5 semitom (mapear para pontos de bend GP5); slide e
+legato com `target_fret` na nota de origem (ASCII `/`, `\`, `h`, `p`). Limitação conhecida: glide na
+cauda de nota numa corda diferente da seguinte vira bend.
+
 ## Execution Log
