@@ -102,7 +102,7 @@
       "phase": 2,
       "depends_on": ["ANA-TASK-03", "ANA-TASK-04"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-2--análise-musical",
-      "files": ["tabgen/core/pipeline.py", "tabgen/cli/main.py", "tests/test_pipeline.py", "tests/test_analysis_pipeline.py"],
+      "files": ["tabgen/core/pipeline.py", "tabgen/cli/main.py", "tests/test_analysis_pipeline.py"],
       "resources": [],
       "status": "done",
       "done_on": "2026-10-26",
