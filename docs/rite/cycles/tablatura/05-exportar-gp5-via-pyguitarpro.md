@@ -77,3 +77,10 @@ Verificação (2026-10-27, thread principal, árvore do commit):
   → `pyguitarpro 0.11`; pin em `pyproject.toml`: `"pyguitarpro==0.11"`
 
 ## Execution Log
+
+- **Closed** — commit `dd7a59f` (2026-10-27): feat(export): write TabScores as Guitar Pro 5 files via PyGuitarPro
+  - Files (`git show --name-status dd7a59f`):
+    - `M docs/rite/cycles/tablatura/05-exportar-gp5-via-pyguitarpro.md`
+    - `M pyproject.toml`
+    - `A tabgen/core/export/gp5.py`
+    - `A tests/test_gp5_export.py`

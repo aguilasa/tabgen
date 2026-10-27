@@ -104,11 +104,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-6--quantização-e-exportação",
       "files": ["pyproject.toml", "tabgen/core/export/gp5.py", "tests/test_gp5_export.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-27",
+      "done_commit": "dd7a59f",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-27T15:01:29-03:00",
+      "active_s": 658,
+      "finished_at": "2026-10-27T15:12:27-03:00"
     },
     {
       "id": "TAB-TASK-06",
