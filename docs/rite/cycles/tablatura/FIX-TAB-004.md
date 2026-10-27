@@ -64,3 +64,7 @@ Falha agora (`AssertionError`); deve passar após o fix. Depois:
   Antes: `item.files` com 5 entradas, sem o golden. Depois: assert da Verificação passa
   (`tests/golden/ascii_guitar_riff.txt` presente em `item.files`); `rite check --quick` →
   errors: 0, warnings: 0. Nota cruzada no doc da TASK-07 deixada fora de `files`, conforme o Fix.
+- **Closed** — commit `e0429ee` (2026-10-27): chore(cycle): declare golden ascii_guitar_riff.txt in TAB-TASK-06 files
+  - Files (`git show --name-status e0429ee`):
+    - `M docs/rite/cycles/tablatura/FIX-TAB-004.md`
+    - `M docs/rite/cycles/tablatura/progress.json`

@@ -61,13 +61,14 @@
       "severity": "low",
       "files": ["docs/rite/cycles/tablatura/progress.json"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-27T16:15:07-03:00",
+      "done_on": "2026-10-27",
+      "done_commit": "e0429ee",
+      "active_since": null,
       "started_at": "2026-10-27T16:15:07-03:00",
-      "active_s": 0
+      "active_s": 297,
+      "finished_at": "2026-10-27T16:20:04-03:00"
     },
     {
       "id": "FIX-TAB-005",
