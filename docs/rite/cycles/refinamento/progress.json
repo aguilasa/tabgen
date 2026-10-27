@@ -36,13 +36,17 @@
       "phase": 4,
       "depends_on": ["REF-TASK-01"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-4--transcrição-áudio--notas-o-coração",
-      "files": ["tabgen/core/techniques/__init__.py", "tabgen/core/techniques/bends.py", "tests/test_techniques_bends.py"],
+      "files": ["tabgen/core/techniques/__init__.py", "tabgen/core/techniques/bends.py", "tests/test_techniques_bends.py", "docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-27",
+      "done_commit": "8283950",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-27T20:12:33-03:00",
+      "active_s": 303,
+      "finished_at": "2026-10-27T20:17:36-03:00"
     },
     {
       "id": "REF-TASK-03",
@@ -54,11 +58,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-4--refinamento",
       "files": ["tabgen/core/techniques/legato.py", "tests/test_techniques_legato.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-27T20:12:40-03:00",
+      "started_at": "2026-10-27T20:12:40-03:00",
+      "active_s": 0
     },
     {
       "id": "REF-TASK-04",

@@ -125,3 +125,13 @@ Verificação (2026-10-27, thread principal, árvore do commit sem os arquivos d
 - Áudio real (YouTube) não conferido (opcional).
 
 ## Execution Log
+
+- **Closed** — commit `8283950` (2026-10-27): feat(core): detect bends and slides from Basic Pitch pitch bends
+  - Files (`git show --name-status 8283950`):
+    - `M docs/rite/cycles/refinamento/02-detectar-bends-e-slides-a-partir-dos-pitch-bends.md`
+    - `M docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
+    - `A tabgen/core/techniques/__init__.py`
+    - `A tabgen/core/techniques/bends.py`
+    - `A tests/test_techniques_bends.py`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
