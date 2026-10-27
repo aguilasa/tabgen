@@ -109,3 +109,4 @@ quentes; scratchpad da sessão):
     - `A tests/test_tablature_pipeline.py`
   - **Outside declared files** (`tabgen/core/pipeline.py`, `tabgen/cli/main.py`, `tests/test_tablature_pipeline.py`):
     - `docs/rite/cycles/tablatura/08-fechar-fase-3.md`
+- **Reviewed** (2026-10-27) at `600abed`: FIX-TAB-005
