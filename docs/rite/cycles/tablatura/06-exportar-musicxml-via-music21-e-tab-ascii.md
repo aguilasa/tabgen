@@ -69,3 +69,17 @@ Verificação (2026-10-27, thread principal, árvore do commit):
 - `rite sweep --terms export_musicxml,export_ascii_tab,music21` → nenhuma menção desatualizada
 
 ## Execution Log
+
+- **Closed** — commit `ee5892e` (2026-10-27): feat(export): write TabScores as MusicXML via music21 and as ASCII tab
+  - Files (`git show --name-status ee5892e`):
+    - `M docs/rite/cycles/tablatura/06-exportar-musicxml-via-music21-e-tab-ascii.md`
+    - `M docs/rite/cycles/tablatura/07-orquestrar-tablatura-no-pipeline-com-cache-e.md`
+    - `M pyproject.toml`
+    - `A tabgen/core/export/ascii_tab.py`
+    - `A tabgen/core/export/musicxml.py`
+    - `A tests/golden/ascii_guitar_riff.txt`
+    - `A tests/test_ascii_tab.py`
+    - `A tests/test_musicxml_export.py`
+  - **Outside declared files** (`pyproject.toml`, `tabgen/core/export/musicxml.py`, `tabgen/core/export/ascii_tab.py`, `tests/test_musicxml_export.py`, `tests/test_ascii_tab.py`):
+    - `docs/rite/cycles/tablatura/07-orquestrar-tablatura-no-pipeline-com-cache-e.md`
+    - `tests/golden/ascii_guitar_riff.txt`
