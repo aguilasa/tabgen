@@ -63,3 +63,7 @@ Novo `scripts/probe_e2e_worker.py`: gera a amostra senoidal de 10 s em diretóri
   asserted), warm run cache_hit=true in 0.17 s (< 5 s); .gp5 written.`; `.venv/bin/pytest -q`
   → 237 passed; `.venv/bin/ruff check .` → All checks passed!; `rite gates --id FIX-UI-004`
   → passed.
+- **Closed** — commit `f02c3e9` (2026-10-28): test(e2e): add worker-path cold/warm probe for the UI pipeline
+  - Files (`git show --name-status f02c3e9`):
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-004.md`
+    - `A scripts/probe_e2e_worker.py`

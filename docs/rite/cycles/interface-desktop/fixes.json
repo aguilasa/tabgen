@@ -57,13 +57,14 @@
       "severity": "low",
       "files": ["scripts/probe_e2e_worker.py"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-28T18:30:19-03:00",
+      "done_on": "2026-10-28",
+      "done_commit": "f02c3e9",
+      "active_since": null,
       "started_at": "2026-10-28T18:30:19-03:00",
-      "active_s": 0
+      "active_s": 991,
+      "finished_at": "2026-10-28T18:46:50-03:00"
     }
   ]
 }
