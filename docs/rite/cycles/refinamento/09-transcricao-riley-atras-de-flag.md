@@ -124,3 +124,33 @@ Execução (2026-10-28), comandos rerodados no thread principal:
   separações frias da mesma música deram 994 e 1040 notas de guitarra.
 
 ## Execution Log
+
+- **Closed** — commit `a54eeaf` (2026-10-28): feat(transcription): add hybrid Riley guitar transcriber behind --transcriber and make it the default
+  - Files (`git show --name-status a54eeaf`):
+    - `M docs/avaliacao/modelo-guitarra.md`
+    - `M docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `M docs/rite/cycles/refinamento/09-transcricao-riley-atras-de-flag.md`
+    - `M docs/rite/cycles/refinamento/progress.json`
+    - `M docs/rite/cycles/refinamento/progress.md`
+    - `M pyproject.toml`
+    - `A scripts/eval/mix.py`
+    - `A scripts/eval/reports/mixed/basic-pitch/egdb-egdb.json`
+    - `A scripts/eval/reports/mixed/basic-pitch/egdb-egdb.md`
+    - `A scripts/eval/reports/mixed/basic-pitch/guitarset-guitarset.json`
+    - `A scripts/eval/reports/mixed/basic-pitch/guitarset-guitarset.md`
+    - `A scripts/eval/reports/mixed/riley/egdb-egdb.json`
+    - `A scripts/eval/reports/mixed/riley/egdb-egdb.md`
+    - `A scripts/eval/reports/mixed/riley/guitarset-guitarset.json`
+    - `A scripts/eval/reports/mixed/riley/guitarset-guitarset.md`
+    - `A scripts/eval/reports/riley/egdb-egdb.json`
+    - `A scripts/eval/reports/riley/egdb-egdb.md`
+    - `A scripts/eval/reports/riley/guitarset-guitarset.json`
+    - `A scripts/eval/reports/riley/guitarset-guitarset.md`
+    - `M scripts/eval/run.py`
+    - `M scripts/probe_e2e_export.py`
+    - `A scripts/probe_e2e_riley.py`
+    - `M tabgen/cli/main.py`
+    - `M tabgen/core/pipeline.py`
+    - `M tabgen/core/transcription/__init__.py`
+    - `A tabgen/core/transcription/riley.py`
+    - `A tests/test_riley_transcription.py`
