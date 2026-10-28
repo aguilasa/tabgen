@@ -68,3 +68,7 @@ Falha agora; passa após o fix. Depois: `.venv/bin/ruff check .` verde e
   `! grep -q "TranscriptionResult.bends" tabgen/core/export/midi.py` passa;
   `.venv/bin/ruff check .` → All checks passed!; `.venv/bin/pytest -q` → 213 passed;
   `rite gates --id FIX-REF-001` → passed.
+- **Closed** — commit `4b2263e` (2026-10-28): docs(export): point midi bends comment at canonical Note.bends
+  - Files (`git show --name-status 4b2263e`):
+    - `M docs/rite/cycles/refinamento/FIX-REF-001.md`
+    - `M tabgen/core/export/midi.py`

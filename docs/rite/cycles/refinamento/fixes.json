@@ -10,13 +10,14 @@
       "severity": "low",
       "files": ["tabgen/core/export/midi.py"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-28T13:20:18-03:00",
+      "done_on": "2026-10-28",
+      "done_commit": "4b2263e",
+      "active_since": null,
       "started_at": "2026-10-28T13:20:18-03:00",
-      "active_s": 0
+      "active_s": 166,
+      "finished_at": "2026-10-28T13:23:04-03:00"
     },
     {
       "id": "FIX-REF-002",
