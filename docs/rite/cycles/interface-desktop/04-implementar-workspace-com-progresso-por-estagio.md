@@ -82,3 +82,31 @@ key_check, unassigned, ascii_preview, output_path, format, cache_hit). Para UI-T
 estender `tablatureArgs(path, prefs)` em `lib/run.ts` ou dar opções a `useTablatureRun.start`.
 
 ## Execution Log
+
+- **Closed** — commit `72ebb52` (2026-10-28): feat(desktop): run tablature from the workspace with live per-stage progress, cancel and errors
+  - Files (`git show --name-status 72ebb52`):
+    - `M desktop/src-tauri/Cargo.lock`
+    - `M desktop/src-tauri/Cargo.toml`
+    - `M desktop/src-tauri/src/lib.rs`
+    - `M desktop/src/App.css`
+    - `M desktop/src/App.tsx`
+    - `A desktop/src/components/Pipeline.tsx`
+    - `M desktop/src/lib/recents.ts`
+    - `A desktop/src/lib/run.ts`
+    - `M desktop/src/lib/worker.ts`
+    - `M desktop/src/screens/Musica.tsx`
+    - `M docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md`
+    - `M docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md`
+    - `M docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-cache-apos-cancelar.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-cancelado-analise.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-cancelado-separacao.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-erro.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-frio-progresso.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-frio-resultado.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-quente-cache.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/04-rerun-concluido.png`
+  - **Files amended** — added to `files`:
+    - `desktop/src/lib/recents.ts`
+    - `docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md`
+    - `docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`

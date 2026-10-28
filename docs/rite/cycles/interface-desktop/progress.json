@@ -78,13 +78,17 @@
       "phase": 5,
       "depends_on": ["UI-TASK-02"],
       "source_of_truth": "/docs/planejamento/interface-desktop.md#4",
-      "files": ["desktop/src/components/Pipeline.tsx", "desktop/src/lib/run.ts", "desktop/src/App.tsx", "desktop/src/App.css", "desktop/src-tauri/src/lib.rs", "desktop/src-tauri/Cargo.toml", "desktop/src-tauri/Cargo.lock", "desktop/src-tauri/capabilities/default.json", "desktop/src-tauri/tauri.conf.json", "desktop/package.json", "desktop/package-lock.json", "desktop/src/lib/worker.ts", "desktop/src/screens/Musica.tsx", "docs/rite/cycles/interface-desktop/evidencias/04-*.png"],
+      "files": ["desktop/src/components/Pipeline.tsx", "desktop/src/lib/run.ts", "desktop/src/App.tsx", "desktop/src/App.css", "desktop/src-tauri/src/lib.rs", "desktop/src-tauri/Cargo.toml", "desktop/src-tauri/Cargo.lock", "desktop/src-tauri/capabilities/default.json", "desktop/src-tauri/tauri.conf.json", "desktop/package.json", "desktop/package-lock.json", "desktop/src/lib/worker.ts", "desktop/src/screens/Musica.tsx", "docs/rite/cycles/interface-desktop/evidencias/04-*.png", "desktop/src/lib/recents.ts", "docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md", "docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-28",
+      "done_commit": "72ebb52",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-28T17:49:29-03:00",
+      "active_s": 849,
+      "finished_at": "2026-10-28T18:03:38-03:00"
     },
     {
       "id": "UI-TASK-05",
