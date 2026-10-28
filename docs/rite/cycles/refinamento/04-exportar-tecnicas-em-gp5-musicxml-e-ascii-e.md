@@ -166,3 +166,4 @@ Verificação (2026-10-28, thread principal, árvore do commit sem os arquivos d
     - `docs/rite/cycles/refinamento/05-suportar-baixo-de-5-cordas-e-violao-nylon-ou-aco.md`
     - `docs/rite/cycles/refinamento/08-fechar-fase-4.md`
     - `tabgen/core/techniques/__init__.py`
+- **Reviewed** (2026-10-28) at `52ab18b`: FIX-REF-001

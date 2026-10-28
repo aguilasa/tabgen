@@ -1,5 +1,45 @@
 {
   "schema": 1,
   "cycle": "refinamento",
-  "fixes": []
+  "fixes": [
+    {
+      "id": "FIX-REF-001",
+      "file": "FIX-REF-001.md",
+      "title": "Update stale bends comment in export/midi.py",
+      "origin": "REF-TASK-04",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-REF-002",
+      "file": "FIX-REF-002.md",
+      "title": "Remove .gitignore from REF-TASK-06 files metadata",
+      "origin": "REF-TASK-06",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-REF-003",
+      "file": "FIX-REF-003.md",
+      "title": "Phase check --bass-tuning five-string does not run: preset missing",
+      "origin": "REF-TASK-06",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    }
+  ]
 }
