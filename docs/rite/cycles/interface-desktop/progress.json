@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "cycle": "interface-desktop",
+  "prefix": "UI",
+  "plan": "/docs/planejamento/interface-desktop.md",
+  "ticket": null,
+  "local": false,
+  "tasks": []
+}
