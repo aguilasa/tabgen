@@ -80,13 +80,17 @@
       "phase": 4,
       "depends_on": ["REF-TASK-02", "REF-TASK-03"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-6--quantização-e-exportação",
-      "files": ["tabgen/core/export/gp5.py", "tabgen/core/export/musicxml.py", "tabgen/core/export/ascii_tab.py", "tabgen/core/pipeline.py", "tabgen/cli/main.py", "scripts/probe_e2e_export.py", "tests/test_gp5_export.py", "tests/test_musicxml_export.py", "tests/test_ascii_tab.py", "tests/test_tablature_pipeline.py", "tests/golden/ascii_techniques.txt"],
+      "files": ["tabgen/core/export/gp5.py", "tabgen/core/export/musicxml.py", "tabgen/core/export/ascii_tab.py", "tabgen/core/pipeline.py", "tabgen/cli/main.py", "scripts/probe_e2e_export.py", "tests/test_gp5_export.py", "tests/test_musicxml_export.py", "tests/test_ascii_tab.py", "tests/test_tablature_pipeline.py", "tests/golden/ascii_techniques.txt", "docs/rite/cycles/refinamento/05-suportar-baixo-de-5-cordas-e-violao-nylon-ou-aco.md", "docs/rite/cycles/refinamento/08-fechar-fase-4.md", "tabgen/core/techniques/__init__.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-28",
+      "done_commit": "c0a1f94",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-27T20:27:29-03:00",
+      "active_s": 53929,
+      "finished_at": "2026-10-28T11:26:18-03:00"
     },
     {
       "id": "REF-TASK-05",
@@ -114,11 +118,14 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#6",
       "files": ["scripts/eval/__init__.py", "scripts/eval/run.py", "scripts/eval/metrics.py", "scripts/eval/subsets/guitarset.txt", "scripts/eval/subsets/egdb.txt", "tests/test_eval_metrics.py", ".gitignore"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-27T20:27:38-03:00",
+      "started_at": "2026-10-27T20:27:38-03:00",
+      "active_s": 0
     },
     {
       "id": "REF-TASK-07",

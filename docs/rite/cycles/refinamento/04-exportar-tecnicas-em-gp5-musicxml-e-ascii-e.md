@@ -144,3 +144,25 @@ Verificação (2026-10-28, thread principal, árvore do commit sem os arquivos d
   técnica.
 
 ## Execution Log
+
+- **Closed** — commit `c0a1f94` (2026-10-28): feat(export): write bends, slides and legato to gp5, MusicXML and ASCII
+  - Files (`git show --name-status c0a1f94`):
+    - `M docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md`
+    - `M docs/rite/cycles/refinamento/05-suportar-baixo-de-5-cordas-e-violao-nylon-ou-aco.md`
+    - `M docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `M scripts/probe_e2e_export.py`
+    - `M tabgen/cli/main.py`
+    - `M tabgen/core/export/ascii_tab.py`
+    - `M tabgen/core/export/gp5.py`
+    - `M tabgen/core/export/musicxml.py`
+    - `M tabgen/core/pipeline.py`
+    - `M tabgen/core/techniques/__init__.py`
+    - `A tests/golden/ascii_techniques.txt`
+    - `M tests/test_ascii_tab.py`
+    - `M tests/test_gp5_export.py`
+    - `M tests/test_musicxml_export.py`
+    - `M tests/test_tablature_pipeline.py`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/refinamento/05-suportar-baixo-de-5-cordas-e-violao-nylon-ou-aco.md`
+    - `docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `tabgen/core/techniques/__init__.py`
