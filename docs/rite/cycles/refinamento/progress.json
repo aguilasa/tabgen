@@ -102,7 +102,7 @@
       "phase": 4,
       "depends_on": [],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-4--refinamento",
-      "files": ["tabgen/core/models.py", "tabgen/core/fretting/dp.py", "tabgen/core/export/gp5.py", "tabgen/core/export/midi.py", "tabgen/core/export/musicxml.py", "tabgen/core/export/ascii_tab.py", "tabgen/cli/main.py", "tests/test_fretting.py", "tests/test_gp5_export.py", "tests/test_ascii_tab.py", "docs/rite/cycles/refinamento/08-fechar-fase-4.md", "docs/rite/cycles/refinamento/FIX-REF-003.md", "tabgen/core/pipeline.py", "tests/test_midi_export.py", "tests/test_musicxml_export.py", "tests/test_tablature_pipeline.py"],
+      "files": ["tabgen/core/models.py", "tabgen/core/fretting/dp.py", "tabgen/core/export/gp5.py", "tabgen/core/export/midi.py", "tabgen/core/export/musicxml.py", "tabgen/cli/main.py", "tests/test_fretting.py", "tests/test_gp5_export.py", "tests/test_ascii_tab.py", "docs/rite/cycles/refinamento/08-fechar-fase-4.md", "docs/rite/cycles/refinamento/FIX-REF-003.md", "tabgen/core/pipeline.py", "tests/test_midi_export.py", "tests/test_musicxml_export.py", "tests/test_tablature_pipeline.py"],
       "resources": [],
       "status": "done",
       "done_on": "2026-10-28",
