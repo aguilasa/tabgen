@@ -61,3 +61,26 @@ Verificação (Xvfb `:99`, nunca o display do usuário; `XDG_DATA_HOME` no scrat
 - Não exercitado na GUI: arrastar/soltar (sem fonte de drag no Xvfb); só typecheck.
 
 ## Execution Log
+
+- **Closed** — commit `d96d198` (2026-10-28): feat(desktop): add start screen with file picker, drag-and-drop and persisted recents
+  - Files (`git show --name-status d96d198`):
+    - `M desktop/package-lock.json`
+    - `M desktop/package.json`
+    - `M desktop/src-tauri/Cargo.lock`
+    - `M desktop/src-tauri/Cargo.toml`
+    - `M desktop/src-tauri/capabilities/default.json`
+    - `M desktop/src-tauri/src/lib.rs`
+    - `M desktop/src/App.css`
+    - `M desktop/src/App.tsx`
+    - `A desktop/src/lib/recents.ts`
+    - `A desktop/src/screens/Inicio.tsx`
+    - `A desktop/src/screens/Musica.tsx`
+    - `M docs/rite/cycles/interface-desktop/03-implementar-tela-inicio-com-abertura-de-arquivo.md`
+    - `M docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/03-escolher-arquivo-copia.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/03-inicio-recentes.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/03-musica-wonderwall.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/03-recente-apagado-some.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/03-recusa-ogg.png`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md`
