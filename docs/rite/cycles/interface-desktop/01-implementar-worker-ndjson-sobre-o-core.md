@@ -73,3 +73,4 @@ Verificação (HEAD do work commit):
     - `A tabgen/worker/__init__.py`
     - `A tabgen/worker/__main__.py`
     - `A tests/test_worker.py`
+- **Reviewed** (2026-10-28) at `3466cd2`: no finding

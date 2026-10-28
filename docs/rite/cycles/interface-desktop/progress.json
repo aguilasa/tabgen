@@ -19,12 +19,14 @@
       "status": "done",
       "done_on": "2026-10-28",
       "done_commit": "455268e",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-28",
+      "review_commit": "3466cd2",
       "active_since": null,
       "started_at": "2026-10-28T16:48:50-03:00",
       "active_s": 203,
-      "finished_at": "2026-10-28T16:52:13-03:00"
+      "finished_at": "2026-10-28T16:52:13-03:00",
+      "review_started_at": "2026-10-28T16:52:55-03:00",
+      "review_s": 239
     },
     {
       "id": "UI-TASK-02",
