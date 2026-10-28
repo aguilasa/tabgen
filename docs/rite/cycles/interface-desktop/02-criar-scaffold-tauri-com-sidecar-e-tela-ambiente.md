@@ -154,3 +154,4 @@ Verificação (HEAD do work commit):
     - `desktop/vite.config.ts`
     - `docs/rite/cycles/interface-desktop/evidencias/02-ambiente-ok.png`
     - `docs/rite/cycles/interface-desktop/evidencias/02-ambiente-python-invalido.png`
+- **Reviewed** (2026-10-28) at `8b6b22c`: no finding
