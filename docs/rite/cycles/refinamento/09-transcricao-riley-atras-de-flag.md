@@ -154,3 +154,4 @@ Execução (2026-10-28), comandos rerodados no thread principal:
     - `M tabgen/core/transcription/__init__.py`
     - `A tabgen/core/transcription/riley.py`
     - `A tests/test_riley_transcription.py`
+- **Reviewed** (2026-10-28) at `dee893a`: no finding
