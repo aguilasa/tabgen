@@ -38,12 +38,16 @@
       "title": "Encerrar workers em andamento ao fechar a janela do app",
       "origin": "UI-TASK-04",
       "severity": "medium",
-      "files": [],
+      "files": ["desktop/src-tauri/src/lib.rs"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-28",
+      "done_commit": "c2c93d2",
+      "active_since": null,
+      "started_at": "2026-10-28T18:29:06-03:00",
+      "active_s": 1011,
+      "finished_at": "2026-10-28T18:45:57-03:00"
     },
     {
       "id": "FIX-UI-004",
@@ -51,12 +55,15 @@
       "title": "Versionar probe e2e do pipeline frio/quente usado pela UI",
       "origin": "UI-TASK-04",
       "severity": "low",
-      "files": [],
+      "files": ["scripts/probe_e2e_worker.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-28T18:30:19-03:00",
+      "started_at": "2026-10-28T18:30:19-03:00",
+      "active_s": 0
     }
   ]
 }

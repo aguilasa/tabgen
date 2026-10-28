@@ -78,3 +78,7 @@ Mesmo roteiro da Evidência (só em Xvfb, nunca no display do usuário): após f
   → All checks passed!; `.venv/bin/pytest -q` → 237 passed; `rite gates --id FIX-UI-003` →
   passed. Medições de GUI (ps = 0 nos dois caminhos de fechamento, controle vermelho = 1) são
   da rodada do executor nesta mesma árvore de `lib.rs`, registradas acima.
+- **Closed** — commit `c2c93d2` (2026-10-28): fix(desktop): kill running worker process groups when the app window closes or the UI dies
+  - Files (`git show --name-status c2c93d2`):
+    - `M desktop/src-tauri/src/lib.rs`
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-003.md`
