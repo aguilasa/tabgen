@@ -138,3 +138,4 @@ Verificação (2026-10-28, thread principal):
     - `scripts/eval/reports/egdb-egdb.md`
     - `scripts/eval/reports/guitarset-guitarset.json`
     - `scripts/eval/reports/guitarset-guitarset.md`
+- **Reviewed** (2026-10-28) at `ac31695`: FIX-REF-002, FIX-REF-003
