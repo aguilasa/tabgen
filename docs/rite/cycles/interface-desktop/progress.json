@@ -36,13 +36,17 @@
       "phase": 5,
       "depends_on": ["UI-TASK-01"],
       "source_of_truth": "/docs/planejamento/interface-desktop.md#2",
-      "files": ["desktop/package.json", "desktop/src-tauri/tauri.conf.json", "desktop/src-tauri/src/main.rs", "desktop/src/App.tsx", "desktop/src/screens/Ambiente.tsx", "desktop/src/lib/worker.ts", "desktop/src/lib/prefs.ts"],
+      "files": ["desktop/package.json", "desktop/src-tauri/tauri.conf.json", "desktop/src-tauri/src/main.rs", "desktop/src/App.tsx", "desktop/src/screens/Ambiente.tsx", "desktop/src/lib/worker.ts", "desktop/src/lib/prefs.ts", "desktop/.gitignore", "desktop/.npmrc", "desktop/index.html", "desktop/package-lock.json", "desktop/src-tauri/.gitignore", "desktop/src-tauri/Cargo.lock", "desktop/src-tauri/Cargo.toml", "desktop/src-tauri/build.rs", "desktop/src-tauri/capabilities/default.json", "desktop/src-tauri/icons/128x128.png", "desktop/src-tauri/icons/128x128@2x.png", "desktop/src-tauri/icons/32x32.png", "desktop/src-tauri/icons/Square107x107Logo.png", "desktop/src-tauri/icons/Square142x142Logo.png", "desktop/src-tauri/icons/Square150x150Logo.png", "desktop/src-tauri/icons/Square284x284Logo.png", "desktop/src-tauri/icons/Square30x30Logo.png", "desktop/src-tauri/icons/Square310x310Logo.png", "desktop/src-tauri/icons/Square44x44Logo.png", "desktop/src-tauri/icons/Square71x71Logo.png", "desktop/src-tauri/icons/Square89x89Logo.png", "desktop/src-tauri/icons/StoreLogo.png", "desktop/src-tauri/icons/icon.icns", "desktop/src-tauri/icons/icon.ico", "desktop/src-tauri/icons/icon.png", "desktop/src-tauri/src/lib.rs", "desktop/src/App.css", "desktop/src/main.tsx", "desktop/src/vite-env.d.ts", "desktop/tsconfig.json", "desktop/tsconfig.node.json", "desktop/vite.config.ts", "docs/rite/cycles/interface-desktop/evidencias/02-ambiente-ok.png", "docs/rite/cycles/interface-desktop/evidencias/02-ambiente-python-invalido.png"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-28",
+      "done_commit": "b8bd761",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-28T16:57:51-03:00",
+      "active_s": 740,
+      "finished_at": "2026-10-28T17:10:11-03:00"
     },
     {
       "id": "UI-TASK-03",

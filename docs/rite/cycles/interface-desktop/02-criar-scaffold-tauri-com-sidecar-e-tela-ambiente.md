@@ -74,3 +74,83 @@ Verificação (HEAD do work commit):
   mapeou no X11 durante o teste; não é critério desta tarefa).
 
 ## Execution Log
+
+- **Closed** — commit `b8bd761` (2026-10-28): feat(desktop): scaffold Tauri app with worker sidecar and Ambiente screen
+  - Files (`git show --name-status b8bd761`):
+    - `A desktop/.gitignore`
+    - `A desktop/.npmrc`
+    - `A desktop/index.html`
+    - `A desktop/package-lock.json`
+    - `A desktop/package.json`
+    - `A desktop/src-tauri/.gitignore`
+    - `A desktop/src-tauri/Cargo.lock`
+    - `A desktop/src-tauri/Cargo.toml`
+    - `A desktop/src-tauri/build.rs`
+    - `A desktop/src-tauri/capabilities/default.json`
+    - `A desktop/src-tauri/icons/128x128.png`
+    - `A desktop/src-tauri/icons/128x128@2x.png`
+    - `A desktop/src-tauri/icons/32x32.png`
+    - `A desktop/src-tauri/icons/Square107x107Logo.png`
+    - `A desktop/src-tauri/icons/Square142x142Logo.png`
+    - `A desktop/src-tauri/icons/Square150x150Logo.png`
+    - `A desktop/src-tauri/icons/Square284x284Logo.png`
+    - `A desktop/src-tauri/icons/Square30x30Logo.png`
+    - `A desktop/src-tauri/icons/Square310x310Logo.png`
+    - `A desktop/src-tauri/icons/Square44x44Logo.png`
+    - `A desktop/src-tauri/icons/Square71x71Logo.png`
+    - `A desktop/src-tauri/icons/Square89x89Logo.png`
+    - `A desktop/src-tauri/icons/StoreLogo.png`
+    - `A desktop/src-tauri/icons/icon.icns`
+    - `A desktop/src-tauri/icons/icon.ico`
+    - `A desktop/src-tauri/icons/icon.png`
+    - `A desktop/src-tauri/src/lib.rs`
+    - `A desktop/src-tauri/src/main.rs`
+    - `A desktop/src-tauri/tauri.conf.json`
+    - `A desktop/src/App.css`
+    - `A desktop/src/App.tsx`
+    - `A desktop/src/lib/prefs.ts`
+    - `A desktop/src/lib/worker.ts`
+    - `A desktop/src/main.tsx`
+    - `A desktop/src/screens/Ambiente.tsx`
+    - `A desktop/src/vite-env.d.ts`
+    - `A desktop/tsconfig.json`
+    - `A desktop/tsconfig.node.json`
+    - `A desktop/vite.config.ts`
+    - `M docs/rite/cycles/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/02-ambiente-ok.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/02-ambiente-python-invalido.png`
+  - **Files amended** — added to `files`:
+    - `desktop/.gitignore`
+    - `desktop/.npmrc`
+    - `desktop/index.html`
+    - `desktop/package-lock.json`
+    - `desktop/src-tauri/.gitignore`
+    - `desktop/src-tauri/Cargo.lock`
+    - `desktop/src-tauri/Cargo.toml`
+    - `desktop/src-tauri/build.rs`
+    - `desktop/src-tauri/capabilities/default.json`
+    - `desktop/src-tauri/icons/128x128.png`
+    - `desktop/src-tauri/icons/128x128@2x.png`
+    - `desktop/src-tauri/icons/32x32.png`
+    - `desktop/src-tauri/icons/Square107x107Logo.png`
+    - `desktop/src-tauri/icons/Square142x142Logo.png`
+    - `desktop/src-tauri/icons/Square150x150Logo.png`
+    - `desktop/src-tauri/icons/Square284x284Logo.png`
+    - `desktop/src-tauri/icons/Square30x30Logo.png`
+    - `desktop/src-tauri/icons/Square310x310Logo.png`
+    - `desktop/src-tauri/icons/Square44x44Logo.png`
+    - `desktop/src-tauri/icons/Square71x71Logo.png`
+    - `desktop/src-tauri/icons/Square89x89Logo.png`
+    - `desktop/src-tauri/icons/StoreLogo.png`
+    - `desktop/src-tauri/icons/icon.icns`
+    - `desktop/src-tauri/icons/icon.ico`
+    - `desktop/src-tauri/icons/icon.png`
+    - `desktop/src-tauri/src/lib.rs`
+    - `desktop/src/App.css`
+    - `desktop/src/main.tsx`
+    - `desktop/src/vite-env.d.ts`
+    - `desktop/tsconfig.json`
+    - `desktop/tsconfig.node.json`
+    - `desktop/vite.config.ts`
+    - `docs/rite/cycles/interface-desktop/evidencias/02-ambiente-ok.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/02-ambiente-python-invalido.png`
