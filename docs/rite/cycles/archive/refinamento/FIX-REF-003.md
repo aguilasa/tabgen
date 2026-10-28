@@ -4,7 +4,7 @@ id: FIX-REF-003
 
 # FIX-REF-003 — Phase check --bass-tuning five-string does not run: preset missing
 
-Origin: [REF-TASK-06](/docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md)
+Origin: [REF-TASK-06](/docs/rite/cycles/archive/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md)
 
 ## Problem
 

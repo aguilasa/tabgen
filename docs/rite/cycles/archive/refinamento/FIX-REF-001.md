@@ -4,7 +4,7 @@ id: FIX-REF-001
 
 # FIX-REF-001 — Update stale bends comment in export/midi.py
 
-Origin: [REF-TASK-04](/docs/rite/cycles/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md)
+Origin: [REF-TASK-04](/docs/rite/cycles/archive/refinamento/04-exportar-tecnicas-em-gp5-musicxml-e-ascii-e.md)
 
 ## Problem
 

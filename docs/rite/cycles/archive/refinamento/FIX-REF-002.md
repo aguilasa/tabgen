@@ -4,7 +4,7 @@ id: FIX-REF-002
 
 # FIX-REF-002 — Remove .gitignore from REF-TASK-06 files metadata
 
-Origin: [REF-TASK-06](/docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md)
+Origin: [REF-TASK-06](/docs/rite/cycles/archive/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md)
 
 ## Problem
 

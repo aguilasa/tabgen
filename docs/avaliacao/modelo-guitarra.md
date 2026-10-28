@@ -1,6 +1,6 @@
 # Avaliação: modelo de transcrição específico de guitarra (estágio 4)
 
-Decisão pedida pela [REF-TASK-07](/docs/rite/cycles/refinamento/07-avaliar-modelo-de-transcricao-especifico-de.md):
+Decisão pedida pela [REF-TASK-07](/docs/rite/cycles/archive/refinamento/07-avaliar-modelo-de-transcricao-especifico-de.md):
 trocar ou não o Basic Pitch por um modelo treinado só para guitarra
 ([plano, Estágio 4](/docs/planejamento/audio-para-tablatura.md#estágio-4--transcrição-áudio--notas-o-coração)).
 A troca em si não faz parte desta tarefa: a decisão é do usuário.
@@ -26,7 +26,7 @@ licença ao autor, ou a definição do modelo é reescrita a partir do projeto M
 
 ## Comparação no subset do harness
 
-Mesmo subset da [REF-TASK-06](/docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md)
+Mesmo subset da [REF-TASK-06](/docs/rite/cycles/archive/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md)
 (8 trechos GuitarSet mono-mic, 8 clipes EGDB DI), mesma métrica (onset ±50 ms, pitch ±50 cents,
 sem critério de offset) e o mesmo fretting DP (`guitar_config()`, afinação padrão). Só a
 transcrição muda. O Basic Pitch foi rodado de novo no mesmo commit para a linha de base.
@@ -71,7 +71,7 @@ quente.
   é um stem do Demucs, com vazamento e artefatos; o ganho em música mixada não foi medido. Os
   modelos Riley foram treinados para guitarra solo.
 - **Bends:** os modelos Riley não produzem curva de pitch bend. A detecção de bends e slides
-  ([REF-TASK-02](/docs/rite/cycles/refinamento/02-detectar-bends-e-slides-a-partir-dos-pitch-bends.md))
+  ([REF-TASK-02](/docs/rite/cycles/archive/refinamento/02-detectar-bends-e-slides-a-partir-dos-pitch-bends.md))
   depende de `Note.bends`, que vem do Basic Pitch. Trocar o modelo perde essa entrada, a menos que
   as duas saídas sejam combinadas (notas do Riley, bends do Basic Pitch).
 - **Baixo:** fora do escopo. O HF tem `filobass_20000_iterations.pth` (baixo), não avaliado.
@@ -99,7 +99,7 @@ Se essas condições não forem atendidas, a recomendação é manter o Basic Pi
 ## Integração e medição em stems do Demucs (REF-TASK-09)
 
 O Riley entrou no core atrás de `--transcriber basic-pitch|riley`
-([REF-TASK-09](/docs/rite/cycles/refinamento/09-transcricao-riley-atras-de-flag.md)), em
+([REF-TASK-09](/docs/rite/cycles/archive/refinamento/09-transcricao-riley-atras-de-flag.md)), em
 `tabgen/core/transcription/riley.py`:
 
 - **Código:** a CRNN e o pós-processamento por regressão foram reescritos a partir do projeto MIT

@@ -8,7 +8,7 @@ id: REF-TASK-09
 
 A CLI ganha `--transcriber basic-pitch|riley`. O stem de guitarra pode ser transcrito pelo modelo
 de Riley et al. 2024, avaliado na
-[REF-TASK-07](/docs/rite/cycles/refinamento/07-avaliar-modelo-de-transcricao-especifico-de.md)
+[REF-TASK-07](/docs/rite/cycles/archive/refinamento/07-avaliar-modelo-de-transcricao-especifico-de.md)
 ([decisão](/docs/avaliacao/modelo-guitarra.md)). A saída é híbrida: as notas vêm do Riley e as
 curvas de bend vêm do Basic Pitch, para a detecção de técnicas continuar funcionando. O padrão
 continua `basic-pitch`. Ele só passa a ser `riley` se o Riley vencer também em stems do Demucs,
