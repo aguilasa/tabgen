@@ -146,13 +146,17 @@
       "phase": 4,
       "depends_on": ["REF-TASK-06"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-4--transcrição-áudio--notas-o-coração",
-      "files": ["docs/avaliacao/modelo-guitarra.md", "scripts/eval/candidates.py"],
+      "files": ["docs/avaliacao/modelo-guitarra.md", "scripts/eval/candidates.py", "docs/rite/cycles/refinamento/08-fechar-fase-4.md", "scripts/eval/reports/candidates/basic-pitch/egdb-egdb.json", "scripts/eval/reports/candidates/basic-pitch/egdb-egdb.md", "scripts/eval/reports/candidates/basic-pitch/guitarset-guitarset.json", "scripts/eval/reports/candidates/basic-pitch/guitarset-guitarset.md", "scripts/eval/reports/candidates/riley-fl/egdb-egdb.json", "scripts/eval/reports/candidates/riley-fl/egdb-egdb.md", "scripts/eval/reports/candidates/riley-fl/guitarset-guitarset.json", "scripts/eval/reports/candidates/riley-fl/guitarset-guitarset.md", "scripts/eval/reports/candidates/riley-gaps/egdb-egdb.json", "scripts/eval/reports/candidates/riley-gaps/egdb-egdb.md", "scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.json", "scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.md"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-28",
+      "done_commit": "f8fb4d6",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-28T13:26:25-03:00",
+      "active_s": 554,
+      "finished_at": "2026-10-28T13:35:39-03:00"
     },
     {
       "id": "REF-TASK-08",

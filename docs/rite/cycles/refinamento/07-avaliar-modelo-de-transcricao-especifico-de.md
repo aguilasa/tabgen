@@ -56,3 +56,36 @@ Execução (2026-10-28):
   números, formato do `run.py`; os relatórios principais ficam com a REF-TASK-08).
 
 ## Execution Log
+
+- **Closed** — commit `f8fb4d6` (2026-10-28): docs(eval): evaluate guitar-specific transcription models against Basic Pitch
+  - Files (`git show --name-status f8fb4d6`):
+    - `A docs/avaliacao/modelo-guitarra.md`
+    - `M docs/rite/cycles/refinamento/07-avaliar-modelo-de-transcricao-especifico-de.md`
+    - `M docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `A scripts/eval/candidates.py`
+    - `A scripts/eval/reports/candidates/basic-pitch/egdb-egdb.json`
+    - `A scripts/eval/reports/candidates/basic-pitch/egdb-egdb.md`
+    - `A scripts/eval/reports/candidates/basic-pitch/guitarset-guitarset.json`
+    - `A scripts/eval/reports/candidates/basic-pitch/guitarset-guitarset.md`
+    - `A scripts/eval/reports/candidates/riley-fl/egdb-egdb.json`
+    - `A scripts/eval/reports/candidates/riley-fl/egdb-egdb.md`
+    - `A scripts/eval/reports/candidates/riley-fl/guitarset-guitarset.json`
+    - `A scripts/eval/reports/candidates/riley-fl/guitarset-guitarset.md`
+    - `A scripts/eval/reports/candidates/riley-gaps/egdb-egdb.json`
+    - `A scripts/eval/reports/candidates/riley-gaps/egdb-egdb.md`
+    - `A scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.json`
+    - `A scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.md`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `scripts/eval/reports/candidates/basic-pitch/egdb-egdb.json`
+    - `scripts/eval/reports/candidates/basic-pitch/egdb-egdb.md`
+    - `scripts/eval/reports/candidates/basic-pitch/guitarset-guitarset.json`
+    - `scripts/eval/reports/candidates/basic-pitch/guitarset-guitarset.md`
+    - `scripts/eval/reports/candidates/riley-fl/egdb-egdb.json`
+    - `scripts/eval/reports/candidates/riley-fl/egdb-egdb.md`
+    - `scripts/eval/reports/candidates/riley-fl/guitarset-guitarset.json`
+    - `scripts/eval/reports/candidates/riley-fl/guitarset-guitarset.md`
+    - `scripts/eval/reports/candidates/riley-gaps/egdb-egdb.json`
+    - `scripts/eval/reports/candidates/riley-gaps/egdb-egdb.md`
+    - `scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.json`
+    - `scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.md`
