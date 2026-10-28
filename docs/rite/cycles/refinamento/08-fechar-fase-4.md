@@ -58,9 +58,8 @@ yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audi
 
 Encaminhado pela REF-TASK-04 (2026-10-28): documentar no README `--no-techniques` (técnicas ligadas por
 padrão) e as marcas ASCII `7b9`, `5/7`, `7\5`, `5h7`, `7p5` — com bend na partitura as células alargam
-e as marcas aparecem com `-` (ex.: `5h--7`). Comentário desatualizado em
-`tabgen/core/export/midi.py:37-38` continua pendente (edição recusada pelo sistema de permissões;
-decisão do usuário).
+e as marcas aparecem com `-` (ex.: `5h--7`). O comentário desatualizado em
+`tabgen/core/export/midi.py` já foi corrigido pela FIX-REF-001 (commit `4b2263e`).
 
 Encaminhado pela REF-TASK-05 (2026-10-28): README — `--guitar-type electric|nylon|steel` (programa GM
 27/24/25, casa máxima 24/19/20; programa padrão da guitarra mudou de 25 para 27), também em
@@ -73,5 +72,7 @@ Encaminhado pela REF-TASK-07 (2026-10-28): decisão em `docs/avaliacao/modelo-gu
 recomenda adotar Riley `guitar-gaps` em tarefa nova (decisão do usuário, ainda não tomada). Ao
 fechar a fase: citar o documento no README (limitações / roadmap) e atualizar o "Verificar se o
 código/pesos foram liberados" do plano (Estágio 4) com o resultado (pesos públicos, MIT).
+A REF-TASK-09 implementa `--transcriber riley` e decide o padrão: documentar a opção e a decisão no
+README.
 
 ## Execution Log
