@@ -134,3 +134,29 @@ Verificação (2026-10-28, thread principal, árvore do commit):
   `tabgen/core/export/ascii_tab.py` (já renderizava N cordas).
 
 ## Execution Log
+
+- **Closed** — commit `1814053` (2026-10-28): feat(export): support 5-string bass preset and guitar type (electric/nylon/steel)
+  - Files (`git show --name-status 1814053`):
+    - `M docs/rite/cycles/refinamento/05-suportar-baixo-de-5-cordas-e-violao-nylon-ou-aco.md`
+    - `M docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `M docs/rite/cycles/refinamento/FIX-REF-003.md`
+    - `M tabgen/cli/main.py`
+    - `M tabgen/core/export/gp5.py`
+    - `M tabgen/core/export/midi.py`
+    - `M tabgen/core/export/musicxml.py`
+    - `M tabgen/core/fretting/dp.py`
+    - `M tabgen/core/models.py`
+    - `M tabgen/core/pipeline.py`
+    - `M tests/test_ascii_tab.py`
+    - `M tests/test_fretting.py`
+    - `M tests/test_gp5_export.py`
+    - `M tests/test_midi_export.py`
+    - `M tests/test_musicxml_export.py`
+    - `M tests/test_tablature_pipeline.py`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `docs/rite/cycles/refinamento/FIX-REF-003.md`
+    - `tabgen/core/pipeline.py`
+    - `tests/test_midi_export.py`
+    - `tests/test_musicxml_export.py`
+    - `tests/test_tablature_pipeline.py`
