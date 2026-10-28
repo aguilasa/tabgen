@@ -160,3 +160,4 @@ Verificação (2026-10-28, thread principal, árvore do commit):
     - `tests/test_midi_export.py`
     - `tests/test_musicxml_export.py`
     - `tests/test_tablature_pipeline.py`
+- **Reviewed** (2026-10-28) at `90a141e`: no finding
