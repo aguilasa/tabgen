@@ -33,8 +33,8 @@ BEND_RANGE_SEMITONES = 2.0
 _PITCH_BEND_MAX = 8191
 _PITCH_BEND_MIN = -8192
 
-# Per-note bend data, parallel to NoteEvents.notes (see
-# tabgen.core.transcription.basic_pitch.TranscriptionResult.bends).
+# Per-note bend data, parallel to NoteEvents.notes (canonical source:
+# Note.bends on tabgen.core.models.Note).
 Bends = Sequence[Optional[Sequence[int]]]
 
 

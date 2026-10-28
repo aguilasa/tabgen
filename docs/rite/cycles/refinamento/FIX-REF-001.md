@@ -51,3 +51,20 @@ Falha agora; passa após o fix. Depois: `.venv/bin/ruff check .` verde e
 `sh "$RITE_HOME/bin/rite" check --quick --json` com 0 erros.
 
 ## Execution Log
+
+- 2026-10-28 — Triagem inline (`rite reproduce --all --cycle refinamento`): REPRODUCED.
+  `grep -n "TranscriptionResult" tabgen/core/export/midi.py` → linha 37 (comentário stale,
+  deslocado 1 linha desde a Evidência); `basic_pitch.py` confirma fonte canônica `Note.bends`
+  (linhas 81-84). Sintoma presente no HEAD.
+- 2026-10-28 — Fix aplicado. Antes: `grep -q "TranscriptionResult.bends" tabgen/core/export/midi.py`
+  saía com 0 (controle `! grep -q …` falhava). Comentário das linhas 36-37 reescrito para apontar
+  a fonte canônica `Note.bends` (`tabgen.core.models.Note`); só comentário, sem mudança de
+  comportamento. Depois: `! grep -q "TranscriptionResult.bends" tabgen/core/export/midi.py` passa
+  (exit 0) e `grep -n "Note.bends"` → linha 37. Gates: `.venv/bin/ruff check .` → "All checks
+  passed!"; `.venv/bin/pytest -q` → 213 passed, 11 warnings. Sweep de `TranscriptionResult.bends`
+  no repositório: hits restantes só em docs históricos do Rite (fundacao-mvp/06, refinamento/01 e
+  04), que relatam o estado da época — nada a corrigir.
+- 2026-10-28 — Verificação final na árvore do commit:
+  `! grep -q "TranscriptionResult.bends" tabgen/core/export/midi.py` passa;
+  `.venv/bin/ruff check .` → All checks passed!; `.venv/bin/pytest -q` → 213 passed;
+  `rite gates --id FIX-REF-001` → passed.
