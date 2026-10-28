@@ -53,3 +53,12 @@ Sai 1 agora; deve sair 0 após o fix. Depois:
 `sh "$RITE_HOME/bin/rite" check --quick --json` com 0 erros.
 
 ## Execution Log
+
+- 2026-10-28 — Triagem inline (`rite reproduce --all --cycle refinamento`): REPRODUCED.
+  `git show --name-only d0d38b4 | grep -x ".gitignore"` → vazio, exit 1 (commit da task não toca
+  o arquivo); `git log --oneline -1 -- .gitignore` → `64f438b` (TAB-TASK-08). `.gitignore` segue
+  declarado em `files` da REF-TASK-06 sem ter sido tocado.
+- 2026-10-28 — Fix aplicado inline (trabalho é bookkeeping via CLI, vedado a workers):
+  `rite set REF-TASK-06 --files …` com a lista atual sem `.gitignore` (12 entradas de
+  scripts/eval + tests). Verificação: script da seção sai 0 (`.gitignore` ausente de
+  `item.files`); `rite check --quick` → errors: 0, warnings: 0.

@@ -124,7 +124,7 @@
       "phase": 4,
       "depends_on": [],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#6",
-      "files": ["scripts/eval/__init__.py", "scripts/eval/run.py", "scripts/eval/metrics.py", "scripts/eval/subsets/guitarset.txt", "scripts/eval/subsets/egdb.txt", "tests/test_eval_metrics.py", ".gitignore", "scripts/eval/download.py", "scripts/eval/loaders.py", "scripts/eval/reports/egdb-egdb.json", "scripts/eval/reports/egdb-egdb.md", "scripts/eval/reports/guitarset-guitarset.json", "scripts/eval/reports/guitarset-guitarset.md"],
+      "files": ["scripts/eval/__init__.py", "scripts/eval/run.py", "scripts/eval/metrics.py", "scripts/eval/subsets/guitarset.txt", "scripts/eval/subsets/egdb.txt", "tests/test_eval_metrics.py", "scripts/eval/download.py", "scripts/eval/loaders.py", "scripts/eval/reports/egdb-egdb.json", "scripts/eval/reports/egdb-egdb.md", "scripts/eval/reports/guitarset-guitarset.json", "scripts/eval/reports/guitarset-guitarset.md"],
       "resources": [],
       "status": "done",
       "done_on": "2026-10-28",
