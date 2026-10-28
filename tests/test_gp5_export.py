@@ -281,3 +281,36 @@ def test_link_effect_goes_on_the_last_tied_chunk(tmp_path):
     assert (2, 2, tie, True, False) in notes
     assert (1, 3, normal, False, True) in notes
     assert (2, 3, tie, False, False) in notes
+
+
+def test_five_string_bass_track_keeps_five_strings_and_tuning(tmp_path):
+    from tabgen.core.models import BASS_FIVE_STRING_TUNING
+
+    bass = TabScore(
+        instrument="bass",
+        tuning_midi=list(BASS_FIVE_STRING_TUNING),
+        tempo_bpm=100.0,
+        events=[_note(5, 0, measure=1, beat=1), _note(4, 3, measure=1, beat=2)],
+    )
+    out = export_gp5(bass, tmp_path / "bass5.gp5")
+    song = guitarpro.parse(str(out))
+    (track,) = song.tracks
+    assert len(track.strings) == 5
+    # String 1 = highest: G2 D2 A1 E1 B0.
+    assert [s.value for s in track.strings] == [43, 38, 33, 28, 23]
+    assert _read_notes(track, QUARTER)[:2] == [(5, 0, 1, 1), (4, 3, 1, 2)]
+    assert track.channel.instrument == 33
+
+
+@pytest.mark.parametrize(
+    ("instrument_type", "program"),
+    [("nylon", 24), ("steel", 25), ("electric", 27), ("", 27)],
+)
+def test_guitar_type_sets_the_track_program(tmp_path, instrument_type, program):
+    score = TabScore(
+        instrument="guitar",
+        instrument_type=instrument_type,
+        events=[_note(1, 0, measure=1, beat=1)],
+    )
+    out = export_gp5(score, tmp_path / "g.gp5")
+    assert guitarpro.parse(str(out)).tracks[0].channel.instrument == program

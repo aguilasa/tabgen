@@ -118,13 +118,51 @@ class NoteEvents(_JsonMixin):
 
 # Version of the TabScore schema; bump on schema changes so cache keys of
 # the tablature stage can invalidate stale payloads (consumed by caching).
-# Version 2 added ``TabNote.technique``.
-TAB_FORMAT_VERSION = 2
+# Version 2 added ``TabNote.technique``; version 3 added
+# ``TabScore.instrument_type``.
+TAB_FORMAT_VERSION = 3
 
 # Tuning presets: open-string MIDI pitches ordered low-to-high
 # (index 0 = lowest-pitched/thickest string).
 GUITAR_STANDARD_TUNING = [40, 45, 50, 55, 59, 64]  # E2 A2 D3 G3 B3 E4
 BASS_STANDARD_TUNING = [28, 33, 38, 43]  # E1 A1 D2 G2
+BASS_FIVE_STRING_TUNING = [23, 28, 33, 38, 43]  # B0 E1 A1 D2 G2
+
+# Guitar types carried by ``TabScore.instrument_type`` for the guitar.
+GUITAR_ELECTRIC = "electric"
+GUITAR_NYLON = "nylon"
+GUITAR_STEEL = "steel"
+GUITAR_TYPES = (GUITAR_ELECTRIC, GUITAR_NYLON, GUITAR_STEEL)
+DEFAULT_GUITAR_TYPE = GUITAR_ELECTRIC
+
+# General MIDI programs (0-based) per instrument and instrument type, shared
+# by every exporter: 24 = Acoustic Guitar (nylon), 25 = Acoustic Guitar
+# (steel), 27 = Electric Guitar (clean) — clean rather than overdriven (29)
+# because the transcription cannot tell distortion apart — and
+# 33 = Electric Bass (finger). The "" entry is the instrument's default type.
+GM_PROGRAMS: dict[str, dict[str, int]] = {
+    "guitar": {
+        "": 27,
+        GUITAR_ELECTRIC: 27,
+        GUITAR_NYLON: 24,
+        GUITAR_STEEL: 25,
+    },
+    "bass": {"": 33},
+}
+# Fallback for unknown instruments: 0 = Acoustic Grand Piano.
+GM_DEFAULT_PROGRAM = 0
+
+
+def gm_program(instrument: str, instrument_type: str = "") -> int:
+    """General MIDI program (0-based) of ``instrument`` / ``instrument_type``.
+
+    Unknown types fall back to the instrument's default type; unknown
+    instruments to :data:`GM_DEFAULT_PROGRAM`.
+    """
+    programs = GM_PROGRAMS.get(instrument)
+    if programs is None:
+        return GM_DEFAULT_PROGRAM
+    return programs.get(instrument_type, programs[""])
 
 
 # Guitar technique kinds carried by ``Technique.kind``.
@@ -244,6 +282,11 @@ class TabScore(_JsonMixin):
     """Output of the fretting stage: notes placed on string/fret over a grid."""
 
     instrument: str = "guitar"
+    # Physical kind of the instrument, which picks the exporters' General
+    # MIDI program (see :func:`gm_program`): for the guitar one of
+    # :data:`GUITAR_TYPES`; "" = the instrument's default type (electric
+    # guitar, finger bass). Payloads predating the field load "".
+    instrument_type: str = ""
     # Open-string MIDI pitches, low-to-high; length is the string count.
     tuning_midi: list[int] = field(default_factory=lambda: list(GUITAR_STANDARD_TUNING))
     capo_fret: int = 0

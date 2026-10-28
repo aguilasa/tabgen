@@ -1,7 +1,9 @@
 """Export TabScore(s) to a Guitar Pro 5 (.gp5) file via PyGuitarPro.
 
 One track is written per :class:`~tabgen.core.models.TabScore` (e.g. guitar
-and bass), carrying its tuning, capo (GP5 track ``offset``), BPM, key
+and bass), carrying its tuning (any string count, e.g. a 5-string bass),
+capo (GP5 track ``offset``), General MIDI program (from ``instrument`` and
+``instrument_type`` via :func:`~tabgen.core.models.gm_program`), BPM, key
 signature and time signature. Notes are placed at string/fret with durations
 quantized on the score grid; gaps are filled with rests so every measure sums
 exactly to the time signature. Chord labels are annotated on the first beat
@@ -50,15 +52,11 @@ from tabgen.core.models import (
     TECHNIQUE_SLIDE,
     TabScore,
     Technique,
+    gm_program,
 )
 
 # Ticks of a whole note on the Guitar Pro grid (quarter = 960).
 _WHOLE_TICKS = gp.Duration.quarterTime * 4
-
-# General MIDI programs per instrument; matches GM_PROGRAMS in
-# tabgen.core.export.midi (25 = steel guitar, 33 = finger bass).
-_GM_PROGRAMS: dict[str, int] = {"guitar": 25, "bass": 33}
-_DEFAULT_PROGRAM = 25
 
 # Chord label meaning "no chord" in Harte notation; never annotated.
 _NO_CHORD = "N"
@@ -411,8 +409,8 @@ def export_gp5(
             for position, pitch in enumerate(reversed(score.tuning_midi))
         ]
         track.offset = score.capo_fret  # GP5 capo
-        track.channel.instrument = _GM_PROGRAMS.get(
-            score.instrument, _DEFAULT_PROGRAM
+        track.channel.instrument = gm_program(
+            score.instrument, score.instrument_type
         )
         track.channel.channel = index * 2
         track.channel.effectChannel = index * 2 + 1

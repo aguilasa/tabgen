@@ -103,3 +103,56 @@ def test_velocity_is_clamped_to_midi_range(tmp_path: Path) -> None:
         m.velocity for m in _messages(path, "note_on") if m.velocity > 0
     )
     assert velocities == [1, 127]
+
+
+@pytest.mark.parametrize(
+    ("instrument", "instrument_type", "program"),
+    [("guitar", "nylon", 24), ("guitar", "steel", 25), ("guitar", "", 27),
+     ("bass", "", 33)],
+)
+def test_instrument_type_sets_the_gm_program(
+    tmp_path: Path, instrument: str, instrument_type: str, program: int
+) -> None:
+    events = NoteEvents(
+        notes=[Note(pitch_midi=52, start_s=0.0, end_s=0.5)], instrument=instrument
+    )
+    path = midi_export.export_midi(
+        events, tmp_path / "x.mid", instrument_type=instrument_type
+    )
+    assert [m.program for m in _messages(path, "program_change")] == [program]
+
+
+def test_run_transcription_guitar_type_reaches_the_midi_file(tmp_path: Path) -> None:
+    """`tabgen transcribe --guitar-type nylon` path: guitar file gets program
+    24, the bass file keeps 33 (stages injected, real MIDI exporter)."""
+    from tabgen.core.models import SeparationResult
+    from tabgen.core.pipeline import PipelineError, run_transcription
+    from tabgen.core.transcription.basic_pitch import TranscriptionResult
+
+    audio = tmp_path / "song.wav"
+    audio.touch()
+    stems = {name: str(tmp_path / f"{name}.wav") for name in ("guitar", "bass")}
+
+    def separate(input_path, device=None, on_progress=None):
+        return SeparationResult(stems=stems), True
+
+    def transcribe(input_path, instrument="guitar", on_progress=None):
+        events = NoteEvents(
+            notes=[Note(pitch_midi=45, start_s=0.0, end_s=0.5)],
+            instrument=instrument,
+        )
+        return TranscriptionResult(note_events=events), False
+
+    summary = run_transcription(
+        audio, separate_fn=separate, transcribe_fn=transcribe, guitar_type="nylon"
+    )
+    programs = {
+        item.instrument: [m.program for m in _messages(Path(item.midi_path),
+                                                       "program_change")]
+        for item in summary.instruments
+    }
+    assert programs == {"guitar": [24], "bass": [33]}
+    with pytest.raises(PipelineError, match="unknown guitar type"):
+        run_transcription(
+            audio, separate_fn=separate, transcribe_fn=transcribe, guitar_type="harp"
+        )

@@ -34,6 +34,10 @@ Conventions (mirroring the gp5 exporter):
 - Harte chord labels (e.g. ``A:min``) map to music21 chord symbols on the
   first beat of their measure; ``N`` (no chord) and unknown labels are
   skipped.
+- Each part carries a MIDI instrument whose General MIDI program comes from
+  ``instrument`` and ``instrument_type`` (:func:`~tabgen.core.models.gm_program`;
+  MusicXML writes it 1-based, e.g. ``<midi-program>25</midi-program>`` for
+  program 24, nylon guitar).
 
 This module is pure core: no print/typer/rich.
 """
@@ -48,6 +52,7 @@ from typing import Sequence
 from music21 import articulations as m21articulations
 from music21 import chord as m21chord
 from music21 import harmony as m21harmony
+from music21 import instrument as m21instrument
 from music21 import interval as m21interval
 from music21 import key as m21key
 from music21 import metadata as m21metadata
@@ -66,6 +71,7 @@ from tabgen.core.models import (
     TECHNIQUE_SLIDE,
     TabScore,
     Technique,
+    gm_program,
 )
 
 # Internal tick grid, mirroring the gp5 exporter (quarter note = 960 ticks).
@@ -336,6 +342,11 @@ def _build_part(
     n_strings = len(score.tuning_midi)
     part = m21stream.Part()
     part.partName = score.instrument
+    midi_instrument = m21instrument.Instrument()
+    midi_instrument.partName = score.instrument
+    midi_instrument.instrumentName = score.instrument
+    midi_instrument.midiProgram = gm_program(score.instrument, score.instrument_type)
+    part.insert(0, midi_instrument)
     chains: dict[int, list[m21note.NotRest]] = {}
     chain_notes: dict[int, list[tuple[int, int, Technique | None]]] = {}
 

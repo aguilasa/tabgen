@@ -58,4 +58,7 @@ ffmpeg -y -f lavfi -i "sine=frequency=220:duration=10" -q:a 2 /tmp/x/sample.mp3 
 Falha hoje no export (exit 2); deve sair 0 após o fix — ou, se o fix for no profile, o comando
 corrigido do profile deve sair 0.
 
+Nota (2026-10-28): o preset `five-string` em `--bass-tuning` entrou com a REF-TASK-05 (commit desta
+task); falta rodar a Verificação desta fix (usa Demucs real).
+
 ## Execution Log

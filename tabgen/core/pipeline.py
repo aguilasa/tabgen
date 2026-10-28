@@ -19,6 +19,7 @@ from typing import Callable, Mapping, Optional, Protocol, Sequence
 
 from tabgen.core.cache import StageCache
 from tabgen.core.models import (
+    DEFAULT_GUITAR_TYPE,
     TAB_FORMAT_VERSION,
     AnalysisResult,
     ChordSegment,
@@ -60,7 +61,9 @@ class _TranscribeFn(Protocol):
 
 
 class _ExportFn(Protocol):
-    def __call__(self, note_events, output_path: Path, bends=None) -> Path: ...
+    def __call__(
+        self, note_events, output_path: Path, bends=None, **kwargs
+    ) -> Path: ...
 
 
 class _BeatsFn(Protocol):
@@ -118,6 +121,7 @@ def run_transcription(
     separate_fn: _SeparateFn | None = None,
     transcribe_fn: _TranscribeFn | None = None,
     export_fn: _ExportFn | None = None,
+    guitar_type: str | None = None,
 ) -> TranscriptionSummary:
     """Separate the input, transcribe each instrument's stem, export MIDI.
 
@@ -130,10 +134,15 @@ def run_transcription(
 
     ``separate_fn`` / ``transcribe_fn`` / ``export_fn`` default to the real
     stages and exist for dependency injection in tests.
+
+    ``guitar_type`` (one of ``models.GUITAR_TYPES``) picks the General MIDI
+    program of the guitar file (e.g. ``"nylon"`` = 24); ``None`` keeps the
+    exporter's default (electric guitar).
     """
     input_path = Path(input_path)
     if not instruments:
         raise PipelineError("no instruments requested")
+    _check_guitar_type(guitar_type)
 
     if separate_fn is None:
         from tabgen.core.separation.demucs import separate as separate_fn
@@ -170,10 +179,14 @@ def run_transcription(
         export_stage = f"export:{instrument}"
         on_progress(export_stage, 0.0)
         midi_path = target_dir / f"{input_path.stem}.{instrument}.mid"
+        export_kwargs = {}
+        if instrument == "guitar" and guitar_type is not None:
+            export_kwargs["instrument_type"] = guitar_type
         export_fn(
             result.note_events,
             midi_path,
             bends=[note.bends for note in result.note_events.notes],
+            **export_kwargs,
         )
         on_progress(export_stage, 100.0)
 
@@ -323,8 +336,9 @@ TABLATURE_STAGE = "tablature"
 # event ordering, cached payload layout). Bump it whenever that logic
 # changes so cached TabScores are recomputed.
 # Revision 2 runs the technique detectors (bends/slides, then legato) on the
-# fretted events.
-TABLATURE_PIPELINE_REVISION = 2
+# fretted events; revision 3 sets ``TabScore.instrument_type`` from the
+# guitar type.
+TABLATURE_PIPELINE_REVISION = 3
 
 TABLATURE_INSTRUMENTS = ("guitar", "bass")
 
@@ -340,6 +354,7 @@ TUNING_PRESETS: dict[str, dict[str, list[int]]] = {
         "standard": [28, 33, 38, 43],
         "drop-d": [26, 33, 38, 43],
         "half-step-down": [27, 32, 37, 42],
+        "five-string": [23, 28, 33, 38, 43],
     },
 }
 
@@ -455,19 +470,37 @@ class TablatureSummary:
     unassigned: dict[str, int] = field(default_factory=dict)
 
 
+def _check_guitar_type(guitar_type: str | None) -> None:
+    """Raise PipelineError unless ``guitar_type`` is None or a known type."""
+    from tabgen.core.models import GUITAR_TYPES
+
+    if guitar_type is not None and guitar_type not in GUITAR_TYPES:
+        raise PipelineError(
+            f"unknown guitar type {guitar_type!r}; choose one of "
+            f"{', '.join(GUITAR_TYPES)}"
+        )
+
+
 def _fretting_configs(
     instruments: Sequence[str],
     tunings: Mapping[str, Sequence[int]],
     capos: Mapping[str, int],
+    guitar_type: str = DEFAULT_GUITAR_TYPE,
 ):
-    from tabgen.core.fretting import FrettingConfig
+    """Per-instrument FrettingConfig; the guitar's max fret follows its type."""
+    from tabgen.core.fretting import FrettingConfig, guitar_config
 
-    return {
-        name: FrettingConfig(
-            tuning_midi=list(tunings[name]), capo_fret=int(capos.get(name, 0))
-        )
-        for name in instruments
-    }
+    configs = {}
+    for name in instruments:
+        tuning = list(tunings[name])
+        capo = int(capos.get(name, 0))
+        if name == "guitar":
+            configs[name] = guitar_config(
+                guitar_type, tuning_midi=tuning, capo_fret=capo
+            )
+        else:
+            configs[name] = FrettingConfig(tuning_midi=tuning, capo_fret=capo)
+    return configs
 
 
 def _techniques_tag(techniques: bool) -> str:
@@ -487,15 +520,22 @@ def _techniques_tag(techniques: bool) -> str:
     return f"tech-{digest}"
 
 
-def tablature_version(configs: Mapping[str, object], techniques: bool = True) -> str:
+def tablature_version(
+    configs: Mapping[str, object],
+    techniques: bool = True,
+    guitar_type: str = DEFAULT_GUITAR_TYPE,
+) -> str:
     """Cache version of the tablature stage for the given fretting configs.
 
     Pins the TabScore contract (``TAB_FORMAT_VERSION``), this assembly's
     revision, every upstream model (analysis, Basic Pitch), the Note
     contract revision, a digest of the per-instrument fretting parameters
-    (tuning, capo, weights) and the technique switch (``tech-off``, or a
-    digest of the bend/slide and legato detector thresholds), so changing
-    any of them recomputes the tablature.
+    (tuning — hence the string count, e.g. the 5-string bass preset —,
+    capo, max fret, weights), the guitar type (``gtype-...``: it is stored
+    in ``TabScore.instrument_type`` even when two types share a max fret)
+    and the technique switch (``tech-off``, or a digest of the bend/slide
+    and legato detector thresholds), so changing any of them recomputes the
+    tablature.
     """
     import hashlib
     import json
@@ -511,7 +551,7 @@ def tablature_version(configs: Mapping[str, object], techniques: bool = True) ->
     return (
         f"tab-{TAB_FORMAT_VERSION}+rev-{TABLATURE_PIPELINE_REVISION}"
         f"+{analysis_version()}+{BP_VERSION}+note-{NOTE_CONTRACT_REVISION}"
-        f"+params-{digest}+{_techniques_tag(techniques)}"
+        f"+params-{digest}+gtype-{guitar_type}+{_techniques_tag(techniques)}"
     )
 
 
@@ -607,6 +647,7 @@ def run_tablature(
     analysis_fn: _AnalysisFn | None = None,
     fretting_fn: _FrettingFn | None = None,
     techniques: bool = True,
+    guitar_type: str = DEFAULT_GUITAR_TYPE,
 ) -> TablatureSummary:
     """Build guitar/bass tablature for the input and export it.
 
@@ -635,8 +676,15 @@ def run_tablature(
     already set), so exporters write bends, slides, hammer-ons and
     pull-offs. When off, every ``TabNote.technique`` stays ``None`` and the
     output carries no effect. The switch is part of the cache version.
+
+    ``guitar_type`` (one of ``models.GUITAR_TYPES``: electric, nylon,
+    steel) sets the guitar's fretting limits (max fret, see
+    ``fretting.dp.GUITAR_MAX_FRETS``) and its ``TabScore.instrument_type``,
+    from which the exporters take the General MIDI program. It is part of
+    the cache version.
     """
     input_path = Path(input_path)
+    _check_guitar_type(guitar_type)
     if not input_path.is_file():
         raise PipelineError(f"input audio not found: {input_path}")
     instruments = tuple(instruments)
@@ -659,8 +707,10 @@ def run_tablature(
     capos = dict(capos or {})
     for name in instruments:
         tunings.setdefault(name, resolve_tuning(None, name))
-    configs = _fretting_configs(instruments, tunings, capos)
-    version = tablature_version(configs, techniques=techniques)
+    configs = _fretting_configs(instruments, tunings, capos, guitar_type)
+    version = tablature_version(
+        configs, techniques=techniques, guitar_type=guitar_type
+    )
 
     summary = None
     cached = cache.get(TABLATURE_STAGE, version)
@@ -697,6 +747,7 @@ def run_tablature(
             analysis_fn,
             fretting_fn,
             techniques,
+            guitar_type,
         )
         cache.put(
             TABLATURE_STAGE,
@@ -813,6 +864,7 @@ def _compute_tablature(
     analysis_fn: _AnalysisFn | None,
     fretting_fn: _FrettingFn | None,
     techniques: bool = True,
+    guitar_type: str = DEFAULT_GUITAR_TYPE,
 ) -> TablatureSummary:
     """Run every upstream stage and assemble the TabScores (cache miss)."""
     from dataclasses import asdict
@@ -935,6 +987,7 @@ def _compute_tablature(
         summary.scores.append(
             TabScore(
                 instrument=name,
+                instrument_type=guitar_type if name == "guitar" else "",
                 tuning_midi=list(config.tuning_midi),
                 capo_fret=config.capo_fret,
                 tempo_bpm=analysis.tempo_bpm,

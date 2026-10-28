@@ -470,3 +470,92 @@ def test_cli_no_techniques_writes_no_effect(tmp_path, monkeypatch):
     assert result.exit_code == 0, result.output
     assert "2 technique(s)" in result.output
     assert any(any(fx) for fx in _gp5_effects(styled))
+
+
+def test_five_string_bass_preset_and_guitar_type_reach_the_gp5(tmp_path):
+    """`--bass-tuning five-string --guitar-type nylon`: a 5-string bass track
+    tuned B0 E1 A1 D2 G2 and a guitar track with GM program 24; both choices
+    change the cache version."""
+    write_input(tmp_path)
+    calls: list[str] = []
+    five = resolve_tuning("five-string", "bass")
+    assert five == [23, 28, 33, 38, 43]
+    out = tmp_path / "typed.gp5"
+    summary = run_with_fakes(
+        tmp_path, out, calls, tunings={"bass": five}, guitar_type="nylon"
+    )
+    assert summary.cache_hit is False
+    guitar, bass = summary.scores
+    assert guitar.instrument_type == "nylon" and bass.instrument_type == ""
+    assert bass.tuning_midi == five
+    song = guitarpro.parse(str(out))
+    assert [len(t.strings) for t in song.tracks] == [6, 5]
+    assert [s.value for s in song.tracks[1].strings] == [43, 38, 33, 28, 23]
+    assert [t.channel.instrument for t in song.tracks] == [24, 33]
+
+    calls.clear()
+    steel = run_with_fakes(
+        tmp_path, tmp_path / "steel.gp5", calls, tunings={"bass": five},
+        guitar_type="steel",
+    )
+    assert steel.cache_hit is False and "transcribe:guitar" in calls
+    with pytest.raises(PipelineError, match="unknown guitar type"):
+        run_with_fakes(tmp_path, tmp_path / "x.gp5", calls, guitar_type="harp")
+
+
+def test_tablature_version_pins_guitar_type_and_bass_strings():
+    tunings = {"guitar": resolve_tuning(None, "guitar"),
+               "bass": resolve_tuning(None, "bass")}
+    base = pipeline._fretting_configs(["guitar", "bass"], tunings, {})
+    nylon = pipeline._fretting_configs(["guitar", "bass"], tunings, {}, "nylon")
+    assert nylon["guitar"].max_fret == 19 and base["guitar"].max_fret == 24
+    five = pipeline._fretting_configs(
+        ["guitar", "bass"],
+        {**tunings, "bass": resolve_tuning("five-string", "bass")},
+        {},
+    )
+    versions = {
+        pipeline.tablature_version(base),
+        pipeline.tablature_version(nylon, guitar_type="nylon"),
+        pipeline.tablature_version(five),
+        # Same configs, other type: the gtype tag alone changes the version.
+        pipeline.tablature_version(base, guitar_type="steel"),
+    }
+    assert len(versions) == 4
+
+
+def test_cli_guitar_type_and_five_string_bass(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from tabgen.cli.main import app
+
+    audio = write_input(tmp_path)
+    separate, analysis, transcribe = make_fakes(tmp_path, [])
+    real_run = pipeline.run_tablature
+
+    def injected(*args, **kwargs):
+        return real_run(
+            *args,
+            separate_fn=separate,
+            analysis_fn=analysis,
+            transcribe_fn=transcribe,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(pipeline, "run_tablature", injected)
+    runner = CliRunner()
+    out = tmp_path / "cli.gp5"
+    result = runner.invoke(
+        app,
+        ["export", str(audio), "-o", str(out), "--guitar-type", "nylon",
+         "--bass-tuning", "five-string"],
+    )
+    assert result.exit_code == 0, result.output
+    assert "guitar (nylon)" in result.output
+    song = guitarpro.parse(str(out))
+    assert [t.channel.instrument for t in song.tracks] == [24, 33]
+    assert len(song.tracks[1].strings) == 5
+
+    bad = runner.invoke(app, ["export", str(audio), "--guitar-type", "harp"])
+    assert bad.exit_code == 2
+    assert "unknown guitar type" in bad.output

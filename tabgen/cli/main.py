@@ -141,6 +141,12 @@ def transcribe(
         "--device",
         help="Device for Demucs: cuda or cpu (default: autodetect).",
     ),
+    guitar_type: Optional[str] = typer.Option(
+        None,
+        "--guitar-type",
+        help="Guitar type: electric, nylon or steel; sets the General MIDI "
+        "program of the guitar file (default: electric, program 27).",
+    ),
 ) -> None:
     """Transcribe the audio into one MIDI file per instrument."""
     from tabgen.core.pipeline import PipelineError, run_transcription
@@ -170,6 +176,7 @@ def transcribe(
                 device=device,
                 output_dir=output_dir,
                 on_progress=on_progress,
+                guitar_type=guitar_type.strip().lower() if guitar_type else None,
             )
         except (PipelineError, SeparationError, TranscriptionError) as err:
             progress.stop()
@@ -308,8 +315,15 @@ def export(
     bass_tuning: Optional[str] = typer.Option(
         None,
         "--bass-tuning",
-        help="Bass tuning: a preset (standard, drop-d, half-step-down) or "
-        "notes low-to-high, e.g. E1,A1,D2,G2.",
+        help="Bass tuning: a preset (standard, drop-d, half-step-down, "
+        "five-string = B0,E1,A1,D2,G2) or notes low-to-high, e.g. E1,A1,D2,G2.",
+    ),
+    guitar_type: str = typer.Option(
+        "electric",
+        "--guitar-type",
+        help="Guitar type: electric, nylon or steel. Sets the General MIDI "
+        "program of the guitar track (27 clean electric, 24 nylon, 25 steel) "
+        "and the highest fret used (24, 19, 20).",
     ),
     capo: int = typer.Option(
         0,
@@ -333,6 +347,7 @@ def export(
     """Generate tablature (Guitar Pro 5, MusicXML or ASCII) from the audio."""
     from tabgen.core.analysis.beats import BeatAnalysisError
     from tabgen.core.analysis.harmony import HarmonyError
+    from tabgen.core.models import DEFAULT_GUITAR_TYPE, GUITAR_TYPES
     from tabgen.core.pipeline import (
         PipelineError,
         resolve_export_format,
@@ -348,6 +363,12 @@ def export(
             output if output is not None else audio.parent / f"{audio.stem}.gp5"
         )
         out_format = resolve_export_format(out_path, fmt)
+        guitar_type = guitar_type.strip().lower()
+        if guitar_type not in GUITAR_TYPES:
+            raise PipelineError(
+                f"unknown guitar type {guitar_type!r}; choose one of "
+                f"{', '.join(GUITAR_TYPES)}"
+            )
         tunings = {}
         if "guitar" in wanted:
             tunings["guitar"] = resolve_tuning(tuning, "guitar")
@@ -382,6 +403,7 @@ def export(
                 device=device,
                 on_progress=on_progress,
                 techniques=techniques,
+                guitar_type=guitar_type,
             )
         except (
             PipelineError,
@@ -410,8 +432,10 @@ def export(
         if techniques:
             marked = sum(1 for event in score.events if event.technique is not None)
             extra += f", {marked} technique(s)"
+        shown_type = score.instrument_type not in ("", DEFAULT_GUITAR_TYPE)
+        kind = f" ({score.instrument_type})" if shown_type else ""
         console.print(
-            f"  {score.instrument}: {len(score.events)} notes, "
+            f"  {score.instrument}{kind}: {len(score.events)} notes, "
             f"tuning {score.tuning_midi}, capo {score.capo_fret}{extra}"
         )
     console.print(

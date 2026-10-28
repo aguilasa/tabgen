@@ -101,3 +101,48 @@ def test_capo_shifts_candidates():
     result = assign_frets(_melody([42]), config)  # low E + capo 2 = F#2
     assert len(result.assignments) == 1
     assert (result.assignments[0].string, result.assignments[0].fret) == (6, 0)
+
+
+def test_five_string_bass_places_low_b_open_on_string_five():
+    from tabgen.core.fretting.dp import five_string_bass_config
+
+    line = _melody([23, 28, 33])  # B0 E1 A1
+    result = assign_frets(line, five_string_bass_config())
+    assert not result.unassigned
+    low_b = result.assignments[0]
+    assert (low_b.note.pitch_midi, low_b.string, low_b.fret) == (23, 5, 0)
+
+    four = assign_frets(line, bass_config())
+    assert [u.note.pitch_midi for u in four.unassigned] == [23]
+    assert "not playable" in four.unassigned[0].reason
+    assert all(fn.note.pitch_midi != 23 for fn in four.assignments)
+
+
+def test_guitar_type_sets_max_fret():
+    from tabgen.core.fretting.dp import GUITAR_MAX_FRETS
+
+    assert GUITAR_MAX_FRETS == {"electric": 24, "steel": 20, "nylon": 19}
+    assert guitar_config().max_fret == 24  # default: electric
+    assert guitar_config("nylon").max_fret == 19
+    assert guitar_config("steel").max_fret == 20
+    # E6 (88) needs fret 24 on the high e: playable on electric only.
+    assert not assign_frets(_melody([88]), guitar_config("electric")).unassigned
+    nylon = assign_frets(_melody([88]), guitar_config("nylon"))
+    assert [u.note.pitch_midi for u in nylon.unassigned] == [88]
+
+
+def test_sparse_line_is_not_pushed_above_the_twelfth_fret():
+    # Regression (REF-TASK-04 finding): with the string-index preference
+    # alone this D4 A4 B4 E4 line landed at frets 21-24 on the low strings.
+    notes = [
+        Note(62, 0.5, 0.95),
+        Note(69, 1.0, 1.25),
+        Note(71, 1.25, 1.45),
+        Note(64, 2.0, 2.45),
+    ]
+    chords = [ChordSegment(start_s=0.0, end_s=3.0, label="E:min")]
+    for prior in (None, chords):
+        result = assign_frets(notes, guitar_config(), chords=prior)
+        assert not result.unassigned
+        frets = [fn.fret for fn in result.assignments]
+        assert max(frets) <= 12, frets

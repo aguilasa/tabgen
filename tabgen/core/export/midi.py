@@ -20,12 +20,11 @@ from typing import Optional, Sequence
 
 import pretty_midi
 
-from tabgen.core.models import NoteEvents
+from tabgen.core.models import NoteEvents, gm_program
 
-# General MIDI program numbers (0-based): 25 = Acoustic Guitar (steel),
-# 33 = Electric Bass (finger). Unknown instruments fall back to 0 (piano).
-GM_PROGRAMS: dict[str, int] = {"guitar": 25, "bass": 33}
-DEFAULT_PROGRAM = 0
+# General MIDI programs come from tabgen.core.models.gm_program (shared with
+# the gp5 and MusicXML exporters): by default 27 = Electric Guitar (clean),
+# 33 = Electric Bass (finger); unknown instruments fall back to 0 (piano).
 
 # Basic Pitch bend bins are thirds of a semitone.
 BEND_BIN_SEMITONES = 1.0 / 3.0
@@ -77,11 +76,15 @@ def export_midi(
     note_events: NoteEvents,
     output_path: str | Path,
     bends: Bends | None = None,
+    instrument_type: str = "",
 ) -> Path:
     """Write ``note_events`` as a single-instrument MIDI file.
 
     ``bends`` (optional) must run parallel to ``note_events.notes``; each
     entry is a list of Basic Pitch 1/3-semitone bend bins or ``None``.
+    ``instrument_type`` (e.g. ``"nylon"`` for the guitar, see
+    ``models.GUITAR_TYPES``) picks the General MIDI program together with
+    ``note_events.instrument``; "" = the instrument's default type.
     Returns the path of the written file.
     """
     notes = note_events.notes
@@ -91,7 +94,7 @@ def export_midi(
         )
 
     midi = pretty_midi.PrettyMIDI()
-    program = GM_PROGRAMS.get(note_events.instrument, DEFAULT_PROGRAM)
+    program = gm_program(note_events.instrument, instrument_type)
     instrument = pretty_midi.Instrument(
         program=program, name=note_events.instrument
     )

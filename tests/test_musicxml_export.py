@@ -217,3 +217,26 @@ def test_link_technique_without_next_note_is_dropped(tmp_path):
     path = export_musicxml(TabScore(events=[last, other]), tmp_path / "x.musicxml")
     xml = path.read_text(encoding="utf-8")
     assert "hammer-on" not in xml and "<slide" not in xml
+
+
+def test_guitar_type_sets_the_part_midi_program(tmp_path):
+    from tabgen.core.models import GUITAR_NYLON
+
+    guitar = TabScore(
+        instrument="guitar",
+        instrument_type=GUITAR_NYLON,
+        events=[_note(1, 0, measure=1, beat=1)],
+    )
+    bass = TabScore(
+        instrument="bass",
+        tuning_midi=list(BASS_STANDARD_TUNING),
+        events=[_note(4, 0, measure=1, beat=1)],
+    )
+    out = export_musicxml([guitar, bass], tmp_path / "typed.musicxml")
+    text = out.read_text(encoding="utf-8")
+    # MusicXML programs are 1-based: 25 = GM 24 (nylon), 34 = GM 33 (bass).
+    assert "<midi-program>25</midi-program>" in text
+    assert "<midi-program>34</midi-program>" in text
+    parsed = converter.parse(str(out))
+    assert [p.getInstrument().midiProgram for p in parsed.parts] == [24, 33]
+    assert [p.partName for p in parsed.parts] == ["guitar", "bass"]

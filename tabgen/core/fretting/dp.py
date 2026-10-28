@@ -25,8 +25,11 @@ import itertools
 from dataclasses import dataclass, field
 
 from tabgen.core.models import (
+    BASS_FIVE_STRING_TUNING,
     BASS_STANDARD_TUNING,
+    DEFAULT_GUITAR_TYPE,
     GUITAR_STANDARD_TUNING,
+    GUITAR_TYPES,
     ChordSegment,
     Note,
     NoteEvents,
@@ -48,6 +51,11 @@ CHORD_SHAPES: dict[str, list[int]] = {
     "F:maj": [1, 3, 3, 2, 1, 1],
     "B:min": [-1, 2, 4, 4, 3, 2],
 }
+
+# Highest usable fret per guitar type (see ``models.GUITAR_TYPES``): a
+# classical (nylon) neck typically has 19 frets, a steel-string acoustic 20
+# and an electric 22-24 (the DP's long-standing default of 24 is kept).
+GUITAR_MAX_FRETS: dict[str, int] = {"electric": 24, "steel": 20, "nylon": 19}
 
 
 @dataclass
@@ -77,6 +85,14 @@ class FrettingConfig:
     # Mild cost per fret number, pulling lines toward the nut when all
     # else is equal.
     high_fret_weight: float = 0.05
+    # Extra cost per fret above ``comfort_max_fret``. Without it the
+    # string-index preference below (0.4 per string, worth 8 frets of
+    # ``high_fret_weight``) always wins over moving one string up (5 frets),
+    # so isolated notes sank to the lowest string that can reach them, at
+    # frets 20+. Above the octave fret every fret now costs enough that a
+    # higher string in a lower position is preferred.
+    comfort_max_fret: int = 12
+    above_comfort_weight: float = 0.5
     # Mild cost per string index above the lowest string, per note. The
     # preference for lower (thicker) strings keeps melodic runs in the
     # conventional root-position box (e.g. A minor pentatonic at the 5th
@@ -92,14 +108,32 @@ class FrettingConfig:
     beam_width: int = 24
 
 
-def guitar_config(**overrides) -> FrettingConfig:
-    """Preset for a standard-tuned 6-string guitar."""
-    return FrettingConfig(tuning_midi=list(GUITAR_STANDARD_TUNING), **overrides)
+def guitar_config(
+    guitar_type: str = DEFAULT_GUITAR_TYPE, **overrides
+) -> FrettingConfig:
+    """Preset for a standard-tuned 6-string guitar of ``guitar_type``.
+
+    ``guitar_type`` (one of ``models.GUITAR_TYPES``) sets ``max_fret`` from
+    :data:`GUITAR_MAX_FRETS` unless ``max_fret`` is overridden.
+    """
+    if guitar_type not in GUITAR_TYPES:
+        raise ValueError(
+            f"unknown guitar type {guitar_type!r}; "
+            f"expected one of: {', '.join(GUITAR_TYPES)}"
+        )
+    overrides.setdefault("max_fret", GUITAR_MAX_FRETS[guitar_type])
+    overrides.setdefault("tuning_midi", list(GUITAR_STANDARD_TUNING))
+    return FrettingConfig(**overrides)
 
 
 def bass_config(**overrides) -> FrettingConfig:
     """Preset for a standard-tuned 4-string bass."""
     return FrettingConfig(tuning_midi=list(BASS_STANDARD_TUNING), **overrides)
+
+
+def five_string_bass_config(**overrides) -> FrettingConfig:
+    """Preset for a standard-tuned 5-string bass (low B: B0 E1 A1 D2 G2)."""
+    return FrettingConfig(tuning_midi=list(BASS_FIVE_STRING_TUNING), **overrides)
 
 
 @dataclass
@@ -237,6 +271,8 @@ def _frame_cost(
         if endorsed:
             cost -= config.chord_shape_bonus
         cost += config.high_fret_weight * fret
+        if fret > config.comfort_max_fret:
+            cost += config.above_comfort_weight * (fret - config.comfort_max_fret)
         cost += config.string_index_weight * s_idx
     return cost
 

@@ -202,3 +202,21 @@ def test_link_marks_touch_the_next_fret_without_bends():
     )
     e_line = render_ascii_tab(score).splitlines()[3]
     assert e_line.startswith("E|5h7p5-")
+
+
+def test_five_string_bass_has_five_string_lines_per_system():
+    from tabgen.core.models import BASS_FIVE_STRING_TUNING
+
+    bass = TabScore(
+        instrument="bass",
+        tuning_midi=list(BASS_FIVE_STRING_TUNING),
+        time_signature=[4, 4],
+        events=[_note(5, 0, measure=1, beat=1), _note(1, 5, measure=2, beat=1)],
+    )
+    text = render_ascii_tab(bass, measures_per_line=1)
+    string_lines = [line for line in text.splitlines() if STRING_LINE.match(line)]
+    # 2 measures at 1 per line -> 2 systems of 5 string lines each.
+    assert len(string_lines) == 10
+    assert [line[0] for line in string_lines[:5]] == ["G", "D", "A", "E", "B"]
+    assert "B0 E1 A1 D2 G2" in text
+    assert string_lines[4].startswith("B|0")

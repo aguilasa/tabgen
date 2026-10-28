@@ -62,4 +62,11 @@ e as marcas aparecem com `-` (ex.: `5h--7`). Comentário desatualizado em
 `tabgen/core/export/midi.py:37-38` continua pendente (edição recusada pelo sistema de permissões;
 decisão do usuário).
 
+Encaminhado pela REF-TASK-05 (2026-10-28): README — `--guitar-type electric|nylon|steel` (programa GM
+27/24/25, casa máxima 24/19/20; programa padrão da guitarra mudou de 25 para 27), também em
+`tabgen transcribe`; `--bass-tuning five-string` (B0 E1 A1 D2 G2); casas acima da 12 passam a ser
+penalizadas no fretting. Os relatórios versionados em `scripts/eval/reports/` foram gerados antes
+dessa mudança no fretting (tab-F1 GuitarSet 0.313 → 0.341, EGDB 0.383 → 0.418 medidos no
+scratchpad): regenerar com o comando registrado na REF-TASK-06 ao fechar a fase.
+
 ## Execution Log
