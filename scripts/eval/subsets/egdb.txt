@@ -1,0 +1,12 @@
+# EGDB fixed evaluation subset (clip numbers, one per line).
+# 8 clips from the paper's held-out clip range (216 and up).
+# Audio: audio_DI/<n>.wav (direct input); annotation: audio_label/<n>.midi.
+# Changing this list changes the reported numbers.
+216
+219
+222
+225
+228
+231
+234
+237

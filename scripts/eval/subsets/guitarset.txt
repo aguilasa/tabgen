@@ -1,0 +1,12 @@
+# GuitarSet 1.1.0 fixed evaluation subset (track ids, one per line).
+# 8 excerpts: 6 players (00-05), 5 styles (BN, Funk, Jazz, Rock, SS),
+# comp and solo. Audio: audio_mono-mic/<id>_mic.wav; annotation:
+# annotation/<id>.jams. Changing this list changes the reported numbers.
+00_BN1-129-Eb_comp
+00_BN1-129-Eb_solo
+01_Funk1-114-Ab_comp
+02_Jazz1-130-D_solo
+03_Rock1-90-C#_comp
+04_SS1-68-E_solo
+05_BN2-166-Ab_comp
+05_BN2-166-Ab_solo
