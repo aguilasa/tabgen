@@ -16,6 +16,7 @@ from rich.progress import (
 
 from tabgen import __version__
 from tabgen.core import doctor as doctor_core
+from tabgen.core.pipeline import DEFAULT_TRANSCRIBER
 
 app = typer.Typer(
     name="tabgen",
@@ -24,6 +25,12 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 console = Console()
+
+TRANSCRIBER_HELP = (
+    "Guitar transcription: basic-pitch, or riley (Riley et al. guitar model "
+    "for the notes plus Basic Pitch for the bends; downloads ~99 MB of "
+    "weights on first use). The bass always uses Basic Pitch."
+)
 
 
 def _version_callback(value: bool) -> None:
@@ -147,6 +154,11 @@ def transcribe(
         help="Guitar type: electric, nylon or steel; sets the General MIDI "
         "program of the guitar file (default: electric, program 27).",
     ),
+    transcriber: str = typer.Option(
+        DEFAULT_TRANSCRIBER,
+        "--transcriber",
+        help=TRANSCRIBER_HELP,
+    ),
 ) -> None:
     """Transcribe the audio into one MIDI file per instrument."""
     from tabgen.core.pipeline import PipelineError, run_transcription
@@ -177,6 +189,7 @@ def transcribe(
                 output_dir=output_dir,
                 on_progress=on_progress,
                 guitar_type=guitar_type.strip().lower() if guitar_type else None,
+                transcriber=transcriber.strip().lower(),
             )
         except (PipelineError, SeparationError, TranscriptionError) as err:
             progress.stop()
@@ -343,12 +356,18 @@ def export(
         help="Detect and write bends, slides, hammer-ons and pull-offs "
         "(--no-techniques writes plain picked notes only).",
     ),
+    transcriber: str = typer.Option(
+        DEFAULT_TRANSCRIBER,
+        "--transcriber",
+        help=TRANSCRIBER_HELP,
+    ),
 ) -> None:
     """Generate tablature (Guitar Pro 5, MusicXML or ASCII) from the audio."""
     from tabgen.core.analysis.beats import BeatAnalysisError
     from tabgen.core.analysis.harmony import HarmonyError
     from tabgen.core.models import DEFAULT_GUITAR_TYPE, GUITAR_TYPES
     from tabgen.core.pipeline import (
+        TRANSCRIBERS,
         PipelineError,
         resolve_export_format,
         resolve_tuning,
@@ -368,6 +387,12 @@ def export(
             raise PipelineError(
                 f"unknown guitar type {guitar_type!r}; choose one of "
                 f"{', '.join(GUITAR_TYPES)}"
+            )
+        transcriber = transcriber.strip().lower()
+        if transcriber not in TRANSCRIBERS:
+            raise PipelineError(
+                f"unknown transcriber {transcriber!r}; choose one of "
+                f"{', '.join(TRANSCRIBERS)}"
             )
         tunings = {}
         if "guitar" in wanted:
@@ -404,6 +429,7 @@ def export(
                 on_progress=on_progress,
                 techniques=techniques,
                 guitar_type=guitar_type,
+                transcriber=transcriber,
             )
         except (
             PipelineError,

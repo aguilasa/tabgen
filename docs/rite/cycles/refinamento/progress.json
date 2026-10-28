@@ -184,13 +184,16 @@
       "phase": 4,
       "depends_on": ["REF-TASK-07"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-4--transcrição-áudio--notas-o-coração",
-      "files": ["tabgen/core/transcription/riley.py", "tabgen/core/transcription/__init__.py", "tabgen/core/pipeline.py", "tabgen/cli/main.py", "pyproject.toml", "tests/test_riley_transcription.py", "tests/test_tablature_pipeline.py", "scripts/eval/run.py", "scripts/eval/candidates.py", "scripts/eval/mix.py", "scripts/eval/reports", "scripts/probe_e2e_export.py", "docs/avaliacao/modelo-guitarra.md"],
+      "files": ["tabgen/core/transcription/riley.py", "tabgen/core/transcription/__init__.py", "tabgen/core/pipeline.py", "tabgen/cli/main.py", "pyproject.toml", "tests/test_riley_transcription.py", "scripts/eval/run.py", "scripts/eval/mix.py", "scripts/eval/reports", "scripts/probe_e2e_export.py", "scripts/probe_e2e_riley.py", "docs/avaliacao/modelo-guitarra.md", "docs/rite/cycles/refinamento/08-fechar-fase-4.md"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "done_on": null,
       "done_commit": null,
       "reviewed_on": null,
-      "review_commit": null
+      "review_commit": null,
+      "active_since": "2026-10-28T14:18:06-03:00",
+      "started_at": "2026-10-28T14:18:06-03:00",
+      "active_s": 0
     }
   ]
 }

@@ -75,4 +75,14 @@ código/pesos foram liberados" do plano (Estágio 4) com o resultado (pesos púb
 A REF-TASK-09 implementa `--transcriber riley` e decide o padrão: documentar a opção e a decisão no
 README.
 
+Encaminhado pela REF-TASK-09 (2026-10-28): README — `--transcriber basic-pitch|riley` em `export` e
+`transcribe`, **padrão `riley`** (EGDB misturado: nota-F1 0,691 vs 0,615, tab-F1 0,336 vs 0,224);
+primeiro uso baixa ~99 MB de pesos para o cache do `huggingface_hub`; dependências novas
+`torchlibrosa==0.1.0` e `huggingface_hub`; tempo extra do riley (~+7,5 s numa música de 4 min); o
+harness ganhou `--transcriber`, `--mix`, `--musdb-dir`, `--mix-dir`, `--device` e relatórios em
+`scripts/eval/reports/{riley,mixed}/`. Decidir se os relatórios principais do harness (padrão do
+`run.py` ainda `basic-pitch`) passam a usar o novo padrão. Tabela de tempos do README muda com o
+riley como padrão. O nome do arquivo de cache da tablatura está a 2 bytes do limite de 255: um
+version string maior quebra (candidato a fix).
+
 ## Execution Log

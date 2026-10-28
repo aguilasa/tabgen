@@ -20,6 +20,17 @@ tab-F1 from :mod:`scripts.eval.metrics`. Reports (JSON + Markdown, no audio)
 go to ``--out`` (default ``scripts/eval/reports/``, versionable) as
 ``<dataset>-<subset name>.json|.md``. Basic Pitch's stage cache is written
 next to the audio (``<data-dir>/.../.tabgen/``), i.e. outside the repository.
+
+``--transcriber riley`` swaps the guitar transcription for tabgen's hybrid
+Riley model (``tabgen.core.transcription.riley``: Riley notes, Basic Pitch
+bends); its reports default to ``scripts/eval/reports/riley/``. ``--mix``
+evaluates on Demucs ``guitar`` stems of the clip mixed with a drums + bass
+backing (see :mod:`scripts.eval.mix`); its reports default to
+``scripts/eval/reports/mixed/<transcriber>/`` and record the backing of each
+clip and the command. Without these options the output is unchanged::
+
+    .venv/bin/python scripts/eval/run.py --dataset egdb \\
+        --subset scripts/eval/subsets/egdb.txt --transcriber riley --mix
 """
 
 from __future__ import annotations
@@ -46,6 +57,7 @@ from scripts.eval.metrics import (  # noqa: E402
 )
 
 DATASETS = ("guitarset", "egdb")
+TRANSCRIBERS = ("basic-pitch", "riley")
 DEFAULT_OUT = REPO_ROOT / "scripts" / "eval" / "reports"
 
 # Audio path -> estimated notes (with strings). Injectable for tests.
@@ -54,11 +66,16 @@ Estimator = Callable[[Path], tuple[list[LabeledNote], str]]
 
 def pipeline_estimator(audio: Path) -> tuple[list[LabeledNote], str]:
     """Basic Pitch transcription + DP fretting (standard guitar tuning)."""
-    from tabgen.core.fretting import assign_frets, guitar_config
     from tabgen.core.transcription.basic_pitch import transcribe, transcription_version
 
     result, _ = transcribe(audio, instrument="guitar")
-    fretting = assign_frets(result.note_events, guitar_config())
+    return _fretted_labels(result.note_events), transcription_version("guitar")
+
+
+def _fretted_labels(note_events) -> list[LabeledNote]:
+    from tabgen.core.fretting import assign_frets, guitar_config
+
+    fretting = assign_frets(note_events, guitar_config())
     notes = [
         LabeledNote(a.note.start_s, a.note.end_s, float(a.note.pitch_midi), a.string)
         for a in fretting.assignments
@@ -68,7 +85,52 @@ def pipeline_estimator(audio: Path) -> tuple[list[LabeledNote], str]:
         for u in fretting.unassigned
     ]
     notes.sort(key=lambda n: (n.onset_s, n.pitch_midi))
-    return notes, transcription_version("guitar")
+    return notes
+
+
+def transcriber_estimator(transcriber: str, device: str | None = None) -> Estimator:
+    """Estimator for one of :data:`TRANSCRIBERS`, through tabgen's core stage."""
+    if transcriber == "basic-pitch":
+        return pipeline_estimator
+    from tabgen.core.transcription import riley
+
+    def estimate(audio: Path) -> tuple[list[LabeledNote], str]:
+        result, _ = riley.transcribe(audio, instrument="guitar", device=device)
+        return _fretted_labels(result.note_events), riley.transcription_version()
+
+    return estimate
+
+
+def mixed_estimator(
+    estimator: Estimator,
+    dataset: str,
+    track_ids: list[str],
+    data_dir: Path,
+    musdb_dir: Path,
+    mix_dir: Path,
+    device: str | None = None,
+) -> tuple[Estimator, dict[str, str]]:
+    """Wrap ``estimator`` to run on the Demucs guitar stem of each mixed clip.
+
+    Returns the wrapped estimator and the backing track per clip id.
+    """
+    from scripts.eval import mix
+
+    clips = {}
+    for position, track_id in enumerate(track_ids):
+        paths = loaders.track_paths(dataset, data_dir, track_id)
+        clips[paths.audio] = mix.build_mix(
+            dataset, track_id, paths.audio, position, musdb_dir, mix_dir
+        )
+
+    def estimate(audio: Path) -> tuple[list[LabeledNote], str]:
+        stem = mix.separated_guitar(clips[audio].mix_path, device=device)
+        notes, version = estimator(stem)
+        from tabgen.core.separation.demucs import MODEL_VERSION
+
+        return notes, f"{version} on {MODEL_VERSION} guitar stem"
+
+    return estimate, {clip.track_id: clip.backing for clip in clips.values()}
 
 
 @dataclass
@@ -90,10 +152,15 @@ class Report:
     pitch_tolerance_cents: float = PITCH_TOLERANCE_CENTS
     tracks: list[TrackReport] = field(default_factory=list)
     mean: dict = field(default_factory=dict)
+    # Non-default runs only (--transcriber riley, --mix): transcriber,
+    # command, backing per clip. Left out of the output when empty.
+    extra: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         data = dict(self.__dict__)
         data["tracks"] = [dict(t.__dict__) for t in self.tracks]
+        if not self.extra:
+            data.pop("extra")
         return data
 
 
@@ -173,6 +240,20 @@ def to_markdown(report: Report) -> str:
         f"pitch +-{report.pitch_tolerance_cents:.0f} cents, no offset criterion",
         f"- tracks: {mean['n_tracks']} (with tab annotation: "
         f"{mean['n_tracks_with_tab']})",
+    ]
+    extra = report.extra
+    if "transcriber" in extra:
+        lines.append(f"- transcriber: `{extra['transcriber']}`")
+    if "mix" in extra:
+        m = extra["mix"]
+        lines.append(
+            f"- mix: guitar over {m['backing_source']}, guitar-to-backing "
+            f"{m['guitar_to_backing_db']:+.1f} dB RMS, separated by Demucs "
+            f"(`{m['separation']}`), stem `guitar`"
+        )
+    if "command" in extra:
+        lines.append(f"- command: `{extra['command']}`")
+    lines += [
         "",
         "| | note P | note R | note F1 | tab P | tab R | tab F1 |",
         "|---|---|---|---|---|---|---|",
@@ -191,9 +272,12 @@ def to_markdown(report: Report) -> str:
         )
     lines += ["", "| track | ref | est | matched | tab correct | string mapping |",
               "|---|---|---|---|---|---|"]
+    backing = extra.get("mix", {}).get("backing", {})
     for t in report.tracks:
         s = t.scores
         mapping = t.string_mapping
+        if t.track_id in backing:
+            mapping += f"; backing: {backing[t.track_id]}"
         if t.tab_unavailable_reason:
             mapping += f"; tab n/a: {t.tab_unavailable_reason}"
         lines.append(
@@ -245,6 +329,20 @@ def main(
                         help="print URL and size of the missing subset files")
     parser.add_argument("--yes", action="store_true",
                         help="with --download: confirm and actually download")
+    parser.add_argument("--transcriber", choices=TRANSCRIBERS,
+                        default="basic-pitch",
+                        help="guitar transcription (default: basic-pitch)")
+    parser.add_argument("--mix", action="store_true",
+                        help="evaluate on the Demucs guitar stem of the clip "
+                             "mixed with a MUSDB18 drums + bass backing")
+    parser.add_argument("--musdb-dir", type=Path, default=None,
+                        help="unzipped MUSDB18-7 (default: "
+                             "~/datasets/tabgen/musdb18-7/raw)")
+    parser.add_argument("--mix-dir", type=Path, default=None,
+                        help="where mixes and stems are written (default: "
+                             "~/datasets/tabgen/mixed)")
+    parser.add_argument("--device", default=None,
+                        help="cuda or cpu for Demucs/Riley (default: autodetect)")
     args = parser.parse_args(argv)
 
     data_dir = (args.data_dir or default_data_dir(args.dataset)).expanduser().resolve()
@@ -273,8 +371,40 @@ def main(
         _say("run with --download to see what would be fetched")
         return 2
 
+    extra: dict = {}
+    out_dir = args.out
+    if args.transcriber != "basic-pitch" or args.mix:
+        if estimator is pipeline_estimator:
+            estimator = transcriber_estimator(args.transcriber, args.device)
+        extra["transcriber"] = args.transcriber
+        extra["command"] = " ".join(
+            [".venv/bin/python scripts/eval/run.py",
+             *(argv if argv is not None else sys.argv[1:])]
+        )
+        if out_dir == DEFAULT_OUT:
+            out_dir = (DEFAULT_OUT / "mixed" / args.transcriber if args.mix
+                       else DEFAULT_OUT / args.transcriber)
+    if args.mix:
+        from scripts.eval import mix
+        from tabgen.core.separation.demucs import MODEL_VERSION
+
+        musdb_dir = (args.musdb_dir or mix.default_musdb_dir()).expanduser().resolve()
+        mix_dir = (args.mix_dir or mix.default_mix_dir()).expanduser().resolve()
+        estimator, backing = mixed_estimator(
+            estimator, args.dataset, track_ids, data_dir, musdb_dir, mix_dir,
+            args.device,
+        )
+        extra["mix"] = {
+            "backing_source": mix.BACKING_SOURCE,
+            "backing_selection": "sorted(test/*.stem.mp4)[clip position % 50]",
+            "guitar_to_backing_db": mix.GUITAR_TO_BACKING_DB,
+            "separation": MODEL_VERSION,
+            "backing": backing,
+        }
+
     report = evaluate(args.dataset, track_ids, data_dir, args.subset.stem, estimator)
-    json_path, md_path = write_report(report, args.out)
+    report.extra = extra
+    json_path, md_path = write_report(report, out_dir)
     mean = report.mean
     _say(f"{args.dataset}/{args.subset.stem}: {mean['n_tracks']} tracks, "
          f"mean note-F1 {_fmt(mean['note_f1'])}, mean tab-F1 {_fmt(mean['tab_f1'])}")

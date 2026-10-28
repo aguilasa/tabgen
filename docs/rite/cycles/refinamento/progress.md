@@ -51,7 +51,7 @@ graph TD
 | [REF-TASK-06](/docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md) | Criar harness de avaliação em GuitarSet e EGDB | 4 | tool | — | done | 2026-10-28 | 2026-10-28 | approved |
 | [REF-TASK-07](/docs/rite/cycles/refinamento/07-avaliar-modelo-de-transcricao-especifico-de.md) | Avaliar modelo de transcrição específico de guitarra | 4 | research | REF-TASK-06 | done | 2026-10-28 | 2026-10-28 | approved |
 | [REF-TASK-08](/docs/rite/cycles/refinamento/08-fechar-fase-4.md) | Fechar Fase 4 | 4 | closing | REF-TASK-01, REF-TASK-02, REF-TASK-03, REF-TASK-04, REF-TASK-05, REF-TASK-06, REF-TASK-07, REF-TASK-09 | pending | — | — | — |
-| [REF-TASK-09](/docs/rite/cycles/refinamento/09-transcricao-riley-atras-de-flag.md) | Transcrição Riley atrás de --transcriber, híbrida com bends do Basic Pitch | 4 | feature | REF-TASK-07 | pending | — | — | — |
+| [REF-TASK-09](/docs/rite/cycles/refinamento/09-transcricao-riley-atras-de-flag.md) | Transcrição Riley atrás de --transcriber, híbrida com bends do Basic Pitch | 4 | feature | REF-TASK-07 | in-progress | — | — | — |
 <!-- rite:end -->
 
 ## Notes

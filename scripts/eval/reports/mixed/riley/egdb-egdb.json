@@ -1,0 +1,177 @@
+{
+  "dataset": "egdb",
+  "subset": "egdb",
+  "data_dir": "/home/ingmar/datasets/tabgen/egdb",
+  "commit": "f5214b8-dirty",
+  "model_version": "riley-guitar-gaps@sha256:65483e7c0e34-guitar+bends-basic-pitch-icassp2022-onnx-tol50ms+note-2 on htdemucs_ft+htdemucs_6s guitar stem",
+  "onset_tolerance_s": 0.05,
+  "pitch_tolerance_cents": 50.0,
+  "tracks": [
+    {
+      "track_id": "216",
+      "scores": {
+        "note_precision": 0.125,
+        "note_recall": 0.03225806451612903,
+        "note_f1": 0.05128205128205128,
+        "tab_precision": 0.125,
+        "tab_recall": 0.03225806451612903,
+        "tab_f1": 0.05128205128205128,
+        "n_ref": 62,
+        "n_est": 16,
+        "n_matched": 2,
+        "n_tab_correct": 2
+      },
+      "string_mapping": "by track (descending, base 6; 98.4% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "219",
+      "scores": {
+        "note_precision": 0.8571428571428571,
+        "note_recall": 0.7659574468085106,
+        "note_f1": 0.8089887640449439,
+        "tab_precision": 0.21428571428571427,
+        "tab_recall": 0.19148936170212766,
+        "tab_f1": 0.20224719101123598,
+        "n_ref": 94,
+        "n_est": 84,
+        "n_matched": 72,
+        "n_tab_correct": 18
+      },
+      "string_mapping": "by track (descending, base 6; 98.9% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "222",
+      "scores": {
+        "note_precision": 0.8227848101265823,
+        "note_recall": 0.7738095238095238,
+        "note_f1": 0.7975460122699387,
+        "tab_precision": 0.3037974683544304,
+        "tab_recall": 0.2857142857142857,
+        "tab_f1": 0.294478527607362,
+        "n_ref": 84,
+        "n_est": 79,
+        "n_matched": 65,
+        "n_tab_correct": 24
+      },
+      "string_mapping": "by track (descending, base 6; 98.8% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "225",
+      "scores": {
+        "note_precision": 0.799373040752351,
+        "note_recall": 0.8415841584158416,
+        "note_f1": 0.8199356913183279,
+        "tab_precision": null,
+        "tab_recall": null,
+        "tab_f1": null,
+        "n_ref": 303,
+        "n_est": 319,
+        "n_matched": 255,
+        "n_tab_correct": null
+      },
+      "string_mapping": "by track: none",
+      "tab_unavailable_reason": "no unique track->string mapping makes >= 95% of notes playable (best 100.0%; ambiguous: 4 mappings tie)"
+    },
+    {
+      "track_id": "228",
+      "scores": {
+        "note_precision": 0.9251700680272109,
+        "note_recall": 0.6868686868686869,
+        "note_f1": 0.7884057971014493,
+        "tab_precision": null,
+        "tab_recall": null,
+        "tab_f1": null,
+        "n_ref": 396,
+        "n_est": 294,
+        "n_matched": 272,
+        "n_tab_correct": null
+      },
+      "string_mapping": "by track: none",
+      "tab_unavailable_reason": "no unique track->string mapping makes >= 95% of notes playable (best 100.0%; ambiguous: 2 mappings tie)"
+    },
+    {
+      "track_id": "231",
+      "scores": {
+        "note_precision": 0.8153846153846154,
+        "note_recall": 0.3509933774834437,
+        "note_f1": 0.4907407407407407,
+        "tab_precision": 0.6153846153846154,
+        "tab_recall": 0.26490066225165565,
+        "tab_f1": 0.3703703703703704,
+        "n_ref": 151,
+        "n_est": 65,
+        "n_matched": 53,
+        "n_tab_correct": 40
+      },
+      "string_mapping": "by track (descending, base 6; 100.0% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "234",
+      "scores": {
+        "note_precision": 0.9484126984126984,
+        "note_recall": 0.7861842105263158,
+        "note_f1": 0.8597122302158274,
+        "tab_precision": null,
+        "tab_recall": null,
+        "tab_f1": null,
+        "n_ref": 304,
+        "n_est": 252,
+        "n_matched": 239,
+        "n_tab_correct": null
+      },
+      "string_mapping": "by track: none",
+      "tab_unavailable_reason": "no unique track->string mapping makes >= 95% of notes playable (best 100.0%; ambiguous: 2 mappings tie)"
+    },
+    {
+      "track_id": "237",
+      "scores": {
+        "note_precision": 0.8848484848484849,
+        "note_recall": 0.9358974358974359,
+        "note_f1": 0.909657320872274,
+        "tab_precision": 0.7393939393939394,
+        "tab_recall": 0.782051282051282,
+        "tab_f1": 0.7601246105919003,
+        "n_ref": 156,
+        "n_est": 165,
+        "n_matched": 146,
+        "n_tab_correct": 122
+      },
+      "string_mapping": "by track (descending, base 5; 100.0% playable)",
+      "tab_unavailable_reason": null
+    }
+  ],
+  "mean": {
+    "note_precision": 0.77226457183685,
+    "note_recall": 0.646694113040736,
+    "note_f1": 0.6907835759806942,
+    "tab_precision": 0.3995723474837399,
+    "tab_recall": 0.31128273124709605,
+    "tab_f1": 0.33570055017258393,
+    "n_tracks": 8,
+    "n_tracks_with_tab": 5
+  },
+  "extra": {
+    "transcriber": "riley",
+    "command": ".venv/bin/python scripts/eval/run.py --dataset egdb --subset scripts/eval/subsets/egdb.txt --mix --transcriber riley",
+    "mix": {
+      "backing_source": "MUSDB18 7-second excerpts (Zenodo record 3270814, MUSDB18-7-STEMS.zip), test/ tracks only, drums + bass streams",
+      "backing_selection": "sorted(test/*.stem.mp4)[clip position % 50]",
+      "guitar_to_backing_db": 0.0,
+      "separation": "htdemucs_ft+htdemucs_6s",
+      "backing": {
+        "216": "AM Contra - Heart Peripheral",
+        "219": "Al James - Schoolboy Facination",
+        "222": "Angels In Amplifiers - I'm Alright",
+        "225": "Arise - Run Run Run",
+        "228": "BKS - Bulldozer",
+        "231": "BKS - Too Much",
+        "234": "Ben Carrigan - We'll Talk About It All Tonight",
+        "237": "Bobby Nobody - Stitch Up"
+      }
+    }
+  }
+}

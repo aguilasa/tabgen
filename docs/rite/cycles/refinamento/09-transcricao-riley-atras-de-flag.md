@@ -58,26 +58,26 @@ medido com o harness.
 
 ## Done criteria
 
-- [ ] `grep -rn "piano_transcription_inference" tabgen/ pyproject.toml` vazio; o cabeçalho de
+- [x] `grep -rn "piano_transcription_inference" tabgen/ pyproject.toml` vazio; o cabeçalho de
       `tabgen/core/transcription/riley.py` cita `qiuqiangkong/piano_transcription` e MIT;
       `pyproject.toml` declara tudo o que o módulo importa (sem `--target` externo).
-- [ ] Teste sem rede e sem pesos reais (modelo falso injetado):
+- [x] Teste sem rede e sem pesos reais (modelo falso injetado):
   - `riley` produz `NoteEvents` com o `model_version` contendo o sha dos pesos.
   - A fusão híbrida copia `bends` só para notas casadas.
   - Uma nota do Riley com bend casado sai como técnica `bend` no `TabScore`.
   - Esses testes falham contra o HEAD anterior (controle).
-- [ ] Equivalência com a referência:
+- [x] Equivalência com a referência:
   - Comando: `.venv/bin/python scripts/eval/run.py --transcriber riley` nos dois subsets limpos.
   - Resultado: a nota-F1 bate com os relatórios de `scripts/eval/reports/candidates/riley-gaps/`
     (0,892 GuitarSet, 0,860 EGDB) com tolerância de ±0,005, e a diferença fica registrada.
-- [ ] `.venv/bin/tabgen export <música>.mp3 --transcriber riley -o x.gp5` sai 0 e o `.gp5` relido
+- [x] `.venv/bin/tabgen export <música>.mp3 --transcriber riley -o x.gp5` sai 0 e o `.gp5` relido
       pelo `guitarpro.parse` tem notas na faixa de guitarra. Com `--transcriber basic-pitch` (e sem
       a opção), os testes e goldens existentes não mudam. Probe reproduzível em
       `scripts/probe_e2e_*.py`.
-- [ ] Tabela basic-pitch vs riley nos subsets misturados (GuitarSet e EGDB), com o comando de cada
+- [x] Tabela basic-pitch vs riley nos subsets misturados (GuitarSet e EGDB), com o comando de cada
       número, em `docs/avaliacao/modelo-guitarra.md`; a decisão de padrão aplicada conforme a regra
       do escopo e registrada nas Notes.
-- [ ] `.venv/bin/pytest -q` verde, `.venv/bin/ruff check .` limpo, grep de pureza em
+- [x] `.venv/bin/pytest -q` verde, `.venv/bin/ruff check .` limpo, grep de pureza em
       `tabgen/core/` vazio.
 
 ## Notes
@@ -90,5 +90,37 @@ Criada a pedido do usuário em 2026-10-28, a partir da recomendação da REF-TAS
   critério 3.
 - **Tempo:** com `riley`, o export roda dois modelos no stem de guitarra (Riley e Basic Pitch). Medir
   o tempo extra e registrar nas Notes.
+
+Execução (2026-10-28), comandos rerodados no thread principal:
+
+- Downloads autorizados pelo usuário nesta sessão: MUSDB18 7s STEMS (Zenodo 3270814, 147 MB,
+  cc-by-4.0, sha256 `365f66ac…`) em `~/datasets/tabgen/musdb18-7/`; `guitar-gaps.pth` no cache do
+  `huggingface_hub`, revisão `b7bec65a…`, sha256 `65483e7c0e34…`.
+- Critério 1: `grep -rn "piano_transcription_inference" tabgen/ pyproject.toml` → vazio (rc=1);
+  cabeçalho de `riley.py` cita `qiuqiangkong/piano_transcription (MIT License …)`; `pyproject.toml`
+  ganhou `numpy`, `torchlibrosa==0.1.0`, `huggingface_hub`.
+- Critério 2: `.venv/bin/pytest -q tests/test_riley_transcription.py` → `8 passed`. Controle: o mesmo
+  arquivo num worktree do HEAD (`f5214b8`) → `ImportError: cannot import name 'riley' from
+  'tabgen.core.transcription'`.
+- Critério 3: `.venv/bin/python scripts/eval/run.py --dataset <d> --subset scripts/eval/subsets/<d>.txt
+  --transcriber riley` → `guitarset: mean note-F1 0.892, mean tab-F1 0.453`, `egdb: mean note-F1
+  0.860, mean tab-F1 0.486`; diferença 0,000 para `reports/candidates/riley-gaps/` (worker: todas
+  as faixas idênticas; ativações iguais ao fork numa faixa).
+- Critério 4: `.venv/bin/tabgen export "You and I.flac" --transcriber riley -o …/youandi-riley.gp5`
+  → rc=0; `guitarpro.parse` → `{'guitar': 994, 'bass': 896}`. `scripts/probe_e2e_riley.py` → `PASS …
+  basic-pitch 1.8 s, riley 4.5 s, extra +2.7 s. Default export (no option) hit the riley cache
+  entry`. `scripts/probe_e2e_export.py` → `PASS` (fixado em `--transcriber basic-pitch`: no seno puro
+  o Riley não acha nota de guitarra). Tempo na música real (worker, separação em cache): basic-pitch
+  9,1 s, riley 16,6 s.
+- Critério 5: `.venv/bin/python scripts/eval/run.py --dataset <d> --subset … --mix --transcriber <t>`
+  → basic-pitch GuitarSet 0.745/0.334, EGDB 0.615/0.224; riley GuitarSet 0.879/0.472, EGDB
+  0.691/0.336. Regra aplicada: riley ≥ basic-pitch nas duas métricas do EGDB misturado, então
+  `DEFAULT_TRANSCRIBER = "riley"`.
+- Critério 6: `.venv/bin/pytest -q` → `221 passed`; `ruff check .` → `All checks passed!`; grep de
+  pureza vazio.
+- Desvios registrados: tag de cache da tablatura curta (`+riley-<sha8>-<hash6>`) porque o nome do
+  arquivo passava de 255 bytes (253 bytes com gtype electric, perto do limite); `torch.load` com
+  `weights_only=False` só depois do sha256 conferir. Variação de Demucs (`shifts` aleatório): duas
+  separações frias da mesma música deram 994 e 1040 notas de guitarra.
 
 ## Execution Log

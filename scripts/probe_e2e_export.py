@@ -19,6 +19,11 @@ Exact note and technique counts drift with mp3 encode artifacts, so they
 are deliberately NOT asserted (same policy as probe_e2e_sample.py); the
 techniques-on effect count is only reported.
 
+Every export pins ``--transcriber basic-pitch``: the sample is a pure sine,
+which Basic Pitch transcribes on both stems but the Riley guitar model (the
+default since REF-TASK-09) leaves without guitar notes. The riley path has
+its own probe on a plucked-string sample, ``scripts/probe_e2e_riley.py``.
+
 Not collected by pytest; run it directly:
 
     .venv/bin/python scripts/probe_e2e_export.py
@@ -41,6 +46,7 @@ import music21
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TABGEN = REPO_ROOT / ".venv" / "bin" / "tabgen"
+TRANSCRIBER = ("--transcriber", "basic-pitch")
 CACHE_HIT_MARKER = "cache hit"
 CACHE_HIT_BUDGET_S = 5.0  # informational only, not a hard assert
 
@@ -91,7 +97,8 @@ def export(
     sample: Path, output: Path, step: str, extra: tuple[str, ...] = ()
 ) -> subprocess.CompletedProcess[str]:
     result = run(
-        [str(TABGEN), "export", str(sample), "-o", str(output), *extra],
+        [str(TABGEN), "export", str(sample), "-o", str(output), *TRANSCRIBER,
+         *extra],
         step=step,
     )
     if not output.is_file():

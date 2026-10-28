@@ -1,4 +1,6 @@
-"""Transcription stage (Basic Pitch, ONNX backend)."""
+"""Transcription stage: Basic Pitch (ONNX backend) and, for the guitar, the
+hybrid Riley model in :mod:`tabgen.core.transcription.riley` (imported on
+demand: it needs torch)."""
 
 from tabgen.core.transcription.basic_pitch import (
     INSTRUMENT_PROFILES,

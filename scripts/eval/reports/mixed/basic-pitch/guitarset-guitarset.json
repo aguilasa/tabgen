@@ -1,0 +1,177 @@
+{
+  "dataset": "guitarset",
+  "subset": "guitarset",
+  "data_dir": "/home/ingmar/datasets/tabgen/guitarset",
+  "commit": "f5214b8-dirty",
+  "model_version": "basic-pitch-icassp2022-onnx-guitar+note-2 on htdemucs_ft+htdemucs_6s guitar stem",
+  "onset_tolerance_s": 0.05,
+  "pitch_tolerance_cents": 50.0,
+  "tracks": [
+    {
+      "track_id": "00_BN1-129-Eb_comp",
+      "scores": {
+        "note_precision": 0.6474820143884892,
+        "note_recall": 0.6766917293233082,
+        "note_f1": 0.6617647058823529,
+        "tab_precision": 0.6402877697841727,
+        "tab_recall": 0.6691729323308271,
+        "tab_f1": 0.6544117647058824,
+        "n_ref": 133,
+        "n_est": 139,
+        "n_matched": 90,
+        "n_tab_correct": 89
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "00_BN1-129-Eb_solo",
+      "scores": {
+        "note_precision": 0.6593406593406593,
+        "note_recall": 0.8450704225352113,
+        "note_f1": 0.7407407407407407,
+        "tab_precision": 0.25274725274725274,
+        "tab_recall": 0.323943661971831,
+        "tab_f1": 0.2839506172839506,
+        "n_ref": 71,
+        "n_est": 91,
+        "n_matched": 60,
+        "n_tab_correct": 23
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "01_Funk1-114-Ab_comp",
+      "scores": {
+        "note_precision": 0.8082191780821918,
+        "note_recall": 0.5086206896551724,
+        "note_f1": 0.6243386243386244,
+        "tab_precision": 0.7945205479452054,
+        "tab_recall": 0.5,
+        "tab_f1": 0.6137566137566137,
+        "n_ref": 232,
+        "n_est": 146,
+        "n_matched": 118,
+        "n_tab_correct": 116
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "02_Jazz1-130-D_solo",
+      "scores": {
+        "note_precision": 0.6928571428571428,
+        "note_recall": 0.8818181818181818,
+        "note_f1": 0.7759999999999999,
+        "tab_precision": 0.0,
+        "tab_recall": 0.0,
+        "tab_f1": 0.0,
+        "n_ref": 110,
+        "n_est": 140,
+        "n_matched": 97,
+        "n_tab_correct": 0
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "03_Rock1-90-C#_comp",
+      "scores": {
+        "note_precision": 0.6542056074766355,
+        "note_recall": 0.6862745098039216,
+        "note_f1": 0.6698564593301435,
+        "tab_precision": 0.205607476635514,
+        "tab_recall": 0.21568627450980393,
+        "tab_f1": 0.21052631578947367,
+        "n_ref": 204,
+        "n_est": 214,
+        "n_matched": 140,
+        "n_tab_correct": 44
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "04_SS1-68-E_solo",
+      "scores": {
+        "note_precision": 0.7266187050359713,
+        "note_recall": 0.9017857142857143,
+        "note_f1": 0.804780876494024,
+        "tab_precision": 0.07194244604316546,
+        "tab_recall": 0.08928571428571429,
+        "tab_f1": 0.0796812749003984,
+        "n_ref": 112,
+        "n_est": 139,
+        "n_matched": 101,
+        "n_tab_correct": 10
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "05_BN2-166-Ab_comp",
+      "scores": {
+        "note_precision": 0.8072289156626506,
+        "note_recall": 0.7745664739884393,
+        "note_f1": 0.7905604719764012,
+        "tab_precision": 0.7289156626506024,
+        "tab_recall": 0.6994219653179191,
+        "tab_f1": 0.7138643067846607,
+        "n_ref": 173,
+        "n_est": 166,
+        "n_matched": 134,
+        "n_tab_correct": 121
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "05_BN2-166-Ab_solo",
+      "scores": {
+        "note_precision": 0.8955223880597015,
+        "note_recall": 0.8955223880597015,
+        "note_f1": 0.8955223880597015,
+        "tab_precision": 0.11940298507462686,
+        "tab_recall": 0.11940298507462686,
+        "tab_f1": 0.11940298507462686,
+        "n_ref": 67,
+        "n_est": 67,
+        "n_matched": 60,
+        "n_tab_correct": 8
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    }
+  ],
+  "mean": {
+    "note_precision": 0.7364343263629303,
+    "note_recall": 0.7712937636837063,
+    "note_f1": 0.7454455333527484,
+    "tab_precision": 0.35167801761006745,
+    "tab_recall": 0.32711419168634026,
+    "tab_f1": 0.33444923478695077,
+    "n_tracks": 8,
+    "n_tracks_with_tab": 8
+  },
+  "extra": {
+    "transcriber": "basic-pitch",
+    "command": ".venv/bin/python scripts/eval/run.py --dataset guitarset --subset scripts/eval/subsets/guitarset.txt --mix",
+    "mix": {
+      "backing_source": "MUSDB18 7-second excerpts (Zenodo record 3270814, MUSDB18-7-STEMS.zip), test/ tracks only, drums + bass streams",
+      "backing_selection": "sorted(test/*.stem.mp4)[clip position % 50]",
+      "guitar_to_backing_db": 0.0,
+      "separation": "htdemucs_ft+htdemucs_6s",
+      "backing": {
+        "00_BN1-129-Eb_comp": "AM Contra - Heart Peripheral",
+        "00_BN1-129-Eb_solo": "Al James - Schoolboy Facination",
+        "01_Funk1-114-Ab_comp": "Angels In Amplifiers - I'm Alright",
+        "02_Jazz1-130-D_solo": "Arise - Run Run Run",
+        "03_Rock1-90-C#_comp": "BKS - Bulldozer",
+        "04_SS1-68-E_solo": "BKS - Too Much",
+        "05_BN2-166-Ab_comp": "Ben Carrigan - We'll Talk About It All Tonight",
+        "05_BN2-166-Ab_solo": "Bobby Nobody - Stitch Up"
+      }
+    }
+  }
+}

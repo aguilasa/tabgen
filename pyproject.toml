@@ -49,6 +49,14 @@ dependencies = [
     "music21==10.5.1",
     "mir-eval",
     "resampy>=0.2.2,<0.4.3",
+    # Optional guitar transcriber (--transcriber riley,
+    # tabgen/core/transcription/riley.py): numpy for the post-processing,
+    # torchlibrosa (MIT) for the log-mel front end the checkpoint was trained
+    # with (pinned: the spectrogram layers' state-dict keys must match), and
+    # huggingface_hub to fetch the pinned guitar-gaps.pth weights.
+    "numpy",
+    "torchlibrosa==0.1.0",
+    "huggingface_hub",
 ]
 
 [project.optional-dependencies]

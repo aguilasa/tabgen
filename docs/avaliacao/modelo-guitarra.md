@@ -95,3 +95,111 @@ A tarefa nova precisa cobrir:
 4. Tratar o download dos pesos (~99 MB) e a dependência `torchlibrosa`.
 
 Se essas condições não forem atendidas, a recomendação é manter o Basic Pitch.
+
+## Integração e medição em stems do Demucs (REF-TASK-09)
+
+O Riley entrou no core atrás de `--transcriber basic-pitch|riley`
+([REF-TASK-09](/docs/rite/cycles/refinamento/09-transcricao-riley-atras-de-flag.md)), em
+`tabgen/core/transcription/riley.py`:
+
+- **Código:** a CRNN e o pós-processamento por regressão foram reescritos a partir do projeto MIT
+  de Kong et al. (`qiuqiangkong/piano_transcription`). O fork sem LICENSE não entra no projeto. O
+  front-end log-mel é o `torchlibrosa==0.1.0` (MIT), declarado no `pyproject.toml` junto com
+  `huggingface_hub` e `numpy`. É menos código que reimplementar, e as chaves do state-dict do
+  checkpoint casam sem adaptação (carga com `strict=True`).
+- **Pesos:** `guitar-gaps.pth` de `xavriley/midi-transcription-models`, revisão
+  `b7bec65a2b860aca72856b0feef58b5df407b777`, sha256 `65483e7c0e34…` conferido antes da carga.
+  São baixados no primeiro uso para o cache do `huggingface_hub`.
+- **Saída híbrida:** as notas vêm do Riley. O Basic Pitch roda no mesmo stem, e cada nota do
+  Riley recebe os `bends` da nota do Basic Pitch de mesmo pitch com onset a até 50 ms
+  (`BEND_MATCH_TOLERANCE_S`, a tolerância de onset do harness). O casamento é um-para-um, pelo
+  onset mais próximo. Sem par, `bends=None`. A detecção de técnicas roda sobre esse resultado.
+  O baixo usa sempre o Basic Pitch.
+- **Cache:** a transcrição híbrida tem versão própria, com o sha dos pesos, a versão do Basic
+  Pitch e a tolerância. A chave da tablatura ganha `+riley-<sha>-<digest>` só com `riley`. As
+  chaves do `basic-pitch` não mudaram.
+
+### Equivalência com a referência (áudio limpo)
+
+Com o mesmo subset e a mesma métrica, a implementação do core reproduz exatamente os relatórios
+da referência (fork + `torchlibrosa`) em
+[candidates/riley-gaps/](/scripts/eval/reports/candidates/riley-gaps/). As saídas por frame das
+quatro cabeças têm diferença máxima 0,0 numa faixa do GuitarSet. Nas 16 faixas, nota-F1,
+tab-F1 e contagens de notas são iguais faixa a faixa:
+
+| Subset | nota-F1 referência | nota-F1 core | tab-F1 referência | tab-F1 core |
+|---|---|---|---|---|
+| GuitarSet | 0,892 | 0,892 | 0,453 | 0,453 |
+| EGDB | 0,860 | 0,860 | 0,486 | 0,486 |
+
+```bash
+for d in guitarset egdb; do
+  .venv/bin/python scripts/eval/run.py --dataset $d --subset scripts/eval/subsets/$d.txt \
+    --transcriber riley          # relatórios em scripts/eval/reports/riley/
+done
+```
+
+### Medição em stems (modo de mistura do harness)
+
+O modo `--mix` do harness ([scripts/eval/mix.py](/scripts/eval/mix.py)) reproduz a entrada real
+do tabgen:
+
+- **Fundo:** bateria + baixo de uma faixa do MUSDB18. São os trechos de 7 s do MUSDB18
+  (Zenodo, registro 3270814, `MUSDB18-7-STEMS.zip`, CC BY 4.0), só das 50 faixas de `test/`,
+  que ficaram fora do treino do Demucs. Streams do `.stem.mp4`: 0 mix, 1 bateria, 2 baixo,
+  3 other, 4 vocais. A ordem foi conferida numa faixa: a soma de 1 a 4 reconstrói o stream 0
+  com resíduo de 6 % do RMS (codificação AAC), e o stream 2 tem o centroide espectral mais grave.
+- **Escolha do fundo:** para o trecho na posição `i` do subset, a faixa
+  `sorted(test/*.stem.mp4)[i % 50]`.
+- **Mistura:** o fundo é repetido em loop até a duração do trecho e posto no mesmo RMS da
+  guitarra (`GUITAR_TO_BACKING_DB = 0`). Se o pico passar de 0,99, a mistura inteira é
+  atenuada.
+- **Separação e transcrição:** o Demucs do tabgen (`htdemucs_ft+htdemucs_6s`) separa a mistura,
+  e o stem `guitar` vai para o transcritor. Depois vêm o mesmo fretting e as mesmas métricas.
+- **Arquivos:** misturas, stems e caches ficam fora do repositório, em `~/datasets/tabgen/mixed/`.
+  Cada relatório registra o fundo de cada trecho e o comando que o gerou.
+
+| Transcritor | GuitarSet misturado nota-F1 | GuitarSet misturado tab-F1 | EGDB misturado nota-F1 | EGDB misturado tab-F1 (5 de 8 faixas) |
+|---|---|---|---|---|
+| `basic-pitch` | 0,745 | 0,334 | 0,615 | 0,224 |
+| `riley` | **0,879** | **0,472** | **0,691** | **0,336** |
+
+Precisão / revocação de nota: `basic-pitch` 0,736/0,771 (GuitarSet) e 0,598/0,662 (EGDB);
+`riley` 0,896/0,866 e 0,772/0,647.
+
+Comando de cada número (a partir da raiz). Os relatórios ficam em
+[scripts/eval/reports/mixed/](/scripts/eval/reports/mixed/) (`<transcritor>/<dataset>-<subset>.md|.json`):
+
+```bash
+for t in basic-pitch riley; do
+  for d in guitarset egdb; do
+    .venv/bin/python scripts/eval/run.py --dataset $d --subset scripts/eval/subsets/$d.txt \
+      --mix --transcriber $t
+  done
+done
+```
+
+Ressalvas da medição:
+
+- **Queda no EGDB:** os dois transcritores perdem mais no EGDB (DI de guitarra elétrica) que no
+  GuitarSet. Na faixa 216 o stem `guitar` sai quase vazio (RMS 0,009 contra 0,092 da guitarra
+  original). O Demucs mandou a guitarra para outro stem, e os dois transcritores ficam perto de
+  zero nessa faixa.
+- **Reprodutibilidade a frio:** o Demucs aplica um deslocamento aleatório (`shifts`). Uma
+  separação refeita do zero pode variar um pouco. Os números acima saem dos stems em cache.
+
+### Decisão de padrão
+
+Regra da tarefa: o padrão vira `riley` só se, no EGDB misturado, nota-F1 e tab-F1 do `riley`
+forem ambos maiores ou iguais aos do `basic-pitch`. Resultado: nota-F1 0,691 ≥ 0,615 e tab-F1
+0,336 ≥ 0,224. **O padrão passa a ser `riley`** (`DEFAULT_TRANSCRIBER` em
+`tabgen/core/pipeline.py`, usado por `tabgen export` e `tabgen transcribe`). O
+`--transcriber basic-pitch` continua disponível. O harness mantém `basic-pitch` como padrão, para
+que os relatórios principais (`scripts/eval/reports/<dataset>-<subset>.*`) continuem a ser os da
+linha de base.
+
+Tempo extra (export de "You and I", 248 s, RTX 3060 Laptop, separação e análise em cache,
+caches de transcrição e tablatura limpos): `basic-pitch` 9,1 s e `riley` 16,6 s, ou seja +7,5 s.
+O tempo extra vem do modelo Riley, que inclui a importação do torch e a carga dos pesos, e do
+Basic Pitch rodado de novo para os bends. No trecho sintético de 10 s de
+`scripts/probe_e2e_riley.py` são 1,9 s contra 4,5 s.

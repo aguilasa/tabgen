@@ -101,6 +101,84 @@ class TranscriptionSummary:
     instruments: list[InstrumentSummary] = field(default_factory=list)
 
 
+# Guitar transcribers (stage 4). The bass always uses Basic Pitch.
+TRANSCRIBER_BASIC_PITCH = "basic-pitch"
+TRANSCRIBER_RILEY = "riley"
+TRANSCRIBERS = (TRANSCRIBER_BASIC_PITCH, TRANSCRIBER_RILEY)
+# Riley became the default after beating Basic Pitch in both note-F1 and
+# tab-F1 on Demucs stems of the mixed EGDB subset (REF-TASK-09, see
+# docs/avaliacao/modelo-guitarra.md).
+DEFAULT_TRANSCRIBER = TRANSCRIBER_RILEY
+
+
+def _check_transcriber(transcriber: str) -> None:
+    """Raise PipelineError unless ``transcriber`` is one of TRANSCRIBERS."""
+    if transcriber not in TRANSCRIBERS:
+        raise PipelineError(
+            f"unknown transcriber {transcriber!r}; choose one of "
+            f"{', '.join(TRANSCRIBERS)}"
+        )
+
+
+def default_transcribe_fn(
+    transcriber: str = DEFAULT_TRANSCRIBER, device: str | None = None
+) -> _TranscribeFn:
+    """The real transcription stage for ``transcriber``.
+
+    ``basic-pitch`` is Basic Pitch for every instrument. ``riley`` routes
+    the guitar to the hybrid Riley transcription (Riley notes, Basic Pitch
+    bends; :mod:`tabgen.core.transcription.riley`) and keeps Basic Pitch
+    for the bass.
+    """
+    _check_transcriber(transcriber)
+    from tabgen.core.transcription.basic_pitch import transcribe as bp_transcribe
+
+    if transcriber == TRANSCRIBER_BASIC_PITCH:
+        return bp_transcribe
+
+    def transcribe(
+        input_path: Path,
+        instrument: str = "guitar",
+        on_progress: ProgressCallback = null_progress,
+    ):
+        if instrument != "guitar":
+            return bp_transcribe(
+                input_path, instrument=instrument, on_progress=on_progress
+            )
+        from tabgen.core.transcription.riley import transcribe as riley_transcribe
+
+        return riley_transcribe(
+            input_path, instrument=instrument, on_progress=on_progress,
+            device=device,
+        )
+
+    return transcribe
+
+
+def transcriber_tag(transcriber: str, instruments: Sequence[str]) -> str:
+    """Cache-key tag of the guitar transcriber (empty for Basic Pitch).
+
+    With ``riley`` and a guitar part it is ``+riley-<weights sha256
+    prefix>-<digest of the hybrid transcription version>`` (the digest pins
+    the Basic Pitch bend source and the matching tolerance). It is kept
+    short: the cache file name already sits near the 255-byte limit.
+    """
+    _check_transcriber(transcriber)
+    if transcriber == TRANSCRIBER_BASIC_PITCH or "guitar" not in instruments:
+        return ""
+    import hashlib
+
+    from tabgen.core.transcription.riley import (
+        WEIGHTS_SHA256,
+        transcription_version,
+    )
+
+    digest = hashlib.sha256(
+        transcription_version("guitar").encode("utf-8")
+    ).hexdigest()[:6]
+    return f"+riley-{WEIGHTS_SHA256[:8]}-{digest}"
+
+
 def _scoped_progress(
     on_progress: ProgressCallback, stage_name: str
 ) -> ProgressCallback:
@@ -122,6 +200,7 @@ def run_transcription(
     transcribe_fn: _TranscribeFn | None = None,
     export_fn: _ExportFn | None = None,
     guitar_type: str | None = None,
+    transcriber: str = DEFAULT_TRANSCRIBER,
 ) -> TranscriptionSummary:
     """Separate the input, transcribe each instrument's stem, export MIDI.
 
@@ -138,16 +217,21 @@ def run_transcription(
     ``guitar_type`` (one of ``models.GUITAR_TYPES``) picks the General MIDI
     program of the guitar file (e.g. ``"nylon"`` = 24); ``None`` keeps the
     exporter's default (electric guitar).
+
+    ``transcriber`` (one of :data:`TRANSCRIBERS`) picks the guitar's
+    transcription when ``transcribe_fn`` is not injected (see
+    :func:`default_transcribe_fn`); the bass always uses Basic Pitch.
     """
     input_path = Path(input_path)
     if not instruments:
         raise PipelineError("no instruments requested")
     _check_guitar_type(guitar_type)
+    _check_transcriber(transcriber)
 
     if separate_fn is None:
         from tabgen.core.separation.demucs import separate as separate_fn
     if transcribe_fn is None:
-        from tabgen.core.transcription.basic_pitch import transcribe as transcribe_fn
+        transcribe_fn = default_transcribe_fn(transcriber, device)
     if export_fn is None:
         from tabgen.core.export.midi import export_midi as export_fn
 
@@ -524,6 +608,7 @@ def tablature_version(
     configs: Mapping[str, object],
     techniques: bool = True,
     guitar_type: str = DEFAULT_GUITAR_TYPE,
+    transcriber: str = DEFAULT_TRANSCRIBER,
 ) -> str:
     """Cache version of the tablature stage for the given fretting configs.
 
@@ -535,7 +620,9 @@ def tablature_version(
     in ``TabScore.instrument_type`` even when two types share a max fret)
     and the technique switch (``tech-off``, or a digest of the bend/slide
     and legato detector thresholds), so changing any of them recomputes the
-    tablature.
+    tablature. A guitar transcribed by ``riley`` adds
+    :func:`transcriber_tag` (transcriber and weights sha); ``basic-pitch``
+    adds nothing, so its keys are unchanged.
     """
     import hashlib
     import json
@@ -550,7 +637,9 @@ def tablature_version(
     ).hexdigest()[:12]
     return (
         f"tab-{TAB_FORMAT_VERSION}+rev-{TABLATURE_PIPELINE_REVISION}"
-        f"+{analysis_version()}+{BP_VERSION}+note-{NOTE_CONTRACT_REVISION}"
+        f"+{analysis_version()}+{BP_VERSION}"
+        f"{transcriber_tag(transcriber, list(configs))}"
+        f"+note-{NOTE_CONTRACT_REVISION}"
         f"+params-{digest}+gtype-{guitar_type}+{_techniques_tag(techniques)}"
     )
 
@@ -648,6 +737,7 @@ def run_tablature(
     fretting_fn: _FrettingFn | None = None,
     techniques: bool = True,
     guitar_type: str = DEFAULT_GUITAR_TYPE,
+    transcriber: str = DEFAULT_TRANSCRIBER,
 ) -> TablatureSummary:
     """Build guitar/bass tablature for the input and export it.
 
@@ -682,9 +772,15 @@ def run_tablature(
     ``fretting.dp.GUITAR_MAX_FRETS``) and its ``TabScore.instrument_type``,
     from which the exporters take the General MIDI program. It is part of
     the cache version.
+
+    ``transcriber`` (one of :data:`TRANSCRIBERS`) picks the guitar's
+    transcription when ``transcribe_fn`` is not injected: ``riley`` gives
+    Riley notes with Basic Pitch bends (see :func:`default_transcribe_fn`),
+    the bass stays on Basic Pitch. It is part of the cache version.
     """
     input_path = Path(input_path)
     _check_guitar_type(guitar_type)
+    _check_transcriber(transcriber)
     if not input_path.is_file():
         raise PipelineError(f"input audio not found: {input_path}")
     instruments = tuple(instruments)
@@ -709,7 +805,8 @@ def run_tablature(
         tunings.setdefault(name, resolve_tuning(None, name))
     configs = _fretting_configs(instruments, tunings, capos, guitar_type)
     version = tablature_version(
-        configs, techniques=techniques, guitar_type=guitar_type
+        configs, techniques=techniques, guitar_type=guitar_type,
+        transcriber=transcriber,
     )
 
     summary = None
@@ -748,6 +845,7 @@ def run_tablature(
             fretting_fn,
             techniques,
             guitar_type,
+            transcriber,
         )
         cache.put(
             TABLATURE_STAGE,
@@ -865,6 +963,7 @@ def _compute_tablature(
     fretting_fn: _FrettingFn | None,
     techniques: bool = True,
     guitar_type: str = DEFAULT_GUITAR_TYPE,
+    transcriber: str = DEFAULT_TRANSCRIBER,
 ) -> TablatureSummary:
     """Run every upstream stage and assemble the TabScores (cache miss)."""
     from dataclasses import asdict
@@ -875,7 +974,7 @@ def _compute_tablature(
     if separate_fn is None:
         from tabgen.core.separation.demucs import separate as separate_fn
     if transcribe_fn is None:
-        from tabgen.core.transcription.basic_pitch import transcribe as transcribe_fn
+        transcribe_fn = default_transcribe_fn(transcriber, device)
     if fretting_fn is None:
         from tabgen.core.fretting import assign_frets as fretting_fn
 
