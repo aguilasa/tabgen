@@ -7,12 +7,14 @@ import {
   extensionOf,
   isSupportedAudio,
   loadRecents,
+  markProcessed,
   probeAudio,
   pruneRecents,
   rememberRecent,
   startupOpen,
   type RecentEntry,
 } from "./lib/recents";
+import { runArtifacts, useTablatureRun, type TablatureResult } from "./lib/run";
 import Ambiente from "./screens/Ambiente";
 import Inicio from "./screens/Inicio";
 import Musica from "./screens/Musica";
@@ -124,6 +126,15 @@ export default function App() {
 
   const python = prefs.pythonPath || fallbackPython;
 
+  const onRunFinished = useCallback((path: string, result: TablatureResult) => {
+    const next = markProcessed(path, runArtifacts(result));
+    setRecents(next);
+    setSong((current) =>
+      current?.path === path ? (next.find((e) => e.path === path) ?? current) : current,
+    );
+  }, []);
+  const tablature = useTablatureRun(python, prefs, onRunFinished);
+
   const recheck = useCallback(() => {
     if (!python) return;
     setDoctor({ state: "loading" });
@@ -185,7 +196,15 @@ export default function App() {
         />
       )}
       {screen === "musica" && song && (
-        <Musica song={song} onBack={() => setScreen("inicio")} />
+        <Musica
+          song={song}
+          run={tablature.run}
+          transcriber={prefs.transcriber}
+          blocked={python ? null : "Interpretador Python ainda não definido"}
+          onGenerate={() => tablature.start(song.path)}
+          onCancel={tablature.cancel}
+          onBack={() => setScreen("inicio")}
+        />
       )}
       {screen === "ambiente" && (
         <>

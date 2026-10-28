@@ -34,4 +34,6 @@ requisição NDJSON e ficam lembradas por música.
 Fonte única dos presets é o core (worker expõe) — nada de duplicar listas de afinação no JS.
 Pitfall herdado: comparar valores parseados, não strings.
 
+Da UI-TASK-04: o botão "Gerar tab ▶" chama `useTablatureRun.start(path)`, que monta os args com `tablatureArgs(path, prefs)` em `desktop/src/lib/run.ts`; o drawer deve estender essa função ou dar um argumento de opções ao `start`.
+
 ## Execution Log

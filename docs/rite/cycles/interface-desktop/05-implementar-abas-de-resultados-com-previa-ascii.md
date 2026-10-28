@@ -34,4 +34,6 @@ rolável do `ascii_preview`; botões de export gp5/MusicXML/ASCII que chamam o w
 Prévia ASCII usa a string pronta do worker — a UI nunca formata tablatura (regra: lógica
 musical só no core).
 
+Da UI-TASK-04: `RunState.result` (em `desktop/src/lib/run.ts`, hook `useTablatureRun` no App) já traz o `TablatureResult` completo do worker (scores, beat_grids, key_check, unassigned, ascii_preview, output_path, format, cache_hit) para a música do caminho atual; `components/Pipeline.tsx` mostra hoje uma linha de resultado que as abas podem substituir.
+
 ## Execution Log

@@ -26,7 +26,11 @@ type WorkerMessage = ProgressMessage | ResultMessage | ErrorMessage;
 interface WorkerExit {
   code: number;
   stderr_tail: string;
+  cancelled: boolean;
 }
+
+/** WorkerError kind of a job stopped by cancelWorker. */
+export const CANCELLED = "Cancelled";
 
 /** A failed job: the worker's error line, or a process that could not run. */
 export class WorkerError extends Error {
@@ -49,13 +53,15 @@ export function defaultPython(): Promise<string> {
  * Run one job and resolve with its result line (without `type`). Rejects
  * with WorkerError: kind `SpawnError` when the interpreter cannot start,
  * `WorkerCrash` when the process ends without an end line (e.g. tabgen not
- * installed in that interpreter), else the worker's own error kind.
+ * installed in that interpreter), `Cancelled` (CANCELLED) when `jobId` was
+ * passed to cancelWorker, else the worker's own error kind.
  */
 export async function runWorker<T = Record<string, unknown>>(
   python: string,
   cmd: WorkerCmd,
   args: Record<string, unknown> = {},
   onProgress?: (stage: string, pct: number) => void,
+  jobId?: string,
 ): Promise<T> {
   let end: ResultMessage | ErrorMessage | null = null;
   let badLine: string | null = null;
@@ -77,12 +83,16 @@ export async function runWorker<T = Record<string, unknown>>(
     exit = await invoke<WorkerExit>("run_worker", {
       python,
       request: { cmd, args },
+      jobId: jobId ?? null,
       onLine,
     });
   } catch (err) {
     throw new WorkerError("SpawnError", String(err));
   }
 
+  if (exit.cancelled) {
+    throw new WorkerError(CANCELLED, "job cancelled", exit.stderr_tail);
+  }
   const last = end as ResultMessage | ErrorMessage | null;
   if (last?.type === "result" && exit.code === 0) {
     const { type: _type, ...payload } = last;
@@ -97,4 +107,12 @@ export async function runWorker<T = Record<string, unknown>>(
     `the worker ended without a result (${detail})`,
     exit.stderr_tail,
   );
+}
+
+/**
+ * Stop the job started with `jobId` (its whole process group). Resolves
+ * false when the job already ended; its runWorker then settles normally.
+ */
+export function cancelWorker(jobId: string): Promise<boolean> {
+  return invoke<boolean>("cancel_worker", { jobId });
 }

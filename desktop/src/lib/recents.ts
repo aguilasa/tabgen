@@ -89,6 +89,20 @@ export function rememberRecent(entry: RecentEntry): RecentEntry[] {
   return next;
 }
 
+/**
+ * Record a finished pipeline run for the entry with `path` (kept in place):
+ * processed_at = now, artifacts replaced. Returns the persisted list; an
+ * unknown path leaves it unchanged.
+ */
+export function markProcessed(path: string, artifacts: string[]): RecentEntry[] {
+  const entries = loadRecents();
+  const next = entries.map((e) =>
+    e.path === path ? { ...e, processed_at: new Date().toISOString(), artifacts } : e,
+  );
+  if (next.some((e) => e.path === path)) saveRecents(next);
+  return next;
+}
+
 /** Drop entries whose file no longer exists; persist and return the rest. */
 export async function pruneRecents(): Promise<RecentEntry[]> {
   const entries = loadRecents();

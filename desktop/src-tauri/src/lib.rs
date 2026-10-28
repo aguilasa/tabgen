@@ -4,16 +4,54 @@
 //! the request line to its stdin and forwards every NDJSON line of its stdout
 //! to the frontend through a channel (protocol: `tabgen/worker/__init__.py`).
 
+use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read, Write};
+use std::os::unix::process::CommandExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
 
 use serde::Serialize;
+use tauri::State;
 use tauri::ipc::Channel;
 
 /// Lines of worker stderr kept for error reporting.
 const STDERR_TAIL_LINES: usize = 20;
+
+/// Grace period between SIGTERM and SIGKILL when a job is cancelled.
+const CANCEL_GRACE: Duration = Duration::from_secs(2);
+
+/// A running job: the worker's pid (also its process group id) and whether
+/// the UI asked to cancel it.
+struct Job {
+    pid: u32,
+    cancelled: bool,
+}
+
+/// Running jobs by the id the frontend gave to `run_worker`.
+#[derive(Default, Clone)]
+struct Jobs(Arc<Mutex<HashMap<String, Job>>>);
+
+impl Jobs {
+    fn lock(&self) -> std::sync::MutexGuard<'_, HashMap<String, Job>> {
+        self.0
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+    }
+}
+
+/// Send `signal` to the whole process group led by `pid` (the worker and
+/// anything it started: ffmpeg, torch/dataloader processes).
+fn signal_group(pid: u32, signal: i32) {
+    if let Ok(pgid) = libc::pid_t::try_from(pid) {
+        // SAFETY: killpg only takes plain integers; an unknown group is ESRCH.
+        unsafe {
+            libc::killpg(pgid, signal);
+        }
+    }
+}
 
 /// Repository root: the worker runs from there so `tabgen` is importable.
 fn repo_root() -> PathBuf {
@@ -38,17 +76,24 @@ struct WorkerExit {
     code: i32,
     /// Last lines the worker wrote to stderr.
     stderr_tail: String,
+    /// True when the job ended because `cancel_worker` was called for it.
+    cancelled: bool,
 }
 
 /// Run one worker job: `request` is the JSON request object; each stdout
 /// line is sent on `on_line` as it arrives. Fails only when the process
-/// cannot be started (e.g. a wrong interpreter path).
+/// cannot be started (e.g. a wrong interpreter path). With a `job_id` the
+/// job can be stopped by `cancel_worker`; the worker runs in its own process
+/// group so cancelling also stops the processes it started.
 #[tauri::command]
 async fn run_worker(
+    jobs: State<'_, Jobs>,
     python: String,
     request: serde_json::Value,
+    job_id: Option<String>,
     on_line: Channel<String>,
 ) -> Result<WorkerExit, String> {
+    let jobs = jobs.inner().clone();
     tauri::async_runtime::spawn_blocking(move || {
         let mut child = Command::new(&python)
             .args(["-m", "tabgen.worker"])
@@ -56,39 +101,96 @@ async fn run_worker(
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
+            .process_group(0)
             .spawn()
             .map_err(|err| format!("cannot start Python at '{python}': {err}"))?;
-
-        let mut stdin = child.stdin.take().expect("stdin is piped");
-        writeln!(stdin, "{request}").map_err(|err| err.to_string())?;
-        drop(stdin);
-
-        let mut stderr = child.stderr.take().expect("stderr is piped");
-        let stderr_reader = std::thread::spawn(move || {
-            let mut text = String::new();
-            let _ = stderr.read_to_string(&mut text);
-            text
-        });
-
-        let stdout = child.stdout.take().expect("stdout is piped");
-        for line in BufReader::new(stdout).lines() {
-            let line = line.map_err(|err| err.to_string())?;
-            if !line.trim().is_empty() {
-                let _ = on_line.send(line);
-            }
+        if let Some(id) = &job_id {
+            jobs.lock().insert(
+                id.clone(),
+                Job {
+                    pid: child.id(),
+                    cancelled: false,
+                },
+            );
         }
-
-        let status = child.wait().map_err(|err| err.to_string())?;
-        let stderr_text = stderr_reader.join().unwrap_or_default();
-        let lines: Vec<&str> = stderr_text.lines().collect();
-        let tail = lines[lines.len().saturating_sub(STDERR_TAIL_LINES)..].join("\n");
-        Ok(WorkerExit {
-            code: status.code().unwrap_or(-1),
-            stderr_tail: tail,
+        let result = drive_worker(&mut child, &request, &on_line);
+        if result.is_err() {
+            // a failed pipe must not leave the worker running unobserved
+            signal_group(child.id(), libc::SIGKILL);
+            let _ = child.wait();
+        }
+        let cancelled = job_id
+            .and_then(|id| jobs.lock().remove(&id))
+            .is_some_and(|job| job.cancelled);
+        result.map(|(code, stderr_tail)| WorkerExit {
+            code,
+            stderr_tail,
+            cancelled,
         })
     })
     .await
     .map_err(|err| err.to_string())?
+}
+
+/// Write the request, forward stdout lines and wait for the exit; returns
+/// the exit code (-1 when killed by a signal) and the stderr tail.
+fn drive_worker(
+    child: &mut std::process::Child,
+    request: &serde_json::Value,
+    on_line: &Channel<String>,
+) -> Result<(i32, String), String> {
+    let mut stdin = child.stdin.take().expect("stdin is piped");
+    writeln!(stdin, "{request}").map_err(|err| err.to_string())?;
+    drop(stdin);
+
+    let mut stderr = child.stderr.take().expect("stderr is piped");
+    let stderr_reader = std::thread::spawn(move || {
+        let mut text = String::new();
+        let _ = stderr.read_to_string(&mut text);
+        text
+    });
+
+    let stdout = child.stdout.take().expect("stdout is piped");
+    for line in BufReader::new(stdout).lines() {
+        let line = line.map_err(|err| err.to_string())?;
+        if !line.trim().is_empty() {
+            let _ = on_line.send(line);
+        }
+    }
+
+    let status = child.wait().map_err(|err| err.to_string())?;
+    let stderr_text = stderr_reader.join().unwrap_or_default();
+    let lines: Vec<&str> = stderr_text.lines().collect();
+    let tail = lines[lines.len().saturating_sub(STDERR_TAIL_LINES)..].join("\n");
+    Ok((status.code().unwrap_or(-1), tail))
+}
+
+/// Stop a job started with `job_id`: SIGTERM to the worker's process group,
+/// SIGKILL after a short grace period. Returns false when no such job is
+/// running (already finished).
+#[tauri::command]
+fn cancel_worker(jobs: State<'_, Jobs>, job_id: String) -> bool {
+    let pid = {
+        let mut map = jobs.lock();
+        let Some(job) = map.get_mut(&job_id) else {
+            return false;
+        };
+        job.cancelled = true;
+        job.pid
+    };
+    signal_group(pid, libc::SIGTERM);
+    let jobs = jobs.inner().clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(CANCEL_GRACE);
+        // run_worker drops the job only after stdout hit EOF and the
+        // worker was reaped; until then some process of the group still
+        // holds the pipe, so the group id cannot have been reused
+        let leader_alive = jobs.lock().get(&job_id).is_some_and(|job| job.pid == pid);
+        if leader_alive {
+            signal_group(pid, libc::SIGKILL);
+        }
+    });
+    true
 }
 
 /// Whether a path still points to a regular file (recents drop the others).
@@ -182,9 +284,11 @@ fn startup_open() -> Option<String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .manage(Jobs::default())
         .invoke_handler(tauri::generate_handler![
             default_python,
             run_worker,
+            cancel_worker,
             file_exists,
             probe_audio,
             startup_open
