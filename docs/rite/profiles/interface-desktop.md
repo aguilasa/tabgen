@@ -10,9 +10,21 @@ which commands search instead of reading whole.
 
 <!-- Decisions the user confirmed. One line each, with the date and where it was decided. -->
 
+- 2026-10-28 — Stack da desktop: Tauri 2 + sidecar Python (worker consome o core); aprovada pelo usuário junto com o protótipo — spec, seção 2.
+- 2026-10-28 — Protótipo aprovado como referência visual: https://claude.ai/artifact/7AvMdpWdyaD56TYHeikJou — spec, cabeçalho.
+- 2026-10-28 — Escopo v1 espelha a CLI (pipeline completo); player por stem, tab renderizada, biblioteca e edição ficam para v2 — spec, seção 1.
+- 2026-10-28 — Protocolo UI↔worker: NDJSON em stdin/stdout, um job por processo; cancelar = encerrar o worker (core sem cancelamento) — spec, seções 2–3.
+- 2026-10-28 — v1 usa a instalação Python existente (venv); empacotar Python fica para depois — spec, seção 2.
+- 2026-10-25 — Arquitetura em camadas: `core/` puro; `desktop/` e `tabgen/worker/` são camadas finas — plano geral, seção 2.
+- 2026-10-25 — Idiomas: código e commits em en-US (conventional), documentação do Rite em pt-BR — adoção do Rite.
+
 ## Sources of truth
 
 <!-- Plan sections, specs, reference outputs. Items point here through `source_of_truth`. -->
+
+- Spec da desktop: [/docs/planejamento/interface-desktop.md](/docs/planejamento/interface-desktop.md) — escopo (1), arquitetura (2), protocolo (3), telas (4), empacotamento (5), roadmap (6).
+- Plano geral: [/docs/planejamento/audio-para-tablatura.md](/docs/planejamento/audio-para-tablatura.md) — arquitetura (seção 2), Fase 5 (seção 5).
+- Protótipo navegável aprovado: https://claude.ai/artifact/7AvMdpWdyaD56TYHeikJou
 
 ## Generated artifacts
 
