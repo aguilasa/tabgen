@@ -89,3 +89,4 @@ Execução (2026-10-28):
     - `scripts/eval/reports/candidates/riley-gaps/egdb-egdb.md`
     - `scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.json`
     - `scripts/eval/reports/candidates/riley-gaps/guitarset-guitarset.md`
+- **Reviewed** (2026-10-28) at `25bb518`: no finding
