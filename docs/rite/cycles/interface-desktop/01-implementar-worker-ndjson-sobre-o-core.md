@@ -66,3 +66,10 @@ Verificação (HEAD do work commit):
 - `.venv/bin/pytest -q` → `237 passed`; `.venv/bin/ruff check .` → `All checks passed!`.
 
 ## Execution Log
+
+- **Closed** — commit `455268e` (2026-10-28): feat(worker): add NDJSON worker over the core pipeline
+  - Files (`git show --name-status 455268e`):
+    - `M docs/rite/cycles/interface-desktop/01-implementar-worker-ndjson-sobre-o-core.md`
+    - `A tabgen/worker/__init__.py`
+    - `A tabgen/worker/__main__.py`
+    - `A tests/test_worker.py`

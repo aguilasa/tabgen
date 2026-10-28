@@ -41,7 +41,7 @@ graph TD
 <!-- rite:begin tasks -->
 | ID | Title | Phase | Type | Depends on | Status | Done on | Reviewed on | Review |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [UI-TASK-01](/docs/rite/cycles/interface-desktop/01-implementar-worker-ndjson-sobre-o-core.md) | Implementar worker NDJSON sobre o core | 5 | feature | — | pending | — | — | — |
+| [UI-TASK-01](/docs/rite/cycles/interface-desktop/01-implementar-worker-ndjson-sobre-o-core.md) | Implementar worker NDJSON sobre o core | 5 | feature | — | done | 2026-10-28 | pending | awaiting |
 | [UI-TASK-02](/docs/rite/cycles/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md) | Criar scaffold Tauri com sidecar e tela Ambiente | 5 | feature | UI-TASK-01 | pending | — | — | — |
 | [UI-TASK-03](/docs/rite/cycles/interface-desktop/03-implementar-tela-inicio-com-abertura-de-arquivo.md) | Implementar tela Início com abertura de arquivo e recentes | 5 | feature | UI-TASK-02 | pending | — | — | — |
 | [UI-TASK-04](/docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md) | Implementar workspace com progresso por estágio e cancelamento | 5 | feature | UI-TASK-02 | pending | — | — | — |

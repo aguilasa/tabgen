@@ -16,11 +16,15 @@
       "source_of_truth": "/docs/planejamento/interface-desktop.md#3",
       "files": ["tabgen/worker/__init__.py", "tabgen/worker/__main__.py", "tests/test_worker.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-28",
+      "done_commit": "455268e",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-28T16:48:50-03:00",
+      "active_s": 203,
+      "finished_at": "2026-10-28T16:52:13-03:00"
     },
     {
       "id": "UI-TASK-02",
