@@ -170,14 +170,15 @@
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-4--refinamento",
       "files": ["README.md", "docs/planejamento/audio-para-tablatura.md", "scripts/eval/reports/egdb-egdb.json", "scripts/eval/reports/egdb-egdb.md", "scripts/eval/reports/guitarset-guitarset.json", "scripts/eval/reports/guitarset-guitarset.md"],
       "resources": [],
-      "status": "in-progress",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
+      "status": "done",
+      "done_on": "2026-10-28",
+      "done_commit": "93adad4",
+      "reviewed_on": "pending",
       "review_commit": null,
-      "active_since": "2026-10-28T15:08:02-03:00",
+      "active_since": null,
       "started_at": "2026-10-28T15:08:02-03:00",
-      "active_s": 0
+      "active_s": 1536,
+      "finished_at": "2026-10-28T15:33:38-03:00"
     },
     {
       "id": "REF-TASK-09",

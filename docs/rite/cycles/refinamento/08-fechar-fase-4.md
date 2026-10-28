@@ -122,3 +122,15 @@ Execução (2026-10-28):
   se o código/pesos foram liberados" — atualizado abaixo.
 
 ## Execution Log
+
+- **Closed** — commit `93adad4` (2026-10-28): docs(readme): document Phase 4 techniques, presets, transcriber and evaluation
+  - Files (`git show --name-status 93adad4`):
+    - `M README.md`
+    - `M docs/planejamento/audio-para-tablatura.md`
+    - `M docs/rite/cycles/refinamento/08-fechar-fase-4.md`
+    - `M docs/rite/cycles/refinamento/progress.json`
+    - `M docs/rite/cycles/refinamento/progress.md`
+    - `M scripts/eval/reports/egdb-egdb.json`
+    - `M scripts/eval/reports/egdb-egdb.md`
+    - `M scripts/eval/reports/guitarset-guitarset.json`
+    - `M scripts/eval/reports/guitarset-guitarset.md`
