@@ -44,8 +44,8 @@ Format:
 ### Emendar files declarados antes de commitar fora do escopo
 - tags: bookkeeping, files, scope
 - paths: docs/rite/cycles/**
-- proven by: FIX-FMVP-007 (2026-10-26), FIX-ANA-002 (2026-10-27), FIX-TAB-004, FIX-TAB-006 (2026-10-27)
-- rule: antes do `rite finish`, comparar os `files` do item com `git show --stat` do work commit nos dois sentidos (tocado fora da lista, listado e não tocado) e corrigir com `rite set <ID> --files ...`.
+- proven by: FIX-FMVP-007 (2026-10-26), FIX-ANA-002 (2026-10-27), FIX-TAB-004, FIX-TAB-006 (2026-10-27), FIX-REF-002 (2026-10-28)
+- rule: antes do `rite finish`, comparar os `files` do item com `git show --stat` do work commit nos dois sentidos (tocado fora da lista, listado e não tocado) e corrigir com `rite set <ID> --files ...`. A regra do `CLAUDE.md` sozinha não bastou: rodar a comparação como último passo antes do `rite finish`, não de memória.
 
 ### Teste da composição real, não só do stub
 - tags: tests, mocks, doctor, pipeline
@@ -56,8 +56,8 @@ Format:
 ### Convenção de contrato fica no contrato, não em prosa de tarefa
 - tags: contract, models, conventions
 - paths: tabgen/core/models.py, tabgen/core/**
-- proven by: FIX-TAB-001 (2026-10-27)
-- rule: quando uma tarefa produz valores de um campo cuja semântica outra tarefa definiu (ex.: numeração de corda), conferir e alinhar o docstring do contrato no mesmo commit; encaminhamento em Notes de tarefa fechada não conta.
+- proven by: FIX-TAB-001 (2026-10-27), FIX-REF-001 (2026-10-28)
+- rule: quando uma tarefa produz valores de um campo cuja semântica outra tarefa definiu (ex.: numeração de corda), conferir e alinhar o docstring do contrato no mesmo commit; encaminhamento em Notes de tarefa fechada não conta. O mesmo vale para qualquer pendência da tarefa (edição negada pela permissão, comentário a corrigir): ou é feita, ou vira fix pela CLI (`rite new-fix`), ou a tarefa fica blocked — nunca só em Notes/Execution Log.
 
 ### Comparar valores parseados, não strings renderizadas
 - tags: analysis, key, labels, external-lib
@@ -70,3 +70,9 @@ Format:
 - paths: docs/rite/cycles/**
 - proven by: FIX-TAB-003 (2026-10-27)
 - rule: linha de saída citada em Verificação/Notes é cópia literal do terminal.
+
+### Check de fase só cita recurso já entregue ou marcado com a tarefa dona
+- tags: profile, phase-checks, review
+- paths: docs/rite/profiles/*.md
+- proven by: FIX-REF-003 (2026-10-28)
+- rule: ao escrever checks de fase no planejamento, anotar a tarefa que entrega cada recurso citado (ex.: "(REF-TASK-05)"); revisor que encontra o check vermelho com a tarefa dona pendente registra nota, não fix.
