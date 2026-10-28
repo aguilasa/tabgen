@@ -14,8 +14,8 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use serde::Serialize;
-use tauri::State;
 use tauri::ipc::Channel;
+use tauri::{Manager, State};
 
 /// Lines of worker stderr kept for error reporting.
 const STDERR_TAIL_LINES: usize = 20;
@@ -50,6 +50,35 @@ fn signal_group(pid: u32, signal: i32) {
         unsafe {
             libc::killpg(pgid, signal);
         }
+    }
+}
+
+/// Watch over the group led by `pid` from outside this process: a tiny `sh`
+/// blocks reading a pipe we hold, so when the UI process dies without
+/// reaching the exit handler (crash, SIGKILL, dev-mode reload) the pipe hits
+/// EOF and the reaper sends SIGTERM then SIGKILL to the whole group.
+fn spawn_reaper(pid: u32) -> Option<std::process::Child> {
+    let script = format!(
+        "read -r _ || {{ kill -s TERM -- -{pid} 2>/dev/null; sleep 2; kill -s KILL -- -{pid} 2>/dev/null; }}"
+    );
+    Command::new("sh")
+        .args(["-c", &script])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .ok()
+}
+
+/// Stand the reaper down once its job ended (the group id may be reused):
+/// a line on its stdin makes `read` succeed, so it exits without killing.
+fn release_reaper(reaper: Option<std::process::Child>) {
+    if let Some(mut reaper) = reaper {
+        if let Some(stdin) = reaper.stdin.as_mut() {
+            let _ = stdin.write_all(b"done\n");
+        }
+        drop(reaper.stdin.take());
+        let _ = reaper.wait();
     }
 }
 
@@ -104,6 +133,7 @@ async fn run_worker(
             .process_group(0)
             .spawn()
             .map_err(|err| format!("cannot start Python at '{python}': {err}"))?;
+        let reaper = spawn_reaper(child.id());
         if let Some(id) = &job_id {
             jobs.lock().insert(
                 id.clone(),
@@ -119,6 +149,7 @@ async fn run_worker(
             signal_group(child.id(), libc::SIGKILL);
             let _ = child.wait();
         }
+        release_reaper(reaper);
         let cancelled = job_id
             .and_then(|id| jobs.lock().remove(&id))
             .is_some_and(|job| job.cancelled);
@@ -191,6 +222,24 @@ fn cancel_worker(jobs: State<'_, Jobs>, job_id: String) -> bool {
         }
     });
     true
+}
+
+/// Stop every running job on app exit: SIGTERM each process group, wait the
+/// cancel grace period, then SIGKILL whatever is left (an already-gone group
+/// is just ESRCH). Blocks on purpose: a background thread like the one in
+/// `cancel_worker` would die with the exiting process before the SIGKILL.
+fn kill_all_jobs(jobs: &Jobs) {
+    let pids: Vec<u32> = jobs.lock().values().map(|job| job.pid).collect();
+    if pids.is_empty() {
+        return;
+    }
+    for &pid in &pids {
+        signal_group(pid, libc::SIGTERM);
+    }
+    std::thread::sleep(CANCEL_GRACE);
+    for &pid in &pids {
+        signal_group(pid, libc::SIGKILL);
+    }
 }
 
 /// Whether a path still points to a regular file (recents drop the others).
@@ -293,6 +342,13 @@ pub fn run() {
             probe_audio,
             startup_open
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app, event| {
+            // closing the last window also raises ExitRequested, so this one
+            // event covers both window close and explicit exit
+            if matches!(event, tauri::RunEvent::ExitRequested { .. }) {
+                kill_all_jobs(&app.state::<Jobs>());
+            }
+        });
 }
