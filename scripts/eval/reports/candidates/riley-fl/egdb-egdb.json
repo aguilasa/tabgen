@@ -1,0 +1,157 @@
+{
+  "dataset": "egdb",
+  "subset": "egdb",
+  "data_dir": "/home/ingmar/datasets/tabgen/egdb",
+  "commit": "7628659-dirty",
+  "model_version": "riley-fl@sha256:50d93dba89bd",
+  "onset_tolerance_s": 0.05,
+  "pitch_tolerance_cents": 50.0,
+  "tracks": [
+    {
+      "track_id": "216",
+      "scores": {
+        "note_precision": 0.6373626373626373,
+        "note_recall": 0.9354838709677419,
+        "note_f1": 0.7581699346405227,
+        "tab_precision": 0.37362637362637363,
+        "tab_recall": 0.5483870967741935,
+        "tab_f1": 0.4444444444444445,
+        "n_ref": 62,
+        "n_est": 91,
+        "n_matched": 58,
+        "n_tab_correct": 34
+      },
+      "string_mapping": "by track (descending, base 6; 98.4% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "219",
+      "scores": {
+        "note_precision": 0.8080808080808081,
+        "note_recall": 0.851063829787234,
+        "note_f1": 0.8290155440414508,
+        "tab_precision": 0.24242424242424243,
+        "tab_recall": 0.2553191489361702,
+        "tab_f1": 0.2487046632124352,
+        "n_ref": 94,
+        "n_est": 99,
+        "n_matched": 80,
+        "n_tab_correct": 24
+      },
+      "string_mapping": "by track (descending, base 6; 98.9% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "222",
+      "scores": {
+        "note_precision": 0.7901234567901234,
+        "note_recall": 0.7619047619047619,
+        "note_f1": 0.7757575757575756,
+        "tab_precision": 0.2345679012345679,
+        "tab_recall": 0.2261904761904762,
+        "tab_f1": 0.2303030303030303,
+        "n_ref": 84,
+        "n_est": 81,
+        "n_matched": 64,
+        "n_tab_correct": 19
+      },
+      "string_mapping": "by track (descending, base 6; 98.8% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "225",
+      "scores": {
+        "note_precision": 0.7800586510263929,
+        "note_recall": 0.8778877887788779,
+        "note_f1": 0.8260869565217391,
+        "tab_precision": null,
+        "tab_recall": null,
+        "tab_f1": null,
+        "n_ref": 303,
+        "n_est": 341,
+        "n_matched": 266,
+        "n_tab_correct": null
+      },
+      "string_mapping": "by track: none",
+      "tab_unavailable_reason": "no unique track->string mapping makes >= 95% of notes playable (best 100.0%; ambiguous: 4 mappings tie)"
+    },
+    {
+      "track_id": "228",
+      "scores": {
+        "note_precision": 0.8702702702702703,
+        "note_recall": 0.8131313131313131,
+        "note_f1": 0.8407310704960836,
+        "tab_precision": null,
+        "tab_recall": null,
+        "tab_f1": null,
+        "n_ref": 396,
+        "n_est": 370,
+        "n_matched": 322,
+        "n_tab_correct": null
+      },
+      "string_mapping": "by track: none",
+      "tab_unavailable_reason": "no unique track->string mapping makes >= 95% of notes playable (best 100.0%; ambiguous: 2 mappings tie)"
+    },
+    {
+      "track_id": "231",
+      "scores": {
+        "note_precision": 0.8535031847133758,
+        "note_recall": 0.8874172185430463,
+        "note_f1": 0.8701298701298702,
+        "tab_precision": 0.5031847133757962,
+        "tab_recall": 0.5231788079470199,
+        "tab_f1": 0.5129870129870131,
+        "n_ref": 151,
+        "n_est": 157,
+        "n_matched": 134,
+        "n_tab_correct": 79
+      },
+      "string_mapping": "by track (descending, base 6; 100.0% playable)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "234",
+      "scores": {
+        "note_precision": 0.93125,
+        "note_recall": 0.9802631578947368,
+        "note_f1": 0.9551282051282052,
+        "tab_precision": null,
+        "tab_recall": null,
+        "tab_f1": null,
+        "n_ref": 304,
+        "n_est": 320,
+        "n_matched": 298,
+        "n_tab_correct": null
+      },
+      "string_mapping": "by track: none",
+      "tab_unavailable_reason": "no unique track->string mapping makes >= 95% of notes playable (best 100.0%; ambiguous: 2 mappings tie)"
+    },
+    {
+      "track_id": "237",
+      "scores": {
+        "note_precision": 0.8287292817679558,
+        "note_recall": 0.9615384615384616,
+        "note_f1": 0.8902077151335311,
+        "tab_precision": 0.6574585635359116,
+        "tab_recall": 0.7628205128205128,
+        "tab_f1": 0.7062314540059348,
+        "n_ref": 156,
+        "n_est": 181,
+        "n_matched": 150,
+        "n_tab_correct": 119
+      },
+      "string_mapping": "by track (descending, base 5; 100.0% playable)",
+      "tab_unavailable_reason": null
+    }
+  ],
+  "mean": {
+    "note_precision": 0.8124222862514454,
+    "note_recall": 0.8835863003182717,
+    "note_f1": 0.8431533589811223,
+    "tab_precision": 0.4022523588393783,
+    "tab_recall": 0.46317920853367445,
+    "tab_f1": 0.4285341209905716,
+    "n_tracks": 8,
+    "n_tracks_with_tab": 5
+  }
+}

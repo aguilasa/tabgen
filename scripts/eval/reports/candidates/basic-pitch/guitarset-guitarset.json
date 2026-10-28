@@ -1,0 +1,157 @@
+{
+  "dataset": "guitarset",
+  "subset": "guitarset",
+  "data_dir": "/home/ingmar/datasets/tabgen/guitarset",
+  "commit": "7628659-dirty",
+  "model_version": "basic-pitch-icassp2022-onnx-guitar+note-2",
+  "onset_tolerance_s": 0.05,
+  "pitch_tolerance_cents": 50.0,
+  "tracks": [
+    {
+      "track_id": "00_BN1-129-Eb_comp",
+      "scores": {
+        "note_precision": 0.6866666666666666,
+        "note_recall": 0.7744360902255639,
+        "note_f1": 0.7279151943462898,
+        "tab_precision": 0.5866666666666667,
+        "tab_recall": 0.6616541353383458,
+        "tab_f1": 0.6219081272084805,
+        "n_ref": 133,
+        "n_est": 150,
+        "n_matched": 103,
+        "n_tab_correct": 88
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "00_BN1-129-Eb_solo",
+      "scores": {
+        "note_precision": 0.6526315789473685,
+        "note_recall": 0.8732394366197183,
+        "note_f1": 0.746987951807229,
+        "tab_precision": 0.23157894736842105,
+        "tab_recall": 0.30985915492957744,
+        "tab_f1": 0.26506024096385544,
+        "n_ref": 71,
+        "n_est": 95,
+        "n_matched": 62,
+        "n_tab_correct": 22
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "01_Funk1-114-Ab_comp",
+      "scores": {
+        "note_precision": 0.8142857142857143,
+        "note_recall": 0.49137931034482757,
+        "note_f1": 0.6129032258064516,
+        "tab_precision": 0.8142857142857143,
+        "tab_recall": 0.49137931034482757,
+        "tab_f1": 0.6129032258064516,
+        "n_ref": 232,
+        "n_est": 140,
+        "n_matched": 114,
+        "n_tab_correct": 114
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "02_Jazz1-130-D_solo",
+      "scores": {
+        "note_precision": 0.6242038216560509,
+        "note_recall": 0.8909090909090909,
+        "note_f1": 0.7340823970037453,
+        "tab_precision": 0.0,
+        "tab_recall": 0.0,
+        "tab_f1": 0.0,
+        "n_ref": 110,
+        "n_est": 157,
+        "n_matched": 98,
+        "n_tab_correct": 0
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "03_Rock1-90-C#_comp",
+      "scores": {
+        "note_precision": 0.6775510204081633,
+        "note_recall": 0.8137254901960784,
+        "note_f1": 0.7394209354120267,
+        "tab_precision": 0.2612244897959184,
+        "tab_recall": 0.3137254901960784,
+        "tab_f1": 0.2850779510022272,
+        "n_ref": 204,
+        "n_est": 245,
+        "n_matched": 166,
+        "n_tab_correct": 64
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "04_SS1-68-E_solo",
+      "scores": {
+        "note_precision": 0.7890625,
+        "note_recall": 0.9017857142857143,
+        "note_f1": 0.8416666666666666,
+        "tab_precision": 0.109375,
+        "tab_recall": 0.125,
+        "tab_f1": 0.11666666666666667,
+        "n_ref": 112,
+        "n_est": 128,
+        "n_matched": 101,
+        "n_tab_correct": 14
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "05_BN2-166-Ab_comp",
+      "scores": {
+        "note_precision": 0.7246376811594203,
+        "note_recall": 0.8670520231213873,
+        "note_f1": 0.7894736842105263,
+        "tab_precision": 0.6376811594202898,
+        "tab_recall": 0.7630057803468208,
+        "tab_f1": 0.694736842105263,
+        "n_ref": 173,
+        "n_est": 207,
+        "n_matched": 150,
+        "n_tab_correct": 132
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    },
+    {
+      "track_id": "05_BN2-166-Ab_solo",
+      "scores": {
+        "note_precision": 0.8840579710144928,
+        "note_recall": 0.9104477611940298,
+        "note_f1": 0.8970588235294118,
+        "tab_precision": 0.13043478260869565,
+        "tab_recall": 0.13432835820895522,
+        "tab_f1": 0.1323529411764706,
+        "n_ref": 67,
+        "n_est": 69,
+        "n_matched": 61,
+        "n_tab_correct": 9
+      },
+      "string_mapping": "jams data_source 0..5 (low E..high E)",
+      "tab_unavailable_reason": null
+    }
+  ],
+  "mean": {
+    "note_precision": 0.7316371192672345,
+    "note_recall": 0.8153718646120514,
+    "note_f1": 0.7611886098477935,
+    "tab_precision": 0.3464058450182133,
+    "tab_recall": 0.3498690286705757,
+    "tab_f1": 0.3410882493661769,
+    "n_tracks": 8,
+    "n_tracks_with_tab": 8
+  }
+}

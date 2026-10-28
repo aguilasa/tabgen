@@ -69,4 +69,9 @@ penalizadas no fretting. Os relatórios versionados em `scripts/eval/reports/` f
 dessa mudança no fretting (tab-F1 GuitarSet 0.313 → 0.341, EGDB 0.383 → 0.418 medidos no
 scratchpad): regenerar com o comando registrado na REF-TASK-06 ao fechar a fase.
 
+Encaminhado pela REF-TASK-07 (2026-10-28): decisão em `docs/avaliacao/modelo-guitarra.md` —
+recomenda adotar Riley `guitar-gaps` em tarefa nova (decisão do usuário, ainda não tomada). Ao
+fechar a fase: citar o documento no README (limitações / roadmap) e atualizar o "Verificar se o
+código/pesos foram liberados" do plano (Estágio 4) com o resultado (pesos públicos, MIT).
+
 ## Execution Log
