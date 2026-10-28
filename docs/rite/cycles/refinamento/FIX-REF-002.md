@@ -62,3 +62,7 @@ Sai 1 agora; deve sair 0 após o fix. Depois:
   `rite set REF-TASK-06 --files …` com a lista atual sem `.gitignore` (12 entradas de
   scripts/eval + tests). Verificação: script da seção sai 0 (`.gitignore` ausente de
   `item.files`); `rite check --quick` → errors: 0, warnings: 0.
+- **Closed** — commit `b6f8743` (2026-10-28): chore(cycle): drop untouched .gitignore from REF-TASK-06 files
+  - Files (`git show --name-status b6f8743`):
+    - `M docs/rite/cycles/refinamento/FIX-REF-002.md`
+    - `M docs/rite/cycles/refinamento/progress.json`

@@ -8,12 +8,15 @@
       "title": "Update stale bends comment in export/midi.py",
       "origin": "REF-TASK-04",
       "severity": "low",
-      "files": [],
+      "files": ["tabgen/core/export/midi.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-28T13:20:18-03:00",
+      "started_at": "2026-10-28T13:20:18-03:00",
+      "active_s": 0
     },
     {
       "id": "FIX-REF-002",
@@ -21,15 +24,16 @@
       "title": "Remove .gitignore from REF-TASK-06 files metadata",
       "origin": "REF-TASK-06",
       "severity": "medium",
-      "files": [],
+      "files": ["docs/rite/cycles/refinamento/progress.json"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-28T13:19:05-03:00",
+      "done_on": "2026-10-28",
+      "done_commit": "b6f8743",
+      "active_since": null,
       "started_at": "2026-10-28T13:19:05-03:00",
-      "active_s": 0
+      "active_s": 203,
+      "finished_at": "2026-10-28T13:22:28-03:00"
     },
     {
       "id": "FIX-REF-003",
