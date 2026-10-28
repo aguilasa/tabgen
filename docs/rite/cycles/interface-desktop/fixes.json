@@ -31,6 +31,32 @@
       "depends_on": [],
       "done_on": null,
       "done_commit": null
+    },
+    {
+      "id": "FIX-UI-003",
+      "file": "FIX-UI-003.md",
+      "title": "Encerrar workers em andamento ao fechar a janela do app",
+      "origin": "UI-TASK-04",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-UI-004",
+      "file": "FIX-UI-004.md",
+      "title": "Versionar probe e2e do pipeline frio/quente usado pela UI",
+      "origin": "UI-TASK-04",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
