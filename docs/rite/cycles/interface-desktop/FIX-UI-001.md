@@ -40,3 +40,5 @@ Abrir o app, mudar Dispositivo para `cpu` e o Interpretador Python, fechar e rea
 valores voltam iguais (screenshot em `evidencias/`).
 
 ## Execution Log
+
+- **Stale** (2026-10-28) at `2e936aa`: sqlite3 ~/.local/share/dev.tabgen.studio/localstorage/http_localhost_1420.localstorage shows tabgen.prefs with device=cpu surviving a fresh xvfb-run tauri dev launch and clean shutdown (md5 identical before/after); WebKitGTK persists localStorage across restarts
