@@ -5,8 +5,9 @@
 //! to the frontend through a channel (protocol: `tabgen/worker/__init__.py`).
 
 use std::io::{BufRead, BufReader, Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use serde::Serialize;
 use tauri::ipc::Channel;
@@ -90,10 +91,104 @@ async fn run_worker(
     .map_err(|err| err.to_string())?
 }
 
+/// Whether a path still points to a regular file (recents drop the others).
+#[tauri::command]
+fn file_exists(path: String) -> bool {
+    Path::new(&path).is_file()
+}
+
+#[derive(Serialize)]
+struct AudioInfo {
+    /// Duration in seconds, from the container.
+    duration_s: f64,
+    /// ffprobe container name (e.g. `mp3`, `wav`, `flac`).
+    format: String,
+    /// Sample rate of the first audio stream, when known.
+    sample_rate: Option<u32>,
+    /// Channels of the first audio stream, when known.
+    channels: Option<u32>,
+}
+
+/// Read duration and format of an audio file with `ffprobe` (ffmpeg is
+/// already a tabgen requirement). Fails when the file is missing or is not
+/// decodable audio.
+#[tauri::command]
+async fn probe_audio(path: String) -> Result<AudioInfo, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        if !Path::new(&path).is_file() {
+            return Err(format!("file not found: {path}"));
+        }
+        let output = Command::new("ffprobe")
+            .args([
+                "-v",
+                "error",
+                "-select_streams",
+                "a:0",
+                "-show_entries",
+                "format=duration,format_name:stream=sample_rate,channels",
+                "-of",
+                "json",
+            ])
+            .arg(&path)
+            .output()
+            .map_err(|err| format!("cannot run ffprobe: {err}"))?;
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            return Err(format!("ffprobe failed: {}", stderr.trim()));
+        }
+        let json: serde_json::Value =
+            serde_json::from_slice(&output.stdout).map_err(|err| err.to_string())?;
+        let stream = &json["streams"][0];
+        if stream.is_null() {
+            return Err("no audio stream".into());
+        }
+        let duration_s = json["format"]["duration"]
+            .as_str()
+            .and_then(|d| d.parse::<f64>().ok())
+            .ok_or("unknown duration")?;
+        let as_u32 = |v: &serde_json::Value| {
+            v.as_u64()
+                .or_else(|| v.as_str().and_then(|s| s.parse().ok()))
+                .and_then(|n| u32::try_from(n).ok())
+        };
+        Ok(AudioInfo {
+            duration_s,
+            format: json["format"]["format_name"]
+                .as_str()
+                .unwrap_or_default()
+                .to_string(),
+            sample_rate: as_u32(&stream["sample_rate"]),
+            channels: as_u32(&stream["channels"]),
+        })
+    })
+    .await
+    .map_err(|err| err.to_string())?
+}
+
+static STARTUP_OPEN_TAKEN: AtomicBool = AtomicBool::new(false);
+
+/// Dev-only: a file named by `TABGEN_OPEN` is opened once at startup through
+/// the same path as the file picker (lets a headless run exercise it).
+/// Release builds ignore the variable.
+#[tauri::command]
+fn startup_open() -> Option<String> {
+    if !cfg!(debug_assertions) || STARTUP_OPEN_TAKEN.swap(true, Ordering::SeqCst) {
+        return None;
+    }
+    std::env::var("TABGEN_OPEN").ok().filter(|p| !p.is_empty())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![default_python, run_worker])
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            default_python,
+            run_worker,
+            file_exists,
+            probe_audio,
+            startup_open
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

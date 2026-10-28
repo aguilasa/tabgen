@@ -34,4 +34,9 @@ processo worker e marca o estado; erro de estágio aparece com a mensagem da exc
 Mapa estágio→barra segue a ordem de `_tablature_stages` (worker repassa os nomes reais;
 nada hardcoded fora da ordem de exibição).
 
+Da UI-TASK-03: `desktop/src/screens/Musica.tsx` é cabeçalho + placeholder; após um pipeline,
+atualizar `processed_at` e `artifacts` da entrada em `desktop/src/lib/recents.ts` (pelo caminho;
+ainda não há função para isso). Para abrir uma música sem o picker num teste headless, há
+`TABGEN_OPEN=<caminho>` (só debug). Verificação de GUI só em Xvfb, nunca no display do usuário.
+
 ## Execution Log
