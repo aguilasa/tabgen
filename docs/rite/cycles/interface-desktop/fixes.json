@@ -65,6 +65,19 @@
       "started_at": "2026-10-28T18:30:19-03:00",
       "active_s": 991,
       "finished_at": "2026-10-28T18:46:50-03:00"
+    },
+    {
+      "id": "FIX-UI-005",
+      "file": "FIX-UI-005.md",
+      "title": "Remover de files do UI-TASK-03 dois paths não tocados pelo work commit",
+      "origin": "UI-TASK-03",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }

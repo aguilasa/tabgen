@@ -84,3 +84,4 @@ Verificação (Xvfb `:99`, nunca o display do usuário; `XDG_DATA_HOME` no scrat
     - `A docs/rite/cycles/interface-desktop/evidencias/03-recusa-ogg.png`
   - **Files amended** — added to `files`:
     - `docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md`
+- **Reviewed** (2026-10-28) at `e022b61`: FIX-UI-005
