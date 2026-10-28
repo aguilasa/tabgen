@@ -115,3 +115,26 @@ Verificação (2026-10-28, thread principal):
   fora do escopo otimizar).
 
 ## Execution Log
+
+- **Closed** — commit `d0d38b4` (2026-10-28): feat(eval): add GuitarSet/EGDB evaluation harness with note-F1 and tab-F1
+  - Files (`git show --name-status d0d38b4`):
+    - `M docs/rite/cycles/refinamento/06-criar-harness-de-avaliacao-em-guitarset-e-egdb.md`
+    - `A scripts/eval/__init__.py`
+    - `A scripts/eval/download.py`
+    - `A scripts/eval/loaders.py`
+    - `A scripts/eval/metrics.py`
+    - `A scripts/eval/reports/egdb-egdb.json`
+    - `A scripts/eval/reports/egdb-egdb.md`
+    - `A scripts/eval/reports/guitarset-guitarset.json`
+    - `A scripts/eval/reports/guitarset-guitarset.md`
+    - `A scripts/eval/run.py`
+    - `A scripts/eval/subsets/egdb.txt`
+    - `A scripts/eval/subsets/guitarset.txt`
+    - `A tests/test_eval_metrics.py`
+  - **Files amended** — added to `files`:
+    - `scripts/eval/download.py`
+    - `scripts/eval/loaders.py`
+    - `scripts/eval/reports/egdb-egdb.json`
+    - `scripts/eval/reports/egdb-egdb.md`
+    - `scripts/eval/reports/guitarset-guitarset.json`
+    - `scripts/eval/reports/guitarset-guitarset.md`
