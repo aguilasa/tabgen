@@ -134,3 +134,4 @@ Execução (2026-10-28):
     - `M scripts/eval/reports/egdb-egdb.md`
     - `M scripts/eval/reports/guitarset-guitarset.json`
     - `M scripts/eval/reports/guitarset-guitarset.md`
+- **Reviewed** (2026-10-28) at `d6d1f30`: no finding

@@ -173,12 +173,14 @@
       "status": "done",
       "done_on": "2026-10-28",
       "done_commit": "93adad4",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-28",
+      "review_commit": "d6d1f30",
       "active_since": null,
       "started_at": "2026-10-28T15:08:02-03:00",
       "active_s": 1536,
-      "finished_at": "2026-10-28T15:33:38-03:00"
+      "finished_at": "2026-10-28T15:33:38-03:00",
+      "review_started_at": "2026-10-28T15:39:50-03:00",
+      "review_s": 319
     },
     {
       "id": "REF-TASK-09",
