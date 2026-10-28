@@ -156,7 +156,8 @@
       "active_since": null,
       "started_at": "2026-10-28T13:26:25-03:00",
       "active_s": 554,
-      "finished_at": "2026-10-28T13:35:39-03:00"
+      "finished_at": "2026-10-28T13:35:39-03:00",
+      "review_started_at": "2026-10-28T13:39:41-03:00"
     },
     {
       "id": "REF-TASK-08",
@@ -164,9 +165,25 @@
       "title": "Fechar Fase 4",
       "type": "closing",
       "phase": 4,
-      "depends_on": ["REF-TASK-01", "REF-TASK-02", "REF-TASK-03", "REF-TASK-04", "REF-TASK-05", "REF-TASK-06", "REF-TASK-07"],
+      "depends_on": ["REF-TASK-01", "REF-TASK-02", "REF-TASK-03", "REF-TASK-04", "REF-TASK-05", "REF-TASK-06", "REF-TASK-07", "REF-TASK-09"],
       "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#fase-4--refinamento",
       "files": ["README.md"],
+      "resources": [],
+      "status": "pending",
+      "done_on": null,
+      "done_commit": null,
+      "reviewed_on": null,
+      "review_commit": null
+    },
+    {
+      "id": "REF-TASK-09",
+      "file": "09-transcricao-riley-atras-de-flag.md",
+      "title": "Transcrição Riley atrás de --transcriber, híbrida com bends do Basic Pitch",
+      "type": "feature",
+      "phase": 4,
+      "depends_on": ["REF-TASK-07"],
+      "source_of_truth": "/docs/planejamento/audio-para-tablatura.md#estágio-4--transcrição-áudio--notas-o-coração",
+      "files": ["tabgen/core/transcription/riley.py", "tabgen/core/transcription/__init__.py", "tabgen/core/pipeline.py", "tabgen/cli/main.py", "pyproject.toml", "tests/test_riley_transcription.py", "tests/test_tablature_pipeline.py", "scripts/eval/run.py", "scripts/eval/candidates.py", "scripts/eval/mix.py", "scripts/eval/reports", "scripts/probe_e2e_export.py", "docs/avaliacao/modelo-guitarra.md"],
       "resources": [],
       "status": "pending",
       "done_on": null,
