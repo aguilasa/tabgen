@@ -10,10 +10,14 @@ only the facts that are stable across runs/encoders:
 - the .musicxml reopens via ``music21.converter.parse``;
 - the ASCII .txt is non-empty;
 - a second gp5 run reuses the tablature cache (stdout mentions "cache hit";
-  its wall-clock time is reported but not hard-asserted).
+  its wall-clock time is reported but not hard-asserted);
+- a ``--no-techniques`` gp5 run (REF-TASK-04) exits 0, is NOT served from
+  the techniques-on cache entry (the switch is part of the cache version)
+  and its .gp5 carries no note effect at all (no bend, slide or hammer).
 
-Exact note counts drift with mp3 encode artifacts, so they are deliberately
-NOT asserted (same policy as probe_e2e_sample.py).
+Exact note and technique counts drift with mp3 encode artifacts, so they
+are deliberately NOT asserted (same policy as probe_e2e_sample.py); the
+techniques-on effect count is only reported.
 
 Not collected by pytest; run it directly:
 
@@ -83,9 +87,11 @@ def generate_sample(directory: Path) -> Path:
     return sample
 
 
-def export(sample: Path, output: Path, step: str) -> subprocess.CompletedProcess[str]:
+def export(
+    sample: Path, output: Path, step: str, extra: tuple[str, ...] = ()
+) -> subprocess.CompletedProcess[str]:
     result = run(
-        [str(TABGEN), "export", str(sample), "-o", str(output)],
+        [str(TABGEN), "export", str(sample), "-o", str(output), *extra],
         step=step,
     )
     if not output.is_file():
@@ -108,6 +114,34 @@ def gp5_track_note_counts(gp5_path: Path) -> dict[str, int]:
         )
         for track in song.tracks
     }
+
+
+def gp5_effect_count(gp5_path: Path) -> int:
+    """Notes of the .gp5 carrying a bend, slide or hammer/pull effect."""
+    song = guitarpro.parse(str(gp5_path))
+    return sum(
+        1
+        for track in song.tracks
+        for measure in track.measures
+        for voice in measure.voices
+        for beat in voice.beats
+        for note in beat.notes
+        if note.effect.bend is not None or note.effect.slides or note.effect.hammer
+    )
+
+
+def check_no_techniques(sample: Path, output: Path) -> None:
+    result = export(
+        sample, output, step="tabgen export --no-techniques", extra=("--no-techniques",)
+    )
+    if CACHE_HIT_MARKER in result.stdout:
+        fail(
+            "--no-techniques run was served from the techniques-on cache entry\n"
+            f"stdout: {result.stdout.strip()}"
+        )
+    effects = gp5_effect_count(output)
+    if effects:
+        fail(f"--no-techniques gp5 still has {effects} note effect(s)")
 
 
 def check_gp5(gp5_path: Path) -> dict[str, int]:
@@ -165,6 +199,7 @@ def main() -> None:
         say("exporting gp5 (cold run: Demucs/Basic Pitch/madmom may be slow)...")
         export(sample, gp5_path, step="tabgen export gp5")
         counts = check_gp5(gp5_path)
+        effects = gp5_effect_count(gp5_path)
 
         say("exporting musicxml...")
         export(sample, xml_path, step="tabgen export musicxml")
@@ -177,6 +212,9 @@ def main() -> None:
         say("rerunning gp5 export to check the tablature cache...")
         elapsed = check_cache_hit(sample, gp5_path)
 
+        say("exporting gp5 with --no-techniques...")
+        check_no_techniques(sample, tmp_dir / "plain.gp5")
+
     counts_text = ", ".join(f"{name}: {n}" for name, n in sorted(counts.items()))
     timing_note = (
         "" if elapsed < CACHE_HIT_BUDGET_S else " (slower than the usual <5 s)"
@@ -186,7 +224,9 @@ def main() -> None:
         f"with notes in both tracks ({counts_text}; counts not asserted); "
         "musicxml reopened by music21; ASCII tab non-empty "
         f"({ascii_bytes} bytes); cached rerun mentioned '{CACHE_HIT_MARKER}' "
-        f"in {elapsed:.2f} s{timing_note}."
+        f"in {elapsed:.2f} s{timing_note}; --no-techniques gp5 has 0 note "
+        f"effects on its own cache entry (techniques on: {effects} effect(s), "
+        "not asserted)."
     )
 
 

@@ -56,4 +56,10 @@ yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artist
 yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
 ```
 
+Encaminhado pela REF-TASK-04 (2026-10-28): documentar no README `--no-techniques` (técnicas ligadas por
+padrão) e as marcas ASCII `7b9`, `5/7`, `7\5`, `5h7`, `7p5` — com bend na partitura as células alargam
+e as marcas aparecem com `-` (ex.: `5h--7`). Comentário desatualizado em
+`tabgen/core/export/midi.py:37-38` continua pendente (edição recusada pelo sistema de permissões;
+decisão do usuário).
+
 ## Execution Log

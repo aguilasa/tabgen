@@ -322,7 +322,9 @@ TABLATURE_STAGE = "tablature"
 # Revision of the tablature assembly done here (chord-to-measure mapping,
 # event ordering, cached payload layout). Bump it whenever that logic
 # changes so cached TabScores are recomputed.
-TABLATURE_PIPELINE_REVISION = 1
+# Revision 2 runs the technique detectors (bends/slides, then legato) on the
+# fretted events.
+TABLATURE_PIPELINE_REVISION = 2
 
 TABLATURE_INSTRUMENTS = ("guitar", "bass")
 
@@ -468,14 +470,32 @@ def _fretting_configs(
     }
 
 
-def tablature_version(configs: Mapping[str, object]) -> str:
+def _techniques_tag(techniques: bool) -> str:
+    """Cache tag of the technique switch and the detector thresholds."""
+    if not techniques:
+        return "tech-off"
+    import hashlib
+    import json
+    from dataclasses import asdict
+
+    from tabgen.core.techniques import BendConfig, LegatoConfig
+
+    params = {"bends": asdict(BendConfig()), "legato": asdict(LegatoConfig())}
+    digest = hashlib.sha256(
+        json.dumps(params, sort_keys=True).encode("utf-8")
+    ).hexdigest()[:12]
+    return f"tech-{digest}"
+
+
+def tablature_version(configs: Mapping[str, object], techniques: bool = True) -> str:
     """Cache version of the tablature stage for the given fretting configs.
 
     Pins the TabScore contract (``TAB_FORMAT_VERSION``), this assembly's
     revision, every upstream model (analysis, Basic Pitch), the Note
-    contract revision and a digest of the per-instrument
-    fretting parameters (tuning, capo, weights), so changing any of them
-    recomputes the tablature.
+    contract revision, a digest of the per-instrument fretting parameters
+    (tuning, capo, weights) and the technique switch (``tech-off``, or a
+    digest of the bend/slide and legato detector thresholds), so changing
+    any of them recomputes the tablature.
     """
     import hashlib
     import json
@@ -491,7 +511,7 @@ def tablature_version(configs: Mapping[str, object]) -> str:
     return (
         f"tab-{TAB_FORMAT_VERSION}+rev-{TABLATURE_PIPELINE_REVISION}"
         f"+{analysis_version()}+{BP_VERSION}+note-{NOTE_CONTRACT_REVISION}"
-        f"+params-{digest}"
+        f"+params-{digest}+{_techniques_tag(techniques)}"
     )
 
 
@@ -586,6 +606,7 @@ def run_tablature(
     transcribe_fn: _TranscribeFn | None = None,
     analysis_fn: _AnalysisFn | None = None,
     fretting_fn: _FrettingFn | None = None,
+    techniques: bool = True,
 ) -> TablatureSummary:
     """Build guitar/bass tablature for the input and export it.
 
@@ -607,6 +628,13 @@ def run_tablature(
     ``separate_fn`` / ``transcribe_fn`` / ``analysis_fn`` /
     ``fretting_fn`` default to the real stages and exist for dependency
     injection in tests.
+
+    ``techniques`` (default on) runs the technique detectors on the fretted
+    events of each instrument, bends/slides first and legato second (the
+    call order is the precedence: a detector never overwrites a technique
+    already set), so exporters write bends, slides, hammer-ons and
+    pull-offs. When off, every ``TabNote.technique`` stays ``None`` and the
+    output carries no effect. The switch is part of the cache version.
     """
     input_path = Path(input_path)
     if not input_path.is_file():
@@ -632,7 +660,7 @@ def run_tablature(
     for name in instruments:
         tunings.setdefault(name, resolve_tuning(None, name))
     configs = _fretting_configs(instruments, tunings, capos)
-    version = tablature_version(configs)
+    version = tablature_version(configs, techniques=techniques)
 
     summary = None
     cached = cache.get(TABLATURE_STAGE, version)
@@ -668,6 +696,7 @@ def run_tablature(
             transcribe_fn,
             analysis_fn,
             fretting_fn,
+            techniques,
         )
         cache.put(
             TABLATURE_STAGE,
@@ -734,6 +763,42 @@ def _fretting_input(quantized: Sequence) -> tuple[dict, list[Note]]:
     return by_id, notes
 
 
+def _source_notes(transcribed: Sequence[Note], placed: Sequence) -> list[Note]:
+    """Transcribed Note behind each placed (quantized, fretted) pair.
+
+    ``QuantizedNote`` and the fretting copies built by
+    :func:`_fretting_input` drop ``Note.bends``, but the quantized note keeps
+    the original ``pitch_midi``/``start_s``/``end_s`` verbatim, so that
+    triple maps it back to the transcribed note (identical triples are the
+    same note for every detector). A pair with no match (not expected)
+    falls back to a bend-less copy of the quantized note.
+    """
+    by_key: dict[tuple[int, float, float], Note] = {}
+    for note in transcribed:
+        by_key.setdefault((note.pitch_midi, note.start_s, note.end_s), note)
+    sources: list[Note] = []
+    for q, _ in placed:
+        note = by_key.get((q.pitch_midi, q.start_s, q.end_s))
+        if note is None:
+            note = Note(
+                pitch_midi=q.pitch_midi,
+                start_s=q.start_s,
+                end_s=q.end_s,
+                velocity=q.velocity,
+                confidence=q.confidence,
+            )
+        sources.append(note)
+    return sources
+
+
+def _detect_techniques(events: list[TabNote], sources: list[Note]) -> list[TabNote]:
+    """Fill techniques: bends/slides first, then legato (call order = precedence)."""
+    from tabgen.core.techniques import detect_bends_and_slides, detect_legato
+
+    events = detect_bends_and_slides(events, sources)
+    return detect_legato(events, sources)
+
+
 def _compute_tablature(
     input_path: Path,
     output_path: Path,
@@ -747,6 +812,7 @@ def _compute_tablature(
     transcribe_fn: _TranscribeFn | None,
     analysis_fn: _AnalysisFn | None,
     fretting_fn: _FrettingFn | None,
+    techniques: bool = True,
 ) -> TablatureSummary:
     """Run every upstream stage and assemble the TabScores (cache miss)."""
     from dataclasses import asdict
@@ -850,6 +916,22 @@ def _compute_tablature(
             ),
         )
         config = configs[name]
+        events = [
+            TabNote(
+                string=f.string,
+                fret=f.fret,
+                measure=q.measure,
+                beat=q.beat,
+                subdivision=q.subdivision,
+                duration_subdivisions=q.duration_subdivisions,
+                start_s=q.start_s,
+                end_s=q.end_s,
+            )
+            for q, f in placed
+        ]
+        if techniques:
+            sources = _source_notes(events_by_instrument[name].notes, placed)
+            events = _detect_techniques(events, sources)
         summary.scores.append(
             TabScore(
                 instrument=name,
@@ -858,19 +940,7 @@ def _compute_tablature(
                 tempo_bpm=analysis.tempo_bpm,
                 key=key_result.key,
                 time_signature=[beats_per_measure, 4],
-                events=[
-                    TabNote(
-                        string=f.string,
-                        fret=f.fret,
-                        measure=q.measure,
-                        beat=q.beat,
-                        subdivision=q.subdivision,
-                        duration_subdivisions=q.duration_subdivisions,
-                        start_s=q.start_s,
-                        end_s=q.end_s,
-                    )
-                    for q, f in placed
-                ],
+                events=events,
                 chords=list(measure_chords),
             )
         )

@@ -7,9 +7,16 @@ from tabgen.core.export.gp5 import Gp5ExportError, export_gp5
 from tabgen.core.models import (
     BASS_STANDARD_TUNING,
     GUITAR_STANDARD_TUNING,
+    SLIDE_DOWN,
+    SLIDE_UP,
+    TECHNIQUE_BEND,
+    TECHNIQUE_HAMMER_ON,
+    TECHNIQUE_PULL_OFF,
+    TECHNIQUE_SLIDE,
     MeasureChord,
     TabNote,
     TabScore,
+    Technique,
 )
 
 QUARTER = guitarpro.Duration.quarterTime  # 960 ticks
@@ -175,3 +182,102 @@ def test_rejects_mismatched_time_signatures_and_bad_strings(tmp_path):
     out_of_range = TabScore(events=[_note(7, 0, measure=1, beat=1)])
     with pytest.raises(Gp5ExportError, match="string 7"):
         export_gp5(out_of_range, tmp_path / "bad.gp5")
+
+
+def _technique_score():
+    """One measure with the four techniques, each on its origin note.
+
+    Beat 1: bend 7 (string 3, whole step, curve rising then holding).
+    Beat 2: slide 5 -> 7 on string 2 (8ths). Beat 3: hammer 5 -> 7 on
+    string 1. Beat 4: pull 7 -> 5 on string 1 (also slide down 9 -> 7 on
+    string 4 of a two-note beat, to pin per-note placement in a chord).
+    """
+    bend = Technique(
+        kind=TECHNIQUE_BEND, bend_semitones=2.0, bend_curve=[0.0, 1.0, 2.0, 2.0, 2.0]
+    )
+    slide = Technique(kind=TECHNIQUE_SLIDE, slide_direction=SLIDE_UP, target_fret=7)
+    down = Technique(kind=TECHNIQUE_SLIDE, slide_direction=SLIDE_DOWN, target_fret=7)
+    hammer = Technique(kind=TECHNIQUE_HAMMER_ON, target_fret=7)
+    pull = Technique(kind=TECHNIQUE_PULL_OFF, target_fret=5)
+    events = [
+        _note(3, 7, 1, 1, duration=4),
+        _note(2, 5, 1, 2, 0, duration=2),
+        _note(2, 7, 1, 2, 2, duration=2),
+        _note(1, 5, 1, 3, 0, duration=2),
+        _note(1, 7, 1, 3, 2, duration=2),
+        _note(1, 7, 1, 4, 0, duration=2),
+        _note(4, 9, 1, 4, 0, duration=2),
+        _note(1, 5, 1, 4, 2, duration=2),
+        _note(4, 7, 1, 4, 2, duration=2),
+    ]
+    for index, technique in ((0, bend), (1, slide), (3, hammer), (5, pull), (6, down)):
+        events[index].technique = technique
+    return TabScore(instrument="guitar", time_signature=[4, 4], events=events)
+
+
+def _effects(path):
+    """(string, fret) -> (bend points, slides, hammer) of every re-read note."""
+    song = guitarpro.parse(str(path))
+    out = []
+    for beat in song.tracks[0].measures[0].voices[0].beats:
+        for note in beat.notes:
+            bend = note.effect.bend
+            out.append(
+                (
+                    note.string,
+                    note.value,
+                    [(p.position, p.value) for p in bend.points] if bend else None,
+                    list(note.effect.slides),
+                    note.effect.hammer,
+                )
+            )
+    return out
+
+
+def test_techniques_roundtrip_as_note_effects(tmp_path):
+    path = export_gp5(_technique_score(), tmp_path / "fx.gp5")
+    shift = guitarpro.SlideType.shiftSlideTo
+    # Bend points are in quarter tones: a whole step peaks at 4.
+    assert _effects(path) == [
+        (3, 7, [(0, 0), (3, 2), (6, 4), (9, 4), (12, 4)], [], False),
+        (2, 5, None, [shift], False),
+        (2, 7, None, [], False),
+        (1, 5, None, [], True),
+        (1, 7, None, [], False),
+        (1, 7, None, [], True),
+        (4, 9, None, [shift], False),
+        (1, 5, None, [], False),
+        (4, 7, None, [], False),
+    ]
+    song = guitarpro.parse(str(path))
+    bend = song.tracks[0].measures[0].voices[0].beats[0].notes[0].effect.bend
+    assert bend.type == guitarpro.BendType.bend and bend.value == 100
+
+
+def test_plain_bend_without_curve_rises_and_holds(tmp_path):
+    note = _note(3, 7, 1, 1)
+    note.technique = Technique(kind=TECHNIQUE_BEND, bend_semitones=1.0)
+    path = export_gp5(TabScore(events=[note]), tmp_path / "b.gp5")
+    assert _effects(path)[0][2] == [(0, 0), (6, 2), (12, 2)]
+
+
+def test_link_effect_goes_on_the_last_tied_chunk(tmp_path):
+    origin = _note(2, 5, 1, 4, duration=8)  # crosses into measure 2
+    origin.technique = Technique(kind=TECHNIQUE_HAMMER_ON, target_fret=7)
+    bend = _note(3, 7, 1, 4, duration=8)
+    bend.technique = Technique(kind=TECHNIQUE_BEND, bend_semitones=1.0)
+    path = export_gp5(
+        TabScore(events=[origin, bend, _note(2, 7, 2, 2)]), tmp_path / "t.gp5"
+    )
+    song = guitarpro.parse(str(path))
+    notes = [
+        (m.header.number, n.string, n.type, n.effect.hammer, n.effect.bend is not None)
+        for m in song.tracks[0].measures
+        for b in m.voices[0].beats
+        for n in b.notes
+    ]
+    normal, tie = guitarpro.NoteType.normal, guitarpro.NoteType.tie
+    assert (1, 2, normal, False, False) in notes
+    assert (2, 2, tie, True, False) in notes
+    assert (1, 3, normal, False, True) in notes
+    assert (2, 3, tie, False, False) in notes

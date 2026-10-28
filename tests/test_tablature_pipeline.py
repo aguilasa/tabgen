@@ -323,3 +323,150 @@ def test_notes_quantized_to_one_onset_are_fretted_as_one_chord(tmp_path):
         if beat.notes
     ]
     assert beat_sizes == [2, 1]
+
+
+# A bent note (beat 1), then a picked note hammered onto a quieter one
+# (beats 2-3, contiguous on one string), then a plain note. Basic Pitch
+# bend bins are 1/3 semitone: 6 bins = a whole step held for ~0.38 s.
+TECHNIQUE_NOTES = [
+    Note(pitch_midi=62, start_s=0.5, end_s=0.95, velocity=0.9,
+         bends=[0] * 6 + [6] * 33),
+    Note(pitch_midi=69, start_s=1.0, end_s=1.25, velocity=0.9),
+    Note(pitch_midi=71, start_s=1.25, end_s=1.45, velocity=0.3),
+    Note(pitch_midi=64, start_s=2.0, end_s=2.45, velocity=0.9),
+]
+
+
+def _technique_transcribe(input_path, instrument="guitar",
+                          on_progress=pipeline.null_progress):
+    events = NoteEvents(notes=[Note(**vars(n)) for n in TECHNIQUE_NOTES])
+    return TranscriptionResult(note_events=events), False
+
+
+# Fixed fingering of TECHNIQUE_NOTES (the hammer pair shares string 1), so
+# the detectors see a known layout whatever the DP weights prefer.
+TECHNIQUE_FRETS = {62: (3, 7), 69: (1, 5), 71: (1, 7), 64: (1, 0)}
+
+
+def _technique_fretting(notes, config=None, chords=None):
+    from tabgen.core.fretting import FrettedNote, FrettingResult
+
+    return FrettingResult(
+        assignments=[FrettedNote(n, *TECHNIQUE_FRETS[n.pitch_midi]) for n in notes]
+    )
+
+
+def _run_techniques(tmp_path: Path, output: Path, **kwargs):
+    separate, analysis, _ = make_fakes(tmp_path, [])
+    return run_tablature(
+        tmp_path / "song.wav",
+        output_path=output,
+        instruments=["guitar"],
+        separate_fn=separate,
+        analysis_fn=analysis,
+        transcribe_fn=_technique_transcribe,
+        fretting_fn=_technique_fretting,
+        **kwargs,
+    )
+
+
+def test_pipeline_detects_bend_and_hammer_from_source_notes(tmp_path):
+    write_input(tmp_path)
+    summary = _run_techniques(tmp_path, tmp_path / "fx.gp5")
+    kinds = [
+        (e.fret, e.technique.kind if e.technique else None)
+        for e in summary.scores[0].events
+    ]
+    # Bends come from the transcribed Note.bends (QuantizedNote drops them).
+    bend = summary.scores[0].events[0].technique
+    assert bend is not None and bend.kind == "bend" and bend.bend_semitones == 2.0
+    assert kinds == [(7, "bend"), (5, "hammer_on"), (7, None), (0, None)]
+    assert summary.scores[0].events[1].technique.target_fret == 7
+
+    song = guitarpro.parse(str(tmp_path / "fx.gp5"))
+    notes = [
+        n
+        for m in song.tracks[0].measures
+        for b in m.voices[0].beats
+        for n in b.notes
+    ]
+    assert notes[0].effect.bend is not None and notes[1].effect.hammer
+
+
+def test_no_techniques_switch_leaves_events_plain_and_has_its_own_cache(tmp_path):
+    write_input(tmp_path)
+    on = _run_techniques(tmp_path, tmp_path / "on.gp5")
+    off = _run_techniques(tmp_path, tmp_path / "off.gp5", techniques=False)
+    assert off.cache_hit is False  # the switch is part of the cache version
+    assert any(e.technique for e in on.scores[0].events)
+    assert all(e.technique is None for e in off.scores[0].events)
+    assert [(e.string, e.fret) for e in off.scores[0].events] == [
+        (e.string, e.fret) for e in on.scores[0].events
+    ]
+    again = _run_techniques(tmp_path, tmp_path / "off2.gp5", techniques=False)
+    assert again.cache_hit is True
+    assert all(e.technique is None for e in again.scores[0].events)
+
+
+def test_tablature_version_pins_the_technique_switch():
+    configs = pipeline._fretting_configs(
+        ["guitar"], {"guitar": resolve_tuning(None, "guitar")}, {}
+    )
+    on = pipeline.tablature_version(configs)
+    off = pipeline.tablature_version(configs, techniques=False)
+    assert on != off
+    assert off.endswith("+tech-off") and "+tech-" in on
+    assert f"+rev-{pipeline.TABLATURE_PIPELINE_REVISION}+" in on
+
+
+def _gp5_effects(path: Path) -> list[tuple]:
+    song = guitarpro.parse(str(path))
+    return [
+        (n.effect.bend is not None, bool(n.effect.slides), n.effect.hammer)
+        for track in song.tracks
+        for m in track.measures
+        for b in m.voices[0].beats
+        for n in b.notes
+    ]
+
+
+def test_cli_no_techniques_writes_no_effect(tmp_path, monkeypatch):
+    """`tabgen export --no-techniques` with injected stages: no effect at all
+    in the .gp5 (the default run of the same input does carry effects)."""
+    from typer.testing import CliRunner
+
+    from tabgen.cli.main import app
+
+    audio = write_input(tmp_path)
+    separate, analysis, _ = make_fakes(tmp_path, [])
+    real_run = pipeline.run_tablature
+
+    def injected(*args, **kwargs):
+        return real_run(
+            *args,
+            separate_fn=separate,
+            analysis_fn=analysis,
+            transcribe_fn=_technique_transcribe,
+            fretting_fn=_technique_fretting,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(pipeline, "run_tablature", injected)
+    runner = CliRunner()
+    plain = tmp_path / "plain.gp5"
+    result = runner.invoke(
+        app,
+        ["export", str(audio), "-o", str(plain), "--instruments", "guitar",
+         "--no-techniques"],
+    )
+    assert result.exit_code == 0, result.output
+    effects = _gp5_effects(plain)
+    assert effects and not any(any(fx) for fx in effects)
+
+    styled = tmp_path / "styled.gp5"
+    result = runner.invoke(
+        app, ["export", str(audio), "-o", str(styled), "--instruments", "guitar"]
+    )
+    assert result.exit_code == 0, result.output
+    assert "2 technique(s)" in result.output
+    assert any(any(fx) for fx in _gp5_effects(styled))

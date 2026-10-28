@@ -21,14 +21,14 @@ para desligar (`--no-techniques`).
 
 ## Done criteria
 
-- [ ] Teste: `TabScore` com as quatro técnicas exportada em .gp5 e relida com `guitarpro.parse()`
+- [x] Teste: `TabScore` com as quatro técnicas exportada em .gp5 e relida com `guitarpro.parse()`
       preserva cada efeito na nota correta.
-- [ ] Teste: MusicXML relido pelo music21 contém as notações técnicas nas notas correspondentes.
-- [ ] Teste: golden ASCII versionado em `tests/golden/` com bend, slide, hammer e pull bate byte a
+- [x] Teste: MusicXML relido pelo music21 contém as notações técnicas nas notas correspondentes.
+- [x] Teste: golden ASCII versionado em `tests/golden/` com bend, slide, hammer e pull bate byte a
       byte.
-- [ ] `--no-techniques` gera saída sem nenhum efeito (teste de CLI com funções injetadas).
-- [ ] `.venv/bin/python scripts/probe_e2e_export.py` sai 0.
-- [ ] `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes.
+- [x] `--no-techniques` gera saída sem nenhum efeito (teste de CLI com funções injetadas).
+- [x] `.venv/bin/python scripts/probe_e2e_export.py` sai 0.
+- [x] `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes.
 
 ## Notes
 
@@ -74,5 +74,73 @@ Exportar as legato no `__init__.py` de `tabgen/core/techniques/` (a REF-03 não 
 `bend_curve` sai com 5 pontos em passos de 0,5 semitom (mapear para pontos de bend GP5); slide e
 legato com `target_fret` na nota de origem (ASCII `/`, `\`, `h`, `p`). Limitação conhecida: glide na
 cauda de nota numa corda diferente da seguinte vira bend.
+
+### Execução (REF-TASK-04)
+
+- **Vínculo no pipeline:** `QuantizedNote` e as cópias de `_fretting_input` perdem `Note.bends`, mas
+  o `QuantizedNote` guarda `pitch_midi`/`start_s`/`end_s` originais sem alteração; `_source_notes`
+  mapeia cada par `(q, f)` de volta à `Note` transcrita por essa tripla (triplas iguais são a
+  mesma nota para os detectores; sem correspondência, cópia sem bends). Escolhido em vez de mexer
+  em `quantize.py` (fora da lista de arquivos). `_detect_techniques` chama
+  `detect_bends_and_slides` e depois `detect_legato` (ordem = precedência).
+- **Cache:** `tablature_version(configs, techniques=True)` termina em `+tech-off` ou
+  `+tech-<sha12 de BendConfig+LegatoConfig>`; `TABLATURE_PIPELINE_REVISION` = 2.
+  `run_tablature(..., techniques=True)`; CLI `tabgen export --techniques/--no-techniques`
+  (padrão ligado; com técnicas, o resumo por instrumento mostra `N technique(s)`).
+- **GP5:** bend → `BendEffect(type=bend, value=semitons*50)` na primeira batida da nota; pontos
+  do `bend_curve` em posições 0..12 com valor em quartos de tom (unidade do PyGuitarPro:
+  `semitoneLength=1` grava ×25 no arquivo); sem curva, sobe ao pico e segura. Slide →
+  `SlideType.shiftSlideTo`; hammer-on e pull-off → `NoteEffect.hammer` (GP5 usa um só flag), os
+  dois na última batida da nota (após ligaduras) para ligar à nota seguinte.
+- **MusicXML:** bend → `<technical><bend><bend-alter>` (`FretBend`) no primeiro elemento; slide →
+  `<slide line-type="solid">` (`Glissando` `continuous`); hammer/pull → spanners `HammerOn`/
+  `PullOff` (start/stop) do último elemento da origem ao primeiro da próxima nota na mesma
+  corda; técnica de ligação sem nota seguinte na corda é descartada.
+- **ASCII:** marca na célula da origem: `7b9` (alvo = traste + semitons, `:g`; quarto de tom
+  vira `7b8.5`), `5/`, `7\`, `5h`, `7p`. A largura da célula conta só trastes e tokens de bend
+  (+1), então o golden antigo `ascii_guitar_riff.txt` fica idêntico; sem bend e com notas em
+  células vizinhas sai `5h7p5`; com bend na mesma partitura (largura 4) sai `5h--7`.
+- **Controle (antes do mapeamento):** com `_apply_technique`/`_link_spanner`/`_cell_token`
+  anulados por monkeypatch (script em scratchpad, não versionado), os três testes de técnica
+  falham: gp5 `At index 0 diff: (3, 7, None, [], False) != (3, 7, [(0, 0), (3, 2), (6, 4), (9, 4),
+  (12, 4)], [], False)`; MusicXML `assert 'line-type="solid"' in ...`; ASCII `At index 154 diff:
+  b'-' != b'h'` → `3 failed`.
+- **Comandos dos critérios:**
+  - gp5: `.venv/bin/pytest -q tests/test_gp5_export.py` → `7 passed`
+    (`test_techniques_roundtrip_as_note_effects`).
+  - MusicXML: `.venv/bin/pytest -q tests/test_musicxml_export.py` → `6 passed`
+    (`test_techniques_reread_as_technical_notations`).
+  - ASCII: `.venv/bin/pytest -q tests/test_ascii_tab.py` → `8 passed`
+    (`test_golden_techniques_match_bytes`; `ascii_guitar_riff.txt` sem diff).
+  - `--no-techniques`: `.venv/bin/pytest -q tests/test_tablature_pipeline.py` → `12 passed`
+    (`test_cli_no_techniques_writes_no_effect`, CliRunner com estágios injetados e fretting
+    fixo).
+  - Probe: `.venv/bin/python scripts/probe_e2e_export.py` → exit 0, `PASS: ... --no-techniques
+    gp5 has 0 note effects on its own cache entry (techniques on: 0 effect(s), not asserted).`
+    O seno puro não gera técnica; a contagem com técnicas só é reportada.
+  - `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes; grep de pureza em `tabgen/core/`
+    vazio.
+- **Não feito — comentário em `tabgen/core/export/midi.py:37-38`:** o comentário ainda diz que os
+  bends vêm de `TranscriptionResult.bends` (agora vêm de `Note.bends`). A edição foi recusada pelo
+  sistema de permissões nesta execução e fica para decisão do usuário; o arquivo não foi
+  tocado.
+- **Achado (encaminhar ao fretting):** `assign_frets` com a configuração padrão põe a linha
+  esparsa D4, A4, B4, E4 (sem acordes) em `(6, 22), (5, 24), (4, 21), (6, 24)` — trastes 21–24
+  nas cordas graves. Por isso o teste de pipeline das técnicas injeta um fretting fixo. Fora do
+  escopo desta tarefa.
+- Verificação opcional com áudio do YouTube: não feita (opcional).
+
+Verificação (2026-10-28, thread principal, árvore do commit sem os arquivos da REF-TASK-06):
+
+- `.venv/bin/pytest -q tests/test_gp5_export.py` → `7 passed`; `tests/test_musicxml_export.py` → `6 passed`;
+  `tests/test_ascii_tab.py` → `8 passed`; `tests/test_tablature_pipeline.py` → `12 passed`
+- `git diff --quiet -- tests/golden/ascii_guitar_riff.txt` → exit 0 (golden antigo intacto)
+- `/usr/bin/time -f "elapsed=%es" .venv/bin/python scripts/probe_e2e_export.py` → exit 0, `PASS: ... cached
+  rerun mentioned 'cache hit' in 0.24 s; --no-techniques gp5 has 0 note effects on its own cache entry`,
+  `elapsed=14.97s`
+- `.venv/bin/pytest -q` → `180 passed`; `.venv/bin/ruff check .` → `All checks passed!`;
+  `grep -rnE "import typer|import rich|print\(" tabgen/core/` → vazio (exit 1)
+- Controle (worker, script de scratchpad): mapeamentos trocados por no-op → `3 failed` nos três testes de
+  técnica.
 
 ## Execution Log

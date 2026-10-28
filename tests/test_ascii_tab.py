@@ -10,7 +10,19 @@ from tabgen.core.export.ascii_tab import (
     export_ascii_tab,
     render_ascii_tab,
 )
-from tabgen.core.models import BASS_STANDARD_TUNING, MeasureChord, TabNote, TabScore
+from tabgen.core.models import (
+    BASS_STANDARD_TUNING,
+    SLIDE_DOWN,
+    SLIDE_UP,
+    TECHNIQUE_BEND,
+    TECHNIQUE_HAMMER_ON,
+    TECHNIQUE_PULL_OFF,
+    TECHNIQUE_SLIDE,
+    MeasureChord,
+    TabNote,
+    TabScore,
+    Technique,
+)
 
 GOLDEN = Path(__file__).parent / "golden" / "ascii_guitar_riff.txt"
 
@@ -122,3 +134,71 @@ def test_rejects_empty_scores_and_bad_events():
     bad_beat = TabScore(events=[_note(1, 0, measure=1, beat=5)])
     with pytest.raises(AsciiTabExportError, match="beat 5"):
         render_ascii_tab(bad_beat)
+
+
+TECHNIQUES_GOLDEN = Path(__file__).parent / "golden" / "ascii_techniques.txt"
+
+
+def _linked(string, fret, measure, beat, subdivision, technique=None):
+    note = _note(string, fret, measure, beat, subdivision=subdivision, duration=1)
+    note.technique = technique
+    return note
+
+
+def _techniques_riff():
+    """2-measure lick pinned by tests/golden/ascii_techniques.txt: a whole-step
+    bend, slides up and down, a hammer-on and a pull-off."""
+    return TabScore(
+        instrument="guitar",
+        tempo_bpm=100.0,
+        key="A minor",
+        time_signature=[4, 4],
+        events=[
+            _linked(3, 7, 1, 1, 0, Technique(kind=TECHNIQUE_BEND, bend_semitones=2.0)),
+            _linked(
+                2, 5, 1, 2, 0,
+                Technique(
+                    kind=TECHNIQUE_SLIDE, slide_direction=SLIDE_UP, target_fret=7
+                ),
+            ),
+            _linked(2, 7, 1, 2, 1),
+            _linked(
+                2, 7, 1, 3, 0,
+                Technique(
+                    kind=TECHNIQUE_SLIDE, slide_direction=SLIDE_DOWN, target_fret=5
+                ),
+            ),
+            _linked(2, 5, 1, 3, 1),
+            _linked(1, 5, 2, 1, 0, Technique(kind=TECHNIQUE_HAMMER_ON, target_fret=7)),
+            _linked(1, 7, 2, 1, 1),
+            _linked(1, 7, 2, 2, 0, Technique(kind=TECHNIQUE_PULL_OFF, target_fret=5)),
+            _linked(1, 5, 2, 2, 1),
+        ],
+    )
+
+
+def test_golden_techniques_match_bytes(tmp_path):
+    path = export_ascii_tab(_techniques_riff(), tmp_path / "lick.txt")
+    assert path.read_bytes() == TECHNIQUES_GOLDEN.read_bytes()
+
+
+def test_technique_marks_follow_the_origin_fret():
+    lines = render_ascii_tab(_techniques_riff()).splitlines()
+    g_line = next(line for line in lines if line.startswith("G|"))
+    b_line = next(line for line in lines if line.startswith("B|"))
+    e_line = next(line for line in lines if line.startswith("E|") and "h" in line)
+    assert g_line.startswith("G|7b9-")
+    assert "5/--7" in b_line and "7\\--5" in b_line
+    assert "5h--7" in e_line and "7p--5" in e_line
+
+
+def test_link_marks_touch_the_next_fret_without_bends():
+    score = TabScore(
+        events=[
+            _linked(1, 5, 1, 1, 0, Technique(kind=TECHNIQUE_HAMMER_ON, target_fret=7)),
+            _linked(1, 7, 1, 1, 1, Technique(kind=TECHNIQUE_PULL_OFF, target_fret=5)),
+            _linked(1, 5, 1, 1, 2),
+        ]
+    )
+    e_line = render_ascii_tab(score).splitlines()[3]
+    assert e_line.startswith("E|5h7p5-")

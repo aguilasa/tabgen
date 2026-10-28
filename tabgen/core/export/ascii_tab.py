@@ -17,6 +17,15 @@ Format (tabgen's own; the golden test under ``tests/`` pins the bytes):
   flattened onto the straight column layout. Only onsets are drawn
   (durations are not rendered); when two onsets collide on one string and
   cell, the later event wins.
+- Techniques use the usual tab marks on the ORIGIN note's cell: a bend is
+  written ``<fret>b<target>`` with target = fret + ``bend_semitones``
+  (``7b9``; a quarter-tone step shows as ``7b8.5``); a slide adds ``/``
+  (up) or ``\\`` (down), a hammer-on ``h`` and a pull-off ``p`` right after
+  the fret, so the next note on the string reads ``5/7``, ``7\\5``,
+  ``5h7``, ``7p5`` when it is in the next cell (cell padding ``-`` sits in
+  between otherwise). The cell width fits the longest fret or bend token
+  plus one character, which always leaves room for a link mark; a score
+  without techniques renders exactly as before.
 - A chord-label line (Harte labels, measure-aligned) tops any system that
   has chord annotations; ``N`` (no chord) is skipped.
 
@@ -28,7 +37,15 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Sequence
 
-from tabgen.core.models import TabScore
+from tabgen.core.models import (
+    SLIDE_UP,
+    TECHNIQUE_BEND,
+    TECHNIQUE_HAMMER_ON,
+    TECHNIQUE_PULL_OFF,
+    TECHNIQUE_SLIDE,
+    TabNote,
+    TabScore,
+)
 
 # Pitch-class names used for string labels and tuning (sharps spelling).
 _PITCH_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
@@ -49,6 +66,28 @@ def _pitch_class(midi: int) -> str:
 def _pitch_name(midi: int) -> str:
     """Scientific pitch name of a MIDI pitch, e.g. 64 -> 'E4'."""
     return f"{_PITCH_NAMES[midi % 12]}{midi // 12 - 1}"
+
+
+def _bend_token(event: TabNote) -> str:
+    """``<fret>b<target>`` of a bend (target fret = fret + bend semitones)."""
+    return f"{event.fret}b{event.fret + event.technique.bend_semitones:g}"
+
+
+def _cell_token(event: TabNote) -> str:
+    """Text of an onset cell: fret plus its technique mark (see docstring)."""
+    technique = event.technique
+    if technique is None:
+        return str(event.fret)
+    if technique.kind == TECHNIQUE_BEND:
+        return _bend_token(event)
+    if technique.kind == TECHNIQUE_SLIDE:
+        mark = "/" if technique.slide_direction == SLIDE_UP else "\\"
+        return f"{event.fret}{mark}"
+    if technique.kind == TECHNIQUE_HAMMER_ON:
+        return f"{event.fret}h"
+    if technique.kind == TECHNIQUE_PULL_OFF:
+        return f"{event.fret}p"
+    return str(event.fret)
 
 
 def _header_lines(score: TabScore, numerator: int, denominator: int) -> list[str]:
@@ -84,10 +123,11 @@ def _render_score(
         )
     measure_cells = numerator * cells_per_beat
 
-    # (measure, string) -> column -> fret; columns are straight-grid cells.
-    frets: dict[tuple[int, int], dict[int, int]] = {}
+    # (measure, string) -> column -> cell token; columns are straight-grid
+    # cells.
+    frets: dict[tuple[int, int], dict[int, str]] = {}
     last_measure = 1
-    max_fret = 0
+    max_token = 1
     for index, (event, grid) in enumerate(zip(score.events, grids)):
         what = f"{score.instrument} event {index}"
         if not 1 <= event.string <= n_strings:
@@ -109,9 +149,13 @@ def _render_score(
         column = (event.beat - 1) * cells_per_beat + min(
             cells_per_beat - 1, round(event.subdivision * cells_per_beat / grid)
         )
-        frets.setdefault((measure, event.string), {})[column] = event.fret
+        frets.setdefault((measure, event.string), {})[column] = _cell_token(event)
         last_measure = max(last_measure, measure)
-        max_fret = max(max_fret, event.fret)
+        # Link marks (one char) live in the +1 padding; bend tokens count whole.
+        bend = event.technique is not None and event.technique.kind == TECHNIQUE_BEND
+        max_token = max(
+            max_token, len(_bend_token(event)) if bend else len(str(event.fret))
+        )
 
     chords = {
         chord.measure + measure_offset: chord.label
@@ -121,7 +165,7 @@ def _render_score(
     if chords:
         last_measure = max(last_measure, max(chords))
 
-    cell_width = max(2, len(str(max_fret)) + 1)
+    cell_width = max(2, max_token + 1)
     measure_width = measure_cells * cell_width
     labels = [
         _pitch_class(score.tuning_midi[n_strings - s])
@@ -144,7 +188,7 @@ def _render_score(
             for measure in system:
                 columns = frets.get((measure, string), {})
                 line += "|" + "".join(
-                    str(columns[c]).ljust(cell_width, "-")
+                    columns[c].ljust(cell_width, "-")
                     if c in columns
                     else "-" * cell_width
                     for c in range(measure_cells)

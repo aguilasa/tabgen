@@ -55,4 +55,15 @@ yt-dlp -x --audio-format mp3 -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artist
 yt-dlp -x --audio-format mp3 --download-sections '*<mm:ss>-<mm:ss>' -o 'out/audio/%(title)s.%(ext)s' "ytsearch1:<artista> <música>"
 ```
 
+Encaminhado pela REF-TASK-04 (2026-10-28): esta task mexe nos mesmos exporters e na CLI. Preservar:
+notas de segmento como triplas `(string, fret, technique)` em gp5 e musicxml; a flag `last` em
+`_Segment`/`_append_beats` do gp5 (slide/hammer vão no último pedaço ligado); spanners ligados pela
+ordem das cadeias no musicxml; a regra de largura de célula do ASCII (mantém
+`tests/golden/ascii_guitar_riff.txt` idêntico); `run_tablature(techniques=...)`, a tag `+tech-...` na
+versão de cache e a opção `--techniques/--no-techniques`.
+Achado da REF-04 sobre `tabgen/core/fretting/dp.py` (arquivo desta task): com `FrettingConfig` padrão,
+a linha esparsa D4, A4, B4, E4 (`Note(62,0.5,0.95)`, `Note(69,1.0,1.25)`, `Note(71,1.25,1.45)`,
+`Note(64,2.0,2.45)`) sai em `(6,22), (5,24), (4,21), (6,24)` — casas 21–24 nas cordas graves, com ou
+sem acordes. Os testes de técnica injetam fretting fixo por causa disso. Avaliar aqui ou abrir fix.
+
 ## Execution Log

@@ -23,6 +23,14 @@ Conventions (mirroring the gp5 exporter):
 - A note whose duration crosses a measure boundary (or that has no single
   notatable duration) is split into tied notes; gaps are filled with rests
   so every measure sums exactly to the time signature.
+- ``TabNote.technique`` maps to MusicXML notations: a bend becomes a
+  ``<technical><bend>`` (music21 ``FretBend``, ``bend-alter`` =
+  ``bend_semitones``) on the note's first element; a slide becomes a solid
+  ``<slide>`` (music21 ``Glissando``, ``slideType="continuous"``) and a
+  hammer-on / pull-off a ``<hammer-on>`` / ``<pull-off>`` start/stop pair
+  (music21 ``HammerOn`` / ``PullOff`` spanners), each spanning from the
+  origin note's last element to the next note on the same string. Link
+  techniques with no later note on their string are dropped.
 - Harte chord labels (e.g. ``A:min``) map to music21 chord symbols on the
   first beat of their measure; ``N`` (no chord) and unknown labels are
   skipped.
@@ -40,16 +48,25 @@ from typing import Sequence
 from music21 import articulations as m21articulations
 from music21 import chord as m21chord
 from music21 import harmony as m21harmony
+from music21 import interval as m21interval
 from music21 import key as m21key
 from music21 import metadata as m21metadata
 from music21 import meter as m21meter
 from music21 import note as m21note
 from music21 import pitch as m21pitch
+from music21 import spanner as m21spanner
 from music21 import stream as m21stream
 from music21 import tempo as m21tempo
 from music21 import tie as m21tie
 
-from tabgen.core.models import TabScore
+from tabgen.core.models import (
+    TECHNIQUE_BEND,
+    TECHNIQUE_HAMMER_ON,
+    TECHNIQUE_PULL_OFF,
+    TECHNIQUE_SLIDE,
+    TabScore,
+    Technique,
+)
 
 # Internal tick grid, mirroring the gp5 exporter (quarter note = 960 ticks).
 _QUARTER_TICKS = 960
@@ -157,7 +174,7 @@ class _Segment:
 
     start: int  # absolute ticks from measure 1, beat 1
     duration: int  # ticks, never crossing a measure boundary
-    notes: list[tuple[int, int]]  # (string, fret) pairs
+    notes: list[tuple[int, int, Technique | None]]  # (string, fret, technique)
     chain: int  # id shared by the tied chunks of one original onset
 
 
@@ -191,7 +208,8 @@ def _plan_part(
 ) -> _PartPlan:
     """Resolve a score's events into non-overlapping measure segments."""
     n_strings = len(score.tuning_midi)
-    onsets: list[tuple[int, int, int, int]] = []  # start, dur, string, fret
+    # start, duration, string, fret, technique
+    onsets: list[tuple[int, int, int, int, Technique | None]] = []
     for index, (event, grid) in enumerate(zip(score.events, grids)):
         what = f"{score.instrument} event {index}"
         if not 1 <= event.string <= n_strings:
@@ -208,17 +226,19 @@ def _plan_part(
             + _grid_ticks(event.subdivision, beat_ticks, grid, what)
         )
         duration = _grid_ticks(event.duration_subdivisions, beat_ticks, grid, what)
-        onsets.append((start, duration, event.string, event.fret))
+        onsets.append((start, duration, event.string, event.fret, event.technique))
     onsets.sort(key=lambda o: (o[0], o[2]))
 
     # Simultaneous onsets form one chord; it lasts their shortest duration.
     grouped: list[_Segment] = []
-    for start, duration, string, fret in onsets:
+    for start, duration, string, fret, technique in onsets:
         if grouped and grouped[-1].start == start:
-            grouped[-1].notes.append((string, fret))
+            grouped[-1].notes.append((string, fret, technique))
             grouped[-1].duration = min(grouped[-1].duration, duration)
         else:
-            grouped.append(_Segment(start, duration, [(string, fret)], len(grouped)))
+            grouped.append(
+                _Segment(start, duration, [(string, fret, technique)], len(grouped))
+            )
 
     plan = _PartPlan(score=score)
     for current, nxt in zip(grouped, grouped[1:] + [None]):
@@ -255,7 +275,9 @@ def _append_rests(measure: m21stream.Measure, offset: int, ticks: int) -> None:
 
 
 def _make_element(
-    pitches: Sequence[int], strings_frets: Sequence[tuple[int, int]], first: bool
+    pitches: Sequence[int],
+    strings_frets: Sequence[tuple[int, int, Technique | None]],
+    first: bool,
 ) -> m21note.NotRest:
     """One note or chord; string/fret indications go on a chain's first chunk."""
     if len(pitches) == 1:
@@ -269,10 +291,36 @@ def _make_element(
             m21_pitches.append(p)
         element = m21chord.Chord(m21_pitches)
     if first and len(strings_frets) == 1:
-        string, fret = strings_frets[0]
+        string, fret, _ = strings_frets[0]
         element.articulations.append(m21articulations.StringIndication(string))
         element.articulations.append(m21articulations.FretIndication(fret))
+    if first:
+        for _, _, technique in strings_frets:
+            if technique is not None and technique.kind == TECHNIQUE_BEND:
+                element.articulations.append(
+                    m21articulations.FretBend(
+                        bendAlter=m21interval.ChromaticInterval(
+                            technique.bend_semitones
+                        )
+                    )
+                )
     return element
+
+
+def _link_spanner(technique: Technique | None, origin, target):
+    """Spanner from ``origin`` to ``target`` for a link technique, else None."""
+    if technique is None:
+        return None
+    if technique.kind == TECHNIQUE_SLIDE:
+        glissando = m21spanner.Glissando(origin, target)
+        glissando.slideType = "continuous"
+        glissando.lineType = "solid"
+        return glissando
+    if technique.kind == TECHNIQUE_HAMMER_ON:
+        return m21articulations.HammerOn(origin, target)
+    if technique.kind == TECHNIQUE_PULL_OFF:
+        return m21articulations.PullOff(origin, target)
+    return None
 
 
 def _build_part(
@@ -289,6 +337,7 @@ def _build_part(
     part = m21stream.Part()
     part.partName = score.instrument
     chains: dict[int, list[m21note.NotRest]] = {}
+    chain_notes: dict[int, list[tuple[int, int, Technique | None]]] = {}
 
     for number in range(1, total_measures + 1):
         measure = m21stream.Measure(number=number)
@@ -310,10 +359,11 @@ def _build_part(
                 _append_rests(measure, cursor - measure_start, segment.start - cursor)
             pitches = [
                 score.tuning_midi[n_strings - string] + fret + score.capo_fret
-                for string, fret in segment.notes
+                for string, fret, _ in segment.notes
             ]
             offset = segment.start - measure_start
             chain = chains.setdefault(segment.chain, [])
+            chain_notes.setdefault(segment.chain, segment.notes)
             for quarter_length in _split_ticks(segment.duration):
                 element = _make_element(pitches, segment.notes, first=not chain)
                 element.quarterLength = quarter_length
@@ -335,6 +385,27 @@ def _build_part(
             for element in chain[1:-1]:
                 element.tie = m21tie.Tie("continue")
             chain[-1].tie = m21tie.Tie("stop")
+
+    # Link techniques span from the origin's last element to the first
+    # element of the next onset on the same string (chain ids follow onsets).
+    ordered = sorted(chain_notes)
+    for position, chain_id in enumerate(ordered):
+        for string, _, technique in chain_notes[chain_id]:
+            target_id = next(
+                (
+                    later
+                    for later in ordered[position + 1 :]
+                    if any(s == string for s, _, _ in chain_notes[later])
+                ),
+                None,
+            )
+            if target_id is None:
+                continue
+            spanner = _link_spanner(
+                technique, chains[chain_id][-1], chains[target_id][0]
+            )
+            if spanner is not None:
+                part.insert(0, spanner)
     return part
 
 

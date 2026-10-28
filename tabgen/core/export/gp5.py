@@ -22,6 +22,15 @@ Conventions (mirroring the fretting stage and PyGuitarPro itself):
   shortest of their durations.
 - A note whose duration crosses a measure boundary (or that has no single
   Guitar Pro duration) is split into tied beats (``NoteType.tie``).
+- ``TabNote.technique`` maps to the Guitar Pro note effects of the origin
+  note: a bend becomes a ``BendEffect`` (``BendType.bend``) on the note's
+  first beat, with ``bend_curve`` as evenly spaced points over positions
+  0..12 (values in quarter tones, PyGuitarPro's unit) or, without a curve,
+  a rise to ``bend_semitones`` that holds; a slide becomes
+  ``SlideType.shiftSlideTo`` and a hammer-on or pull-off sets
+  ``NoteEffect.hammer`` (GP5 uses one flag for both; the direction follows
+  from the next fret), both on the note's last beat so they link into the
+  next note on the string.
 
 This module is pure core: no print/typer/rich.
 """
@@ -34,7 +43,14 @@ from typing import Sequence
 
 import guitarpro as gp
 
-from tabgen.core.models import TabScore
+from tabgen.core.models import (
+    TECHNIQUE_BEND,
+    TECHNIQUE_HAMMER_ON,
+    TECHNIQUE_PULL_OFF,
+    TECHNIQUE_SLIDE,
+    TabScore,
+    Technique,
+)
 
 # Ticks of a whole note on the Guitar Pro grid (quarter = 960).
 _WHOLE_TICKS = gp.Duration.quarterTime * 4
@@ -114,8 +130,9 @@ class _Segment:
 
     start: int  # absolute ticks from measure 1, beat 1
     duration: int  # ticks, never crossing a measure boundary
-    notes: list[tuple[int, int]]  # (string, fret) pairs
+    notes: list[tuple[int, int, Technique | None]]  # (string, fret, technique)
     tied: bool  # continuation of a note split at a boundary
+    last: bool = True  # final chunk of its note (link effects go here)
 
 
 @dataclass
@@ -148,7 +165,8 @@ def _plan_track(
 ) -> _TrackPlan:
     """Resolve a score's events into non-overlapping measure segments."""
     n_strings = len(score.tuning_midi)
-    onsets: list[tuple[int, int, int, int]] = []  # start, dur, string, fret
+    # start, duration, string, fret, technique
+    onsets: list[tuple[int, int, int, int, Technique | None]] = []
     for index, (event, grid) in enumerate(zip(score.events, grids)):
         what = f"{score.instrument} event {index}"
         if not 1 <= event.string <= n_strings:
@@ -167,17 +185,19 @@ def _plan_track(
         duration = _grid_ticks(
             event.duration_subdivisions, beat_ticks, grid, what
         )
-        onsets.append((start, duration, event.string, event.fret))
+        onsets.append((start, duration, event.string, event.fret, event.technique))
     onsets.sort(key=lambda o: (o[0], o[2]))
 
     # Simultaneous onsets form one beat; it lasts their shortest duration.
     grouped: list[_Segment] = []
-    for start, duration, string, fret in onsets:
+    for start, duration, string, fret, technique in onsets:
         if grouped and grouped[-1].start == start:
-            grouped[-1].notes.append((string, fret))
+            grouped[-1].notes.append((string, fret, technique))
             grouped[-1].duration = min(grouped[-1].duration, duration)
         else:
-            grouped.append(_Segment(start, duration, [(string, fret)], False))
+            grouped.append(
+                _Segment(start, duration, [(string, fret, technique)], False)
+            )
 
     plan = _TrackPlan(score=score)
     for current, nxt in zip(grouped, grouped[1:] + [None]):
@@ -190,7 +210,7 @@ def _plan_track(
             boundary = measure * measure_ticks
             chunk = min(remaining, boundary - start)
             plan.segments_by_measure.setdefault(measure, []).append(
-                _Segment(start, chunk, current.notes, tied)
+                _Segment(start, chunk, current.notes, tied, chunk == remaining)
             )
             plan.last_measure = max(plan.last_measure, measure)
             start, remaining, tied = start + chunk, remaining - chunk, True
@@ -203,21 +223,70 @@ def _plan_track(
     return plan
 
 
+def _bend_effect(technique: Technique) -> gp.BendEffect:
+    """Guitar Pro bend for a bend technique (point values in quarter tones)."""
+    per_semitone = 2 * gp.BendEffect.semitoneLength  # PyGuitarPro: 1 = 1/4 tone
+    max_position = gp.BendEffect.maxPosition
+    curve = list(technique.bend_curve)
+    if len(curve) >= 2:
+        last = len(curve) - 1
+        shape = [
+            (round(k * max_position / last), value) for k, value in enumerate(curve)
+        ]
+    else:
+        peak = technique.bend_semitones
+        shape = [(0, 0.0), (max_position // 2, peak), (max_position, peak)]
+    points = [
+        gp.BendPoint(
+            position=position,
+            value=min(gp.BendEffect.maxValue, max(0, round(value * per_semitone))),
+        )
+        for position, value in shape
+    ]
+    # BendEffect.value: Guitar Pro's 1/100-tone amount (100 = whole step).
+    return gp.BendEffect(
+        type=gp.BendType.bend,
+        value=round(technique.bend_semitones * 50),
+        points=points,
+    )
+
+
+def _apply_technique(
+    note: gp.Note, technique: Technique | None, first: bool, last: bool
+) -> None:
+    """Write ``technique`` as effects of ``note`` (see module docstring)."""
+    if technique is None:
+        return
+    if technique.kind == TECHNIQUE_BEND and first:
+        note.effect.bend = _bend_effect(technique)
+    elif technique.kind == TECHNIQUE_SLIDE and last:
+        note.effect.slides = [gp.SlideType.shiftSlideTo]
+    elif technique.kind in (TECHNIQUE_HAMMER_ON, TECHNIQUE_PULL_OFF) and last:
+        note.effect.hammer = True
+
+
 def _append_beats(
     voice: gp.Voice,
     durations: Sequence[gp.Duration],
-    notes: Sequence[tuple[int, int]],
+    notes: Sequence[tuple[int, int, Technique | None]],
     tied: bool,
+    last: bool = True,
 ) -> None:
-    """Append note beats (tie-chained) or rest beats to ``voice``."""
-    for duration in durations:
+    """Append note beats (tie-chained) or rest beats to ``voice``.
+
+    ``tied`` marks the first duration as a continuation of the note;
+    ``last`` marks this chunk as the note's final one (link effects go on
+    its final beat).
+    """
+    for index, duration in enumerate(durations):
         if notes:
             beat = gp.Beat(voice, duration=duration, status=gp.BeatStatus.normal)
             note_type = gp.NoteType.tie if tied else gp.NoteType.normal
-            for string, fret in notes:
-                beat.notes.append(
-                    gp.Note(beat, value=fret, string=string, type=note_type)
-                )
+            final = last and index == len(durations) - 1
+            for string, fret, technique in notes:
+                note = gp.Note(beat, value=fret, string=string, type=note_type)
+                _apply_technique(note, technique, not tied, final)
+                beat.notes.append(note)
             tied = True  # chunks after the first continue the same note
         else:
             beat = gp.Beat(voice, duration=duration, status=gp.BeatStatus.rest)
@@ -239,7 +308,11 @@ def _fill_measure(
         if segment.start > cursor:
             _append_beats(voice, _split_ticks(segment.start - cursor), [], False)
         _append_beats(
-            voice, _split_ticks(segment.duration), segment.notes, segment.tied
+            voice,
+            _split_ticks(segment.duration),
+            segment.notes,
+            segment.tied,
+            segment.last,
         )
         cursor = segment.start + segment.duration
     if cursor < measure_start + measure_ticks:

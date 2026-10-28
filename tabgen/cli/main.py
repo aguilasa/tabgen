@@ -323,6 +323,12 @@ def export(
         "--device",
         help="Device for Demucs: cuda or cpu (default: autodetect).",
     ),
+    techniques: bool = typer.Option(
+        True,
+        "--techniques/--no-techniques",
+        help="Detect and write bends, slides, hammer-ons and pull-offs "
+        "(--no-techniques writes plain picked notes only).",
+    ),
 ) -> None:
     """Generate tablature (Guitar Pro 5, MusicXML or ASCII) from the audio."""
     from tabgen.core.analysis.beats import BeatAnalysisError
@@ -375,6 +381,7 @@ def export(
                 capos={"guitar": capo},
                 device=device,
                 on_progress=on_progress,
+                techniques=techniques,
             )
         except (
             PipelineError,
@@ -400,6 +407,9 @@ def export(
     for score in summary.scores:
         dropped = summary.unassigned.get(score.instrument, 0)
         extra = f", {dropped} unplayable note(s) left out" if dropped else ""
+        if techniques:
+            marked = sum(1 for event in score.events if event.technique is not None)
+            extra += f", {marked} technique(s)"
         console.print(
             f"  {score.instrument}: {len(score.events)} notes, "
             f"tuning {score.tuning_midi}, capo {score.capo_fret}{extra}"
