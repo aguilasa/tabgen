@@ -2,7 +2,7 @@
   "dataset": "egdb",
   "subset": "egdb",
   "data_dir": "/home/ingmar/datasets/tabgen/egdb",
-  "commit": "bf2d233-dirty",
+  "commit": "3c5acd6-dirty",
   "model_version": "basic-pitch-icassp2022-onnx-guitar+note-2",
   "onset_tolerance_s": 0.05,
   "pitch_tolerance_cents": 50.0,
@@ -132,13 +132,13 @@
         "note_precision": 0.6488888888888888,
         "note_recall": 0.9358974358974359,
         "note_f1": 0.7664041994750656,
-        "tab_precision": 0.3688888888888889,
-        "tab_recall": 0.532051282051282,
-        "tab_f1": 0.43569553805774275,
+        "tab_precision": 0.52,
+        "tab_recall": 0.75,
+        "tab_f1": 0.6141732283464567,
         "n_ref": 156,
         "n_est": 225,
         "n_matched": 146,
-        "n_tab_correct": 83
+        "n_tab_correct": 117
       },
       "string_mapping": "by track (descending, base 5; 100.0% playable)",
       "tab_unavailable_reason": null
@@ -148,9 +148,9 @@
     "note_precision": 0.6867338862270517,
     "note_recall": 0.8774942895961563,
     "note_f1": 0.7652116412053649,
-    "tab_precision": 0.33253990698974,
-    "tab_recall": 0.4548312157433685,
-    "tab_f1": 0.382803370869353,
+    "tab_precision": 0.3627621292119622,
+    "tab_recall": 0.4984209593331121,
+    "tab_f1": 0.41849890892709585,
     "n_tracks": 8,
     "n_tracks_with_tab": 5
   }

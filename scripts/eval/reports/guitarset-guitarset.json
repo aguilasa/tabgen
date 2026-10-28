@@ -2,7 +2,7 @@
   "dataset": "guitarset",
   "subset": "guitarset",
   "data_dir": "/home/ingmar/datasets/tabgen/guitarset",
-  "commit": "bf2d233-dirty",
+  "commit": "3c5acd6-dirty",
   "model_version": "basic-pitch-icassp2022-onnx-guitar+note-2",
   "onset_tolerance_s": 0.05,
   "pitch_tolerance_cents": 50.0,
@@ -30,13 +30,13 @@
         "note_precision": 0.6526315789473685,
         "note_recall": 0.8732394366197183,
         "note_f1": 0.746987951807229,
-        "tab_precision": 0.2,
-        "tab_recall": 0.2676056338028169,
-        "tab_f1": 0.2289156626506024,
+        "tab_precision": 0.23157894736842105,
+        "tab_recall": 0.30985915492957744,
+        "tab_f1": 0.26506024096385544,
         "n_ref": 71,
         "n_est": 95,
         "n_matched": 62,
-        "n_tab_correct": 19
+        "n_tab_correct": 22
       },
       "string_mapping": "jams data_source 0..5 (low E..high E)",
       "tab_unavailable_reason": null
@@ -98,13 +98,13 @@
         "note_precision": 0.7890625,
         "note_recall": 0.9017857142857143,
         "note_f1": 0.8416666666666666,
-        "tab_precision": 0.03125,
-        "tab_recall": 0.03571428571428571,
-        "tab_f1": 0.03333333333333333,
+        "tab_precision": 0.109375,
+        "tab_recall": 0.125,
+        "tab_f1": 0.11666666666666667,
         "n_ref": 112,
         "n_est": 128,
         "n_matched": 101,
-        "n_tab_correct": 4
+        "n_tab_correct": 14
       },
       "string_mapping": "jams data_source 0..5 (low E..high E)",
       "tab_unavailable_reason": null
@@ -132,13 +132,13 @@
         "note_precision": 0.8840579710144928,
         "note_recall": 0.9104477611940298,
         "note_f1": 0.8970588235294118,
-        "tab_precision": 0.028985507246376812,
-        "tab_recall": 0.029850746268656716,
-        "tab_f1": 0.029411764705882353,
+        "tab_precision": 0.13043478260869565,
+        "tab_recall": 0.13432835820895522,
+        "tab_f1": 0.1323529411764706,
         "n_ref": 67,
         "n_est": 69,
         "n_matched": 61,
-        "n_tab_correct": 2
+        "n_tab_correct": 9
       },
       "string_mapping": "jams data_source 0..5 (low E..high E)",
       "tab_unavailable_reason": null
@@ -148,9 +148,9 @@
     "note_precision": 0.7316371192672345,
     "note_recall": 0.8153718646120514,
     "note_f1": 0.7611886098477935,
-    "tab_precision": 0.32001169217687075,
-    "tab_recall": 0.320366922751479,
-    "tab_f1": 0.3132858633515301,
+    "tab_precision": 0.3464058450182133,
+    "tab_recall": 0.3498690286705757,
+    "tab_f1": 0.3410882493661769,
     "n_tracks": 8,
     "n_tracks_with_tab": 8
   }

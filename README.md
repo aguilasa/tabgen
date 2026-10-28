@@ -19,7 +19,9 @@ Six-stage pipeline, all stages behind a pure-Python core library:
 1. **Source separation** — [Demucs v4](https://github.com/adefossez/demucs) (`htdemucs_ft` + `htdemucs_6s`)
 2. **Key + chord detection** — [madmom](https://github.com/CPJKU/madmom)
 3. **Beat / downbeat tracking** — madmom `DBNDownBeatTracker` (bar grid + BPM)
-4. **Audio-to-notes transcription** — [Basic Pitch](https://github.com/spotify/basic-pitch) per stem
+4. **Audio-to-notes transcription** — guitar: the CRNN of [Riley et al. 2024](https://arxiv.org/abs/2402.15258)
+   (GAPS weights), with pitch bends taken from [Basic Pitch](https://github.com/spotify/basic-pitch);
+   bass: Basic Pitch
 5. **String/fret assignment** — dynamic programming over fingering costs (configurable tuning)
 6. **Quantization + export** — [music21](https://www.music21.org) + [PyGuitarPro](https://github.com/Perlence/PyGuitarPro) (`.gp5`)
 
@@ -63,6 +65,11 @@ wheel metadata pulls in tensorflow, which forces numpy<2 and conflicts with the
 torch stack — tabgen uses its ONNX backend, whose actual dependencies
 (onnxruntime, librosa, pretty-midi, ...) are already listed in `pyproject.toml`.
 Without this step the `transcribe` command will not work.
+
+**Guitar model weights:** the default guitar transcriber (`riley`, see
+[Transcriber](#transcriber)) downloads its weights (`guitar-gaps.pth`, ~99 MB,
+pinned revision, sha256-checked) from the Hugging Face hub on first use and keeps
+them in the `huggingface_hub` cache (`~/.cache/huggingface`).
 
 **madmom note:** `pip install -e ".[dev]"` installs madmom from a pinned commit
 of the [CPJKU/madmom](https://github.com/CPJKU/madmom) GitHub repository (no
@@ -129,10 +136,14 @@ with `--output-dir`). Options:
 - `--instruments guitar,bass` — comma-separated subset of `guitar`, `bass`.
 - `--output-dir DIR` — where the `.mid` files go.
 - `--device cuda|cpu` — device for Demucs (default: autodetect).
+- `--guitar-type electric|nylon|steel` — General MIDI program of the guitar
+  track (default `electric`, program 27; nylon 24, steel 25).
+- `--transcriber riley|basic-pitch` — guitar transcription model (default
+  `riley`; see [Transcriber](#transcriber)).
 
 Each `.mid` file contains a single track with the detected notes (pitch, onset,
-duration, velocity) plus the pitch bends Basic Pitch reports, under a General
-MIDI program (steel guitar / fingered bass). Timestamps are absolute seconds —
+duration, velocity) plus their pitch bends, under a General MIDI program
+(clean electric guitar by default / fingered bass). Timestamps are absolute seconds —
 no quantization to a bar grid yet (that is a later pipeline stage). The files
 open in any MIDI player or editor; [TuxGuitar](https://tuxguitar.app) is the
 reference target, since it shows them directly as tablature.
@@ -177,10 +188,11 @@ that later pipeline stages consume. Options:
 tabgen export song.mp3 -o song.gp5
 ```
 
-Runs the whole Phase 3 pipeline: separation, analysis (key, beats, chords),
+Runs the whole pipeline: separation, analysis (key, beats, chords),
 transcription of the guitar and bass stems, a cross-check of the key against
 the transcribed notes, quantization on the detected bar grid and string/fret
-assignment by dynamic programming. The result is one file with a guitar and a
+assignment by dynamic programming, then playing-technique detection. The
+result is one file with a guitar and a
 bass track — tuning, BPM, key signature and chord names included — that opens
 in [TuxGuitar](https://tuxguitar.app) or Guitar Pro. The output suffix picks
 the format:
@@ -211,13 +223,50 @@ Options:
   `half-step-down`, `d-standard`) or notes low-to-high, e.g.
   `D2,A2,D3,G3,B3,E4`.
 - `--bass-tuning` — bass tuning: a preset (`standard`, `drop-d`,
-  `half-step-down`) or notes low-to-high, e.g. `E1,A1,D2,G2`.
+  `half-step-down`, `five-string` = B0 E1 A1 D2 G2) or notes low-to-high, e.g.
+  `E1,A1,D2,G2`. Five notes make a 5-string bass track.
+- `--guitar-type electric|nylon|steel` — guitar kind: General MIDI program
+  (27 / 24 / 25) and highest usable fret (24 / 19 / 20). Default `electric`.
 - `--capo N` — guitar capo fret (frets in the tab are relative to it).
+- `--techniques` / `--no-techniques` — detect and write playing techniques
+  (default on; see below).
+- `--transcriber riley|basic-pitch` — guitar transcription model (default
+  `riley`).
 - `--device cuda|cpu` — device for Demucs (default: autodetect).
 
-The tablature is cached in `.tabgen/` per input, tuning and capo: re-exporting
-the same song to another format finishes in under a second. Notes outside the
-instrument's range are left out and counted in the report.
+The tablature is cached in `.tabgen/` per input, tuning, capo, guitar type,
+transcriber and techniques switch: re-exporting the same song to another format
+finishes in under a second. Notes outside the instrument's range are left out
+and counted in the report. Frets above 12 cost more in the string/fret
+assignment, so sparse lines stay in the lower positions.
+
+#### Playing techniques
+
+With techniques on (the default), tabgen marks:
+
+- **bends** and **slides** — from the pitch-bend curves Basic Pitch reports for
+  each note (bend: at least 3/4 of a semitone; slide: a glide of at least one
+  semitone into the next note on the same string);
+- **hammer-ons** and **pull-offs** — notes on the same string that follow
+  each other with no gap and a weak onset.
+
+They are written as note effects in `.gp5` and MusicXML. In ASCII tab they read
+`7b9` (bend from 7 to 9), `5/7` and `7\5` (slide up / down), `5h7` (hammer-on)
+and `7p5` (pull-off); when a bend widens the columns the marks are padded with
+`-` (e.g. `5h--7`). Palm mute and vibrato are not detected.
+
+#### Transcriber
+
+The guitar stem is transcribed by the CRNN of Riley et al. (["High Resolution
+Guitar Transcription via Domain Adaptation"](https://arxiv.org/abs/2402.15258),
+ICASSP 2024, trained on [GAPS](https://arxiv.org/abs/2408.08653)); the network
+is re-implemented in `tabgen/core/transcription/riley.py` from the MIT code of
+Kong et al. That model reports no pitch bends, so Basic Pitch also runs on the
+guitar stem and each note takes the bends of the matching Basic Pitch note
+(same pitch, onset within 50 ms). `--transcriber basic-pitch` restores the
+previous, Basic-Pitch-only transcription. The bass is always transcribed by
+Basic Pitch. See [docs/avaliacao/modelo-guitarra.md](docs/avaliacao/modelo-guitarra.md)
+for the comparison that made `riley` the default.
 
 **What to expect.** The output is an **editable draft, not a finished
 score**: Basic Pitch reaches roughly 66% F-measure on real recordings, and
@@ -229,8 +278,46 @@ in TuxGuitar or Guitar Pro before using it (true of commercial tools too).
 - Struggles with heavy distortion, several instruments in the same register,
   rubato and unusual tunings that were not passed with `--tuning`.
 - Acoustic and electric guitar in the same mix are not told apart: the guitar
-  stem is treated as one track.
-- No playing techniques yet (bends, slides, hammer-ons): those are Phase 4.
+  stem is treated as one track (`--guitar-type` only sets its sound and fret
+  range).
+- Techniques are heuristic: expect missed and spurious bends, slides and
+  hammer-ons, especially on distorted guitar.
+- The string/fret assignment still favours the lower strings; the evaluation
+  below measures string accuracy (tab-F1) well under note accuracy.
+
+### Evaluation
+
+`scripts/eval/run.py` scores the pipeline on a fixed, versioned subset of
+[GuitarSet](https://guitarset.weebly.com) (8 excerpts, mono mic) and
+EGDB (8 clips, DI) —
+datasets are kept outside the repository and downloaded only with
+`--download --yes`. Note-F1 matches onset (±50 ms) and pitch (±50 cents);
+tab-F1 also requires the right string. EGDB tab-F1 covers the 5 clips whose
+annotation carries strings.
+
+| Input | Transcriber | GuitarSet note-F1 / tab-F1 | EGDB note-F1 / tab-F1 |
+| ----- | ----------- | -------------------------- | --------------------- |
+| clean guitar | basic-pitch | 0.761 / 0.341 | 0.765 / 0.418 |
+| clean guitar | riley       | 0.892 / 0.453 | 0.860 / 0.486 |
+| Demucs stem of a mix | basic-pitch | 0.745 / 0.334 | 0.615 / 0.224 |
+| Demucs stem of a mix | riley       | 0.879 / 0.472 | 0.691 / 0.336 |
+
+Commands (one row each; `$d` is `guitarset` or `egdb`):
+
+```bash
+.venv/bin/python scripts/eval/run.py --dataset $d --subset scripts/eval/subsets/$d.txt
+.venv/bin/python scripts/eval/run.py --dataset $d --subset scripts/eval/subsets/$d.txt --transcriber riley
+.venv/bin/python scripts/eval/run.py --dataset $d --subset scripts/eval/subsets/$d.txt --mix
+.venv/bin/python scripts/eval/run.py --dataset $d --subset scripts/eval/subsets/$d.txt --mix --transcriber riley
+```
+
+The harness default is still `basic-pitch`, so the main reports
+(`scripts/eval/reports/<dataset>-<subset>.md`) stay the Basic Pitch baseline;
+`--transcriber riley` reports go to `scripts/eval/reports/riley/` and `--mix`
+reports to `scripts/eval/reports/mixed/<transcriber>/`. The mix mode adds bass
+and drums from the [MUSDB18](https://sigsep.github.io/datasets/musdb.html)
+7-second test excerpts (CC BY 4.0, `--musdb-dir`) at the guitar's level,
+separates with Demucs and transcribes the guitar stem.
 
 ### Expected runtimes
 
@@ -248,8 +335,12 @@ end-to-end validation of each phase (cold = no cache at all):
 | `analyze`, 4-minute song, warm        | < 1 s           |
 | `export`, 4-minute song, cold         | ~193 s total (separation, analysis, transcription and tablature) |
 | `export`, 4-minute song, warm         | < 1 s (0.35 s)  |
+| `export --transcriber riley` vs `basic-pitch`, 10 s sample, separation cached | +2.7 s (4.5 s vs 1.8 s) |
 
-The very first run also downloads the Demucs model weights (~1 GB). On CPU,
+The `export` rows above were measured with Basic Pitch; the riley row comes
+from `scripts/probe_e2e_riley.py` (riley runs both models on the guitar stem).
+The very first run also downloads the Demucs model weights (~1 GB) and, with
+`riley`, the guitar weights (~99 MB). On CPU,
 expect separation to be 10–20× slower.
 
 ## Development

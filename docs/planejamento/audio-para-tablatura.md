@@ -188,8 +188,9 @@ Pontos de atenção e alternativas:
   (GuitarSet frame-F1 0.89) mas pior que Basic Pitch em gravação real; pesado. Opção de upgrade.
 - **Transcrição específica de guitarra por adaptação de domínio**
   ([Riley et al. 2024](https://arxiv.org/pdf/2402.15258)): F-measure 84.7 em
-  gravações reais — muito acima de ambos. Verificar se o código/pesos foram
-  liberados; se sim, é o melhor candidato a substituir o Basic Pitch no stem de guitarra.
+  gravações reais — muito acima de ambos. Pesos públicos (MIT) verificados em 2026-10-28;
+  desde a Fase 4 é o transcritor padrão do stem de guitarra (`--transcriber riley`, com bends do
+  Basic Pitch). Ver [avaliação](/docs/avaliacao/modelo-guitarra.md).
 
 ### Estágio 5 — Atribuição corda/casa (o problema difícil)
 

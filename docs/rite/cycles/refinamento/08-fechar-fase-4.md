@@ -19,13 +19,13 @@ avaliação existe com números reproduzíveis; checks e gates da fase verdes; R
 
 ## Done criteria
 
-- [ ] `.venv/bin/tabgen export <música real>.mp3 -o <música>.gp5` sai 0; usuário confirma no
+- [x] `.venv/bin/tabgen export <música real>.mp3 -o <música>.gp5` sai 0; usuário confirma no
       TuxGuitar que bends/slides/hammer-ons aparecem (registrado nas Notes).
-- [ ] `.venv/bin/python scripts/probe_e2e_export.py` e `scripts/probe_e2e_sample.py` saem 0.
-- [ ] Todos os checks da Fase 4 do profile passam.
-- [ ] Venv limpa: instalação documentada sai 0 e `.venv/bin/pytest -q` verde.
-- [ ] README tem seção de técnicas, presets novos e tabela de avaliação com o comando que a gera.
-- [ ] `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes.
+- [x] `.venv/bin/python scripts/probe_e2e_export.py` e `scripts/probe_e2e_sample.py` saem 0.
+- [x] Todos os checks da Fase 4 do profile passam.
+- [x] Venv limpa: instalação documentada sai 0 e `.venv/bin/pytest -q` verde.
+- [x] README tem seção de técnicas, presets novos e tabela de avaliação com o comando que a gera.
+- [x] `.venv/bin/pytest -q` e `.venv/bin/ruff check .` verdes.
 
 ## Notes
 
@@ -84,5 +84,41 @@ harness ganhou `--transcriber`, `--mix`, `--musdb-dir`, `--mix-dir`, `--device` 
 `run.py` ainda `basic-pitch`) passam a usar o novo padrão. Tabela de tempos do README muda com o
 riley como padrão. O nome do arquivo de cache da tablatura está a 2 bytes do limite de 255: um
 version string maior quebra (candidato a fix).
+
+Execução (2026-10-28):
+
+- Downloads autorizados pelo usuário nesta sessão: 4 trechos de 60 s por `yt-dlp` em `out/audio/`
+  (ignorado): Pink Floyd "Comfortably Numb (Studio Version)" 4:30–5:30 (youtube.com/watch?v=2rPKQI1KnXw),
+  AC/DC "Back In Black" 0:00–1:00 (pAgnJDJN4VA), Korn "Freak On A Leash" 0:00–1:00 (jRGrNDV2mKc),
+  Oasis "Wonderwall" 0:00–1:00 (bx1Bh8ZvH84). Saídas em `out/fase4/` (ignorado).
+- Critério 1: `tabgen export comfortably-numb.mp3 -o …`, `back-in-black.mp3`, `freak-on-a-leash.mp3
+  --bass-tuning five-string`, `wonderwall.mp3 --guitar-type steel` → rc=0 nas 4. `guitarpro.parse`:
+  guitarra 482/237/357/881 notas; baixo de Freak on a Leash com 5 cordas; Wonderwall programa 25.
+  Confirmação do usuário no TuxGuitar: "comfortably-numb: 1 bend, 2 slides, na guitarra e no baixo 1
+  hamer; back-in-black: 1 bend e 1 slide na guitar; freak-on-a-leash: 1 bend, 2 slides e 1 hamer no
+  baixo; wonderwall: 5 slides na guitar". Divergência: em Comfortably Numb contei 2 bends no
+  `guitarpro.parse` e o usuário viu 1. Hammer-on de guitarra: zero nas 4 músicas (só no baixo).
+  Bends poucos no solo de Comfortably Numb: com o padrão `riley`, o bend só vem quando a nota do
+  Basic Pitch casa (mesmo pitch, ±50 ms).
+- Critério 2: `scripts/probe_e2e_export.py` → `PASS: export exit 0 for gp5/musicxml/ascii …`;
+  `scripts/probe_e2e_sample.py` → `PASS: transcribe exit 0; both .mid written …`;
+  `scripts/probe_e2e_riley.py` → `PASS … basic-pitch 1.8 s, riley 4.5 s, extra +2.7 s`.
+- Critério 3 (checks da Fase 4): export real sai 0 e reabre com efeitos (acima);
+  `--no-techniques` em comfortably-numb → rc=0, 0 notas com efeito; `--bass-tuning five-string` →
+  faixa de baixo com 5 cordas; probes acima; relatório reproduzível: `scripts/eval/run.py --dataset
+  <d> --subset scripts/eval/subsets/<d>.txt` regenerou `reports/{guitarset,egdb}-*` com note-F1/tab-F1
+  0.761/0.341 e 0.765/0.418; grep de pureza vazio.
+- Critério 4: venv nova (Python 3.11.15 do mise) num worktree do HEAD `3c5acd6`, `pip install -e
+  ".[dev]"` + `pip install --no-deps basic-pitch==0.4.0` → `install rc=0`; `pytest -q` lá →
+  `221 passed`. Worktree e venv removidos. Observação: `python3.11` não está no PATH desta máquina;
+  o README assume que está.
+- Critério 5: README ganhou seções "Playing techniques", "Transcriber" e "Evaluation" (tabela
+  limpa/mistura × basic-pitch/riley com os 4 comandos), opções `--no-techniques`, `--guitar-type`,
+  `--transcriber`, preset `five-string`, programa GM 27 como padrão, linha de tempo do riley (probe).
+- Critério 6: `.venv/bin/pytest -q` → `221 passed`; `ruff check .` → `All checks passed!`.
+- Decisão tomada sem pergunta: o padrão do harness continua `basic-pitch` (relatórios principais =
+  linha de base); o README traz as duas colunas. Pendente fora do escopo: nome do arquivo de cache
+  da tablatura a 2 bytes do limite de 255 (REF-TASK-09); o plano (Estágio 4) ainda diz "Verificar
+  se o código/pesos foram liberados" — atualizado abaixo.
 
 ## Execution Log
