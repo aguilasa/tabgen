@@ -62,3 +62,5 @@ Nota (2026-10-28): o preset `five-string` em `--bass-tuning` entrou com a REF-TA
 task); falta rodar a Verificação desta fix (usa Demucs real).
 
 ## Execution Log
+
+- **Stale** (2026-10-28) at `359be68`: tabgen export sample.mp3 -o out5.gp5 --bass-tuning five-string now exits 0 with bass tuning [23, 28, 33, 38, 43]; grep five tabgen/core/pipeline.py shows the preset at line 357

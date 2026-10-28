@@ -23,10 +23,13 @@
       "severity": "medium",
       "files": [],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-28T13:19:05-03:00",
+      "started_at": "2026-10-28T13:19:05-03:00",
+      "active_s": 0
     },
     {
       "id": "FIX-REF-003",
@@ -36,10 +39,10 @@
       "severity": "medium",
       "files": [],
       "resources": [],
-      "status": "pending",
+      "status": "stale",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-28",
+      "done_commit": "359be68"
     }
   ]
 }
