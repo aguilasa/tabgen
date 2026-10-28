@@ -1,5 +1,19 @@
 {
   "schema": 1,
   "cycle": "interface-desktop",
-  "fixes": []
+  "fixes": [
+    {
+      "id": "FIX-UI-001",
+      "file": "FIX-UI-001.md",
+      "title": "Verificar persistência das preferências após reiniciar o app",
+      "origin": "UI-TASK-02",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    }
+  ]
 }
