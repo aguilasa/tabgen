@@ -10,6 +10,7 @@ which commands search instead of reading whole.
 
 <!-- Decisions the user confirmed. One line each, with the date and where it was decided. -->
 
+- 2026-10-28 — Frontend do Tauri: React + Vite (TypeScript) — escolhido pelo usuário no planejamento do ciclo.
 - 2026-10-28 — Stack da desktop: Tauri 2 + sidecar Python (worker consome o core); aprovada pelo usuário junto com o protótipo — spec, seção 2.
 - 2026-10-28 — Protótipo aprovado como referência visual: https://claude.ai/artifact/7AvMdpWdyaD56TYHeikJou — spec, cabeçalho.
 - 2026-10-28 — Escopo v1 espelha a CLI (pipeline completo); player por stem, tab renderizada, biblioteca e edição ficam para v2 — spec, seção 1.
