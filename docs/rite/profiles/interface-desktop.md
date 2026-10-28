@@ -49,3 +49,11 @@ which commands search instead of reading whole.
 ## Phase-specific checks
 
 <!-- One entry per phase used by tasks ("### Phase 1 — ..."). The reviewer runs these; a phase without an entry is a finding. -->
+
+### Fase 5 — Interface desktop
+
+- `printf '{"cmd":"doctor","args":{}}\n' | .venv/bin/python -m tabgen.worker` emite só NDJSON e termina com `{"type":"result",…}`, exit 0.
+- `cd desktop && npm run build` e o typecheck do frontend saem 0.
+- No app (`tauri dev` ou AppImage): pipeline da amostra roda com barras por estágio real e a segunda execução mostra cache em <5 s.
+- Export .gp5 feito pelo app reabre com `guitarpro.parse` (faixas guitarra e baixo).
+- `grep -rnE "import typer|import rich|print\(" tabgen/core/` não retorna nada.

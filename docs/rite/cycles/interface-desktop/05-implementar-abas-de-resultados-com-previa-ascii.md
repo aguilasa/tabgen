@@ -1,0 +1,37 @@
+---
+id: UI-TASK-05
+---
+
+# UI-TASK-05 — Implementar abas de resultados com prévia ASCII e exports
+
+## Goal
+
+As abas de resultados existem conforme o protótipo: Stems (5 stems com caminho e "abrir
+pasta"), Análise (tom + confiança com aviso de `switched`, BPM, beats/downbeats, tabela de
+acordes com filtro de `N`), Notas (contagem, transcriber, caminho do .mid por instrumento) e
+Tablatura (resumo por faixa: notas, afinação, capo, não atribuídas, técnicas; prévia ASCII
+rolável do `ascii_preview`; botões de export gp5/MusicXML/ASCII que chamam o worker).
+
+## Escopo
+
+- In: render dos payloads do worker (summaries serializados); "abrir pasta" via API do Tauri;
+  exports re-invocando o worker com o formato pedido (cache quente esperado); estados vazios
+  (estágio ainda não rodado).
+- Out: player por stem, tab renderizada (v2); opções de geração (06).
+
+## Done criteria
+
+- [ ] Após uma execução real da amostra, cada aba mostra os dados do summary (screenshots nas
+      Notes); o aviso de tom trocado aparece quando `key_check.switched` é true (dado simulado em
+      teste de componente ou música que troque).
+- [ ] Exportar MusicXML a partir do resultado gp5 reusa o cache (<5 s) e grava o arquivo
+      (verificado reabrindo com music21 via worker ou CLI).
+- [ ] "Abrir pasta" abre o diretório do artefato no gerenciador de arquivos.
+- [ ] `npm run build` e typecheck do frontend saem 0.
+
+## Notes
+
+Prévia ASCII usa a string pronta do worker — a UI nunca formata tablatura (regra: lógica
+musical só no core).
+
+## Execution Log
