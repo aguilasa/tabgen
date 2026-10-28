@@ -18,6 +18,19 @@
       "started_at": "2026-10-28T17:18:02-03:00",
       "active_s": 383,
       "finished_at": "2026-10-28T17:24:25-03:00"
+    },
+    {
+      "id": "FIX-UI-002",
+      "file": "FIX-UI-002.md",
+      "title": "Fixar Node do desktop via mise e remover legacy-peer-deps",
+      "origin": "UI-TASK-02",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }

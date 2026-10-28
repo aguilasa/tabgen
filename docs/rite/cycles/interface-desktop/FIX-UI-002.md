@@ -1,0 +1,47 @@
+---
+id: FIX-UI-002
+---
+
+# FIX-UI-002 — Fixar Node do desktop via mise e remover legacy-peer-deps
+
+Origin: [UI-TASK-02](/docs/rite/cycles/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md)
+
+## Problem
+
+O Node do usuário é gerido pelo mise (global `node 20` em `~/.config/mise/config.toml`, com
+16, 22 e 24 também instalados). `desktop/` não fixa versão: herda o node 20.20.2 / npm 10.8.2
+global, cujo arborist quebra ao resolver peers opcionais do template Tauri. A UI-TASK-02 contornou
+com `desktop/.npmrc` (`legacy-peer-deps=true`), que desliga a checagem de peers para sempre.
+Ponto de atenção levantado pelo usuário em 2026-10-28.
+
+## Evidência
+
+<!-- The exact command and its output that shows the problem. Whoever fixes this reproduces it first. -->
+
+```text
+$ cd desktop && mv .npmrc /tmp/npmrc.bak && rm -rf node_modules && npm install
+npm error Cannot read properties of null (reading 'edgesOut')
+```
+
+## Root cause
+
+## Fix
+
+<!-- Where the change goes. If the defect is in generated output, the fix goes in the generator. -->
+
+`desktop/mise.toml` fixando um Node LTS cujo npm resolve os peers (candidato: 22 ou 24, já
+instalados); remover `desktop/.npmrc`; regenerar `package-lock.json`; citar o mise no README.
+
+## Arquivos
+
+- `desktop/mise.toml`
+- `desktop/.npmrc` (remover)
+- `desktop/package-lock.json`
+- `README.md`
+
+## Verificação
+
+`cd desktop && rm -rf node_modules && npm install && npm run build` sai 0 sem `.npmrc`, com
+`node --version` (dentro de `desktop/`) igual ao fixado no `mise.toml`.
+
+## Execution Log
