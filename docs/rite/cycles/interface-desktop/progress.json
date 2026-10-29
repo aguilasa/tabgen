@@ -146,13 +146,17 @@
       "phase": 5,
       "depends_on": ["UI-TASK-02"],
       "source_of_truth": "/docs/planejamento/interface-desktop.md#5",
-      "files": ["desktop/src-tauri/tauri.conf.json", "desktop/README.md", "README.md"],
+      "files": ["desktop/src-tauri/tauri.conf.json", "desktop/README.md", "README.md", "desktop/src-tauri/icons/128x128.png", "desktop/src-tauri/icons/128x128@2x.png", "desktop/src-tauri/icons/32x32.png", "desktop/src-tauri/icons/64x64.png", "desktop/src-tauri/icons/Square107x107Logo.png", "desktop/src-tauri/icons/Square142x142Logo.png", "desktop/src-tauri/icons/Square150x150Logo.png", "desktop/src-tauri/icons/Square284x284Logo.png", "desktop/src-tauri/icons/Square30x30Logo.png", "desktop/src-tauri/icons/Square310x310Logo.png", "desktop/src-tauri/icons/Square44x44Logo.png", "desktop/src-tauri/icons/Square71x71Logo.png", "desktop/src-tauri/icons/Square89x89Logo.png", "desktop/src-tauri/icons/StoreLogo.png", "desktop/src-tauri/icons/icon.icns", "desktop/src-tauri/icons/icon.ico", "desktop/src-tauri/icons/icon.png", "desktop/src-tauri/icons/src/icon.svg", "desktop/src-tauri/src/lib.rs", "docs/rite/cycles/interface-desktop/evidencias/07-appimage-ambiente.png", "docs/rite/cycles/interface-desktop/evidencias/07-appimage-env-vazado-antes.png", "docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-cache.png", "docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-fria.png", "docs/rite/cycles/interface-desktop/evidencias/07-appimage-python-ausente.png"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-29",
+      "done_commit": "544b50e",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-29T13:34:37-03:00",
+      "active_s": 1054,
+      "finished_at": "2026-10-29T13:52:11-03:00"
     },
     {
       "id": "UI-TASK-08",

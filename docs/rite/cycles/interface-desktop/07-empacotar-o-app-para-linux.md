@@ -77,3 +77,59 @@ Nota: o padrão vazio do interpretador (`.venv` do checkout de build) só existe
 build; documentado no `desktop/README.md`, a tela já orienta quando falta.
 
 ## Execution Log
+
+- **Closed** — commit `544b50e` (2026-10-29): build(desktop): package tabgen Studio as .deb and AppImage
+  - Files (`git show --name-status 544b50e`):
+    - `M README.md`
+    - `A desktop/README.md`
+    - `M desktop/src-tauri/icons/128x128.png`
+    - `M desktop/src-tauri/icons/128x128@2x.png`
+    - `M desktop/src-tauri/icons/32x32.png`
+    - `A desktop/src-tauri/icons/64x64.png`
+    - `M desktop/src-tauri/icons/Square107x107Logo.png`
+    - `M desktop/src-tauri/icons/Square142x142Logo.png`
+    - `M desktop/src-tauri/icons/Square150x150Logo.png`
+    - `M desktop/src-tauri/icons/Square284x284Logo.png`
+    - `M desktop/src-tauri/icons/Square30x30Logo.png`
+    - `M desktop/src-tauri/icons/Square310x310Logo.png`
+    - `M desktop/src-tauri/icons/Square44x44Logo.png`
+    - `M desktop/src-tauri/icons/Square71x71Logo.png`
+    - `M desktop/src-tauri/icons/Square89x89Logo.png`
+    - `M desktop/src-tauri/icons/StoreLogo.png`
+    - `M desktop/src-tauri/icons/icon.icns`
+    - `M desktop/src-tauri/icons/icon.ico`
+    - `M desktop/src-tauri/icons/icon.png`
+    - `A desktop/src-tauri/icons/src/icon.svg`
+    - `M desktop/src-tauri/src/lib.rs`
+    - `M desktop/src-tauri/tauri.conf.json`
+    - `M docs/rite/cycles/interface-desktop/07-empacotar-o-app-para-linux.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/07-appimage-ambiente.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/07-appimage-env-vazado-antes.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-cache.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-fria.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/07-appimage-python-ausente.png`
+  - **Files amended** — added to `files`:
+    - `desktop/src-tauri/icons/128x128.png`
+    - `desktop/src-tauri/icons/128x128@2x.png`
+    - `desktop/src-tauri/icons/32x32.png`
+    - `desktop/src-tauri/icons/64x64.png`
+    - `desktop/src-tauri/icons/Square107x107Logo.png`
+    - `desktop/src-tauri/icons/Square142x142Logo.png`
+    - `desktop/src-tauri/icons/Square150x150Logo.png`
+    - `desktop/src-tauri/icons/Square284x284Logo.png`
+    - `desktop/src-tauri/icons/Square30x30Logo.png`
+    - `desktop/src-tauri/icons/Square310x310Logo.png`
+    - `desktop/src-tauri/icons/Square44x44Logo.png`
+    - `desktop/src-tauri/icons/Square71x71Logo.png`
+    - `desktop/src-tauri/icons/Square89x89Logo.png`
+    - `desktop/src-tauri/icons/StoreLogo.png`
+    - `desktop/src-tauri/icons/icon.icns`
+    - `desktop/src-tauri/icons/icon.ico`
+    - `desktop/src-tauri/icons/icon.png`
+    - `desktop/src-tauri/icons/src/icon.svg`
+    - `desktop/src-tauri/src/lib.rs`
+    - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-ambiente.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-env-vazado-antes.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-cache.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-fria.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-python-ausente.png`
