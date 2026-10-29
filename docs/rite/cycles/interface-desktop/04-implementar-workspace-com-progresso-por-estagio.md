@@ -110,3 +110,4 @@ estender `tablatureArgs(path, prefs)` em `lib/run.ts` ou dar opções a `useTabl
     - `desktop/src/lib/recents.ts`
     - `docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md`
     - `docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
+- **Reviewed** (2026-10-29) at `8078ed8`: FIX-UI-006

@@ -85,12 +85,14 @@
       "status": "done",
       "done_on": "2026-10-28",
       "done_commit": "72ebb52",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-29",
+      "review_commit": "8078ed8",
       "active_since": null,
       "started_at": "2026-10-28T17:49:29-03:00",
       "active_s": 849,
-      "finished_at": "2026-10-28T18:03:38-03:00"
+      "finished_at": "2026-10-28T18:03:38-03:00",
+      "review_started_at": "2026-10-29T11:29:10-03:00",
+      "review_s": 342
     },
     {
       "id": "UI-TASK-05",
