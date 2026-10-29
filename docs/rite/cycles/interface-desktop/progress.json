@@ -166,13 +166,17 @@
       "phase": 5,
       "depends_on": ["UI-TASK-01", "UI-TASK-02", "UI-TASK-03", "UI-TASK-04", "UI-TASK-05", "UI-TASK-06", "UI-TASK-07"],
       "source_of_truth": "/docs/planejamento/interface-desktop.md#6",
-      "files": ["README.md"],
+      "files": ["README.md", "docs/img/tabgen-studio.png", "docs/rite/cycles/interface-desktop/evidencias/08-real-fria-rodando.png", "docs/rite/cycles/interface-desktop/evidencias/08-real-fria.png", "docs/rite/cycles/interface-desktop/evidencias/08-real-quente.png", "docs/rite/cycles/interface-desktop/evidencias/08-real-tablatura.png"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-29",
+      "done_commit": "ce33201",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-29T13:52:30-03:00",
+      "active_s": 1692,
+      "finished_at": "2026-10-29T14:20:42-03:00"
     }
   ]
 }

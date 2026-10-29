@@ -62,3 +62,19 @@ build e configuração do Python; Usage aponta para ela; "Expected runtimes" gan
 (44 s fria / 0,2 s quente, 1 min, riley, capo 2) com como foram medidas.
 
 ## Execution Log
+
+- **Closed** — commit `ce33201` (2026-10-29): docs(readme): add the tabgen Studio desktop app section
+  - Files (`git show --name-status ce33201`):
+    - `M README.md`
+    - `A docs/img/tabgen-studio.png`
+    - `M docs/rite/cycles/interface-desktop/08-fechar-fase-5.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/08-real-fria-rodando.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/08-real-fria.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/08-real-quente.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/08-real-tablatura.png`
+  - **Files amended** — added to `files`:
+    - `docs/img/tabgen-studio.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/08-real-fria-rodando.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/08-real-fria.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/08-real-quente.png`
+    - `docs/rite/cycles/interface-desktop/evidencias/08-real-tablatura.png`
