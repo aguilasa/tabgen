@@ -74,3 +74,8 @@ Hoje 0 em todos; este fix existe para isso — depois dele o probe roda verde do
   (not asserted); warm options cache_hit=true in 0.21 s (< 5 s).`; `grep -n "FIX-UI-008"` no
   doc 06 → linha 86; `rite gates --id FIX-UI-008` → passed (0 gates). Agente mediu também
   `.venv/bin/pytest -q` → 260 passed e `.venv/bin/ruff check .` → All checks passed.
+- **Closed** — commit `32a1eb4` (2026-10-29): test(scripts): cover UI-TASK-06 e2e numbers in the worker probe
+  - Files (`git show --name-status 32a1eb4`):
+    - `M docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-008.md`
+    - `M scripts/probe_e2e_worker.py`

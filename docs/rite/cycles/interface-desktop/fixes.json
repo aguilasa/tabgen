@@ -106,7 +106,7 @@
       "title": "Estender probe e2e do worker ao export MusicXML do cache",
       "origin": "UI-TASK-05",
       "severity": "low",
-      "files": [],
+      "files": ["scripts/probe_e2e_worker.py"],
       "resources": [],
       "status": "pending",
       "depends_on": [],
@@ -119,12 +119,16 @@
       "title": "Rastrear em fix real o probe dos números e2e da UI-TASK-06",
       "origin": "UI-TASK-06",
       "severity": "medium",
-      "files": [],
+      "files": ["scripts/probe_e2e_worker.py", "docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-29",
+      "done_commit": "32a1eb4",
+      "active_since": null,
+      "started_at": "2026-10-29T13:13:12-03:00",
+      "active_s": 506,
+      "finished_at": "2026-10-29T13:21:38-03:00"
     },
     {
       "id": "FIX-UI-009",
@@ -132,12 +136,15 @@
       "title": "Unificar limite de capo no core (CLI e worker têm cópias)",
       "origin": "UI-TASK-06",
       "severity": "low",
-      "files": [],
+      "files": ["tabgen/core/models.py", "tabgen/cli/main.py", "tabgen/worker/__init__.py", "tests/test_worker.py"],
       "resources": [],
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [],
       "done_on": null,
-      "done_commit": null
+      "done_commit": null,
+      "active_since": "2026-10-29T13:14:18-03:00",
+      "started_at": "2026-10-29T13:14:18-03:00",
+      "active_s": 0
     }
   ]
 }
