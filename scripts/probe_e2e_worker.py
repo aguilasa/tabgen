@@ -1,10 +1,11 @@
-"""Standalone end-to-end probe for the UI's worker path (FIX-UI-004, FIX-UI-008).
+"""Standalone end-to-end probe for the UI's worker path (FIX-UI-004,
+FIX-UI-008, FIX-UI-007).
 
 Regenerates the verification sample deterministically (sine 220 Hz, 10 s, mp3)
 with ffmpeg in a fresh temporary directory (so the ``.tabgen/`` cache next to
 the input starts cold) and sends ``{"cmd": "tablature", ...}`` requests to
 ``python -m tabgen.worker`` — one process per request, exactly like the
-desktop UI (``desktop/src/lib/worker.ts``). Five runs, asserting only the
+desktop UI (``desktop/src/lib/worker.ts``). Six runs, asserting only the
 facts that are stable across runs/encoders.
 
 Every run must exit 0 and write nothing but NDJSON on stdout (every line
@@ -19,22 +20,27 @@ again, but never a NEW stage out of order). On top of that shape:
    exported .gp5 exists next to the sample (FIX-UI-004);
 2. warm run (same args): ``cache_hit: true`` in under 5 s wall clock
    (FIX-UI-004);
-3. transcriber switch (``transcriber: riley``, UI-TASK-06): invalidates only
+3. MusicXML export run (same args, ``output`` with a ``.musicxml`` suffix,
+   UI-TASK-05 / FIX-UI-007): the output format is not part of the tablature
+   cache key, so ``cache_hit: true`` in under 5 s wall clock; the exported
+   .musicxml reopens with ``music21.converter.parse`` and has exactly 2
+   parts (guitar and bass);
+4. transcriber switch (``transcriber: riley``, UI-TASK-06): invalidates only
    the transcription of the guitar — ``cache_hit: false`` overall, while the
    analysis stages and ``transcription:bass`` are stage-cache hits (their
    first reported pct is already 100.0) and ``transcription:guitar`` re-runs
    (first pct below 100.0);
-4. options run (``tunings: {"guitar": "drop-d"}``, ``capos: {"guitar": 2}``,
+5. options run (``tunings: {"guitar": "drop-d"}``, ``capos: {"guitar": 2}``,
    ``guitar_type: "nylon"``, UI-TASK-06): the exported .gp5, reopened with
    ``guitarpro.parse``, has strings ``[64, 59, 55, 50, 45, 38]`` (drop-d
    low-to-high reversed: GP5 lists string 1 = highest pitch first), capo
    ``offset == 2`` and GM program ``24`` (Acoustic Guitar nylon, 0-based);
-5. warm options run (same args as 4, UI-TASK-06): the tablature cache
+6. warm options run (same args as 5, UI-TASK-06): the tablature cache
    answers with ``cache_hit: true`` in under 5 s wall clock.
 
-Wall-clock times of every run are printed; only the warm ones (2 and 5) are
-asserted (< 5 s). Note counts are deliberately NOT asserted (same policy as
-probe_e2e_sample.py).
+Wall-clock times of every run are printed; only the cache-served ones (2, 3
+and 6) are asserted (< 5 s). Note counts are deliberately NOT asserted (same
+policy as probe_e2e_sample.py).
 
 Not collected by pytest; run it directly:
 
@@ -57,6 +63,7 @@ import time
 from pathlib import Path
 
 import guitarpro
+import music21
 
 from tabgen.core.pipeline import (
     ANALYSIS_STAGES,
@@ -80,6 +87,10 @@ OPTIONS_ARGS = {
     "capos": {"guitar": OPTIONS_CAPO},
     "guitar_type": "nylon",
 }
+
+# UI-TASK-05 / FIX-UI-007: the .musicxml reopened with music21 has one part
+# per tablature instrument (guitar and bass).
+MUSICXML_PARTS = 2
 
 # Stages the transcriber switch must answer from the stage caches: everything
 # that runs before transcription, plus the bass (basic-pitch either way).
@@ -251,6 +262,38 @@ def main() -> None:
             fail(f"warm run took {warm_s:.2f} s (budget < {WARM_BUDGET_S:.0f} s)")
         say(f"warm run OK in {warm_s:.2f} s")
 
+        say("musicxml export run (same args, output .musicxml, cache reused)...")
+        musicxml_path = tmp_dir / "sample.musicxml"
+        musicxml_args = {"output": str(musicxml_path), **base_args}
+        messages, musicxml_s = run_worker(sample, "musicxml export run", musicxml_args)
+        musicxml = check_run(messages, "musicxml export run")
+        if musicxml.get("cache_hit") is not True:
+            fail(
+                f"musicxml export run cache_hit is "
+                f"{musicxml.get('cache_hit')!r}, expected true (format is not "
+                f"part of the tablature cache key)"
+            )
+        if musicxml_s >= WARM_BUDGET_S:
+            fail(
+                f"musicxml export run took {musicxml_s:.2f} s "
+                f"(budget < {WARM_BUDGET_S:.0f} s)"
+            )
+        if not musicxml_path.is_file():
+            fail(
+                f"musicxml export run reported a result but "
+                f"{musicxml_path.name} was not written"
+            )
+        parts = len(music21.converter.parse(str(musicxml_path)).parts)
+        if parts != MUSICXML_PARTS:
+            fail(
+                f"musicxml export run: music21 reopened {parts} part(s), "
+                f"expected {MUSICXML_PARTS} (guitar and bass)"
+            )
+        say(
+            f"musicxml export OK in {musicxml_s:.2f} s "
+            f"({parts} parts reopened via music21.converter.parse)"
+        )
+
         say("transcriber switch run (riley; re-runs the guitar transcription)...")
         messages, switch_s = run_worker(
             sample, "transcriber switch run", {"transcriber": "riley"}
@@ -299,10 +342,13 @@ def main() -> None:
         say(f"warm options run OK in {warm_options_s:.2f} s")
 
     say(
-        "PASS: five worker runs exit 0 with NDJSON-only stdout and stage order "
+        "PASS: six worker runs exit 0 with NDJSON-only stdout and stage order "
         "following _tablature_stages + export; cold (basic-pitch) "
         f"cache_hit=false in {cold_s:.1f} s (not asserted), warm cache_hit=true "
-        f"in {warm_s:.2f} s (< {WARM_BUDGET_S:.0f} s); transcriber switch to "
+        f"in {warm_s:.2f} s (< {WARM_BUDGET_S:.0f} s); musicxml export from "
+        f"the same cache: cache_hit=true in {musicxml_s:.2f} s "
+        f"(< {WARM_BUDGET_S:.0f} s), reopened by music21 with "
+        f"{MUSICXML_PARTS} parts; transcriber switch to "
         "riley: cache_hit=false, analysis + transcription:bass first pct 100.0, "
         f"transcription:guitar re-ran, in {switch_s:.1f} s (not asserted); "
         f"drop-d + capo 2 + nylon .gp5 reopened as {DROP_D_GP5_STRINGS} "
