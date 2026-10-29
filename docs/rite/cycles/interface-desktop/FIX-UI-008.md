@@ -55,3 +55,22 @@ Hoje 0 em todos; este fix existe para isso — depois dele o probe roda verde do
 `.venv/bin/python scripts/probe_e2e_worker.py` cobrindo os três números acima.
 
 ## Execution Log
+
+- 2026-10-29 — Triagem inline (`rite reproduce --all --cycle interface-desktop`): REPRODUCED.
+  `grep -c "UI-TASK-06" FIX-UI-007.md` → `0`; `grep -n "ver FIX-UI-007"` no doc da UI-TASK-06
+  → linha 86 (Evidência gravou 69; doc cresceu, conteúdo idêntico); FIX-UI-007 segue restrito
+  ao critério 2 da UI-TASK-05. Nenhum fix cobre os números e2e da UI-TASK-06.
+- 2026-10-29 — Fix (agente executor): `scripts/probe_e2e_worker.py` passou de 2 para 5 runs no
+  mesmo tempdir — cold/warm com `transcriber: basic-pitch` explícito, troca para `riley`
+  (invalidação por estágio: primeiro pct 100.0 = hit, <100.0 = re-run), geração
+  drop-d+capo2+nylon com reabertura `guitarpro.parse` e warm das opções; linha 86 do doc da
+  UI-TASK-06 agora cita este fix e o escopo real da FIX-UI-007. Verificação na árvore do
+  commit (FIX-UI-009 em stash): `.venv/bin/python scripts/probe_e2e_worker.py` → exit 0,
+  `PASS: five worker runs exit 0 with NDJSON-only stdout and stage order following
+  _tablature_stages + export; cold (basic-pitch) cache_hit=false in 13.8 s (not asserted),
+  warm cache_hit=true in 0.21 s (< 5 s); transcriber switch to riley: cache_hit=false,
+  analysis + transcription:bass first pct 100.0, transcription:guitar re-ran, in 4.2 s (not
+  asserted); drop-d + capo 2 + nylon .gp5 reopened as [64, 59, 55, 50, 45, 38] 2 24 in 0.2 s
+  (not asserted); warm options cache_hit=true in 0.21 s (< 5 s).`; `grep -n "FIX-UI-008"` no
+  doc 06 → linha 86; `rite gates --id FIX-UI-008` → passed (0 gates). Agente mediu também
+  `.venv/bin/pytest -q` → 260 passed e `.venv/bin/ruff check .` → All checks passed.

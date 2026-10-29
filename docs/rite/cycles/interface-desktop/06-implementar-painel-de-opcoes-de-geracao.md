@@ -83,7 +83,9 @@ Verificação (worker reproduzido pelo main thread em diretórios novos; UI em X
   cache da tablatura em 0,2 s (`evidencias/06-custom-igual-dropd-cache.png`).
 - `npm run typecheck` rc 0; `npm run build` → `✓ built`; `cargo clippy -q` sem saída;
   `cargo fmt --check` rc 0; `.venv/bin/pytest -q` → `260 passed`; `ruff check .` limpo; grep de
-  pureza do core vazio. Números e2e por comando inline, sem probe (ver FIX-UI-007).
+  pureza do core vazio. Números e2e cobertos por `scripts/probe_e2e_worker.py` via FIX-UI-008
+  (gp5 drop-d+capo2+nylon reaberto, troca de transcriber, cache da tablatura <5 s); o export
+  MusicXML do cache (critério 2 da UI-TASK-05) segue em FIX-UI-007.
 
 ## Execution Log
 
