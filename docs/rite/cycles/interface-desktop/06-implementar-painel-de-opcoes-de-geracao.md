@@ -105,3 +105,4 @@ Verificação (worker reproduzido pelo main thread em diretórios novos; UI em X
     - `A docs/rite/cycles/interface-desktop/evidencias/06-troca-transcriber-riley.png`
     - `M tabgen/worker/__init__.py`
     - `M tests/test_worker.py`
+- **Reviewed** (2026-10-29) at `2d2bf49`: FIX-UI-008, FIX-UI-009

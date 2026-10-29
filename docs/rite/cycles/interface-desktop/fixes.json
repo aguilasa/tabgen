@@ -112,6 +112,32 @@
       "depends_on": [],
       "done_on": null,
       "done_commit": null
+    },
+    {
+      "id": "FIX-UI-008",
+      "file": "FIX-UI-008.md",
+      "title": "Rastrear em fix real o probe dos números e2e da UI-TASK-06",
+      "origin": "UI-TASK-06",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-UI-009",
+      "file": "FIX-UI-009.md",
+      "title": "Unificar limite de capo no core (CLI e worker têm cópias)",
+      "origin": "UI-TASK-06",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
