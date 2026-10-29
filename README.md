@@ -91,11 +91,32 @@ pip install torch --index-url https://download.pytorch.org/whl/cu121
 (replace `cu121` with the CUDA version you want — see
 [pytorch.org](https://pytorch.org/get-started/locally/) for the available tags).
 
+## Desktop app (tabgen Studio)
+
+![tabgen Studio showing the Tablatura tab of a finished run](docs/img/tabgen-studio.png)
+
+tabgen Studio is a desktop window over the same pipeline: open an audio file,
+pick the options (instruments, tunings, capo, guitar type, transcriber,
+techniques, output format), follow each stage's progress, browse the stems,
+analysis, notes and tablature, and export Guitar Pro, MusicXML or ASCII.
+It runs on Linux as a `.deb` or AppImage and uses the virtual environment
+installed above — it does not bundle Python or the models.
+
+```bash
+cd desktop
+npm install
+npm run tauri build   # .deb and AppImage in src-tauri/target/release/bundle/
+```
+
+On first launch, open **Ambiente** and set **Interpretador Python** to the
+interpreter of that environment (e.g. `/path/to/tabgen/.venv/bin/python`); the
+screen lists what is missing when the check fails. Build requirements, sizes
+and development mode: [desktop/README.md](desktop/README.md).
+
 ## Usage
 
-The examples below use the CLI. For a desktop window over the same pipeline,
-see [tabgen Studio](desktop/README.md) (Linux `.deb`/AppImage; it uses the
-virtual environment installed above).
+The examples below use the CLI; the [desktop app](#desktop-app-tabgen-studio)
+runs the same pipeline.
 
 Check the installed version:
 
@@ -341,9 +362,14 @@ end-to-end validation of each phase (cold = no cache at all):
 | `export`, 4-minute song, cold         | ~193 s total (separation, analysis, transcription and tablature) |
 | `export`, 4-minute song, warm         | < 1 s (0.35 s)  |
 | `export --transcriber riley` vs `basic-pitch`, 10 s sample, separation cached | +2.7 s (4.5 s vs 1.8 s) |
+| Desktop app, 1-minute song (riley, capo 2, steel), cold | ~44 s (44.0 s) |
+| Desktop app, same song, warm (cache hit) | < 1 s (0.2 s) |
 
 The `export` rows above were measured with Basic Pitch; the riley row comes
 from `scripts/probe_e2e_riley.py` (riley runs both models on the guitar stem).
+The desktop rows are the run time the app shows when a job ends, for the
+AppImage on a fresh copy of a 60-second MP3 (model weights already
+downloaded).
 The very first run also downloads the Demucs model weights (~1 GB) and, with
 `riley`, the guitar weights (~99 MB). On CPU,
 expect separation to be 10–20× slower.
