@@ -108,10 +108,14 @@
       "severity": "low",
       "files": ["scripts/probe_e2e_worker.py"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-29",
+      "done_commit": "79bda73",
+      "active_since": null,
+      "started_at": "2026-10-29T13:22:40-03:00",
+      "active_s": 220,
+      "finished_at": "2026-10-29T13:26:20-03:00"
     },
     {
       "id": "FIX-UI-008",

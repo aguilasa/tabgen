@@ -54,3 +54,7 @@ Após a execução quente, o probe envia o mesmo `tablature` com `output` `.musi
   music21 with 2 parts ...`; `grep -c musicxml scripts/probe_e2e_worker.py` → 21;
   `rite gates --id FIX-UI-007` → passed (0 gates). Agente mediu na mesma árvore
   `.venv/bin/pytest -q` → 260 passed e `.venv/bin/ruff check .` → All checks passed.
+- **Closed** — commit `79bda73` (2026-10-29): test(scripts): cover cached MusicXML export in the worker e2e probe
+  - Files (`git show --name-status 79bda73`):
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-007.md`
+    - `M scripts/probe_e2e_worker.py`
