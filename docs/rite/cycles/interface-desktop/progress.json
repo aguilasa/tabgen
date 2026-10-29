@@ -151,12 +151,14 @@
       "status": "done",
       "done_on": "2026-10-29",
       "done_commit": "544b50e",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-29",
+      "review_commit": "37f41cb",
       "active_since": null,
       "started_at": "2026-10-29T13:34:37-03:00",
       "active_s": 1054,
-      "finished_at": "2026-10-29T13:52:11-03:00"
+      "finished_at": "2026-10-29T13:52:11-03:00",
+      "review_started_at": "2026-10-29T14:22:15-03:00",
+      "review_s": 264
     },
     {
       "id": "UI-TASK-08",
@@ -176,7 +178,8 @@
       "active_since": null,
       "started_at": "2026-10-29T13:52:30-03:00",
       "active_s": 1692,
-      "finished_at": "2026-10-29T14:20:42-03:00"
+      "finished_at": "2026-10-29T14:20:42-03:00",
+      "review_started_at": "2026-10-29T14:22:15-03:00"
     }
   ]
 }

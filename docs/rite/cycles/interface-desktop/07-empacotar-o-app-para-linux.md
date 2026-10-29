@@ -133,3 +133,4 @@ build; documentado no `desktop/README.md`, a tela já orienta quando falta.
     - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-cache.png`
     - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-pipeline-fria.png`
     - `docs/rite/cycles/interface-desktop/evidencias/07-appimage-python-ausente.png`
+- **Reviewed** (2026-10-29) at `37f41cb`: no finding
