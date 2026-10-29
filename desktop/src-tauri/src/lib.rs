@@ -316,6 +316,33 @@ async fn probe_audio(path: String) -> Result<AudioInfo, String> {
     .map_err(|err| err.to_string())?
 }
 
+/// Show a result artifact's folder in the file manager: the directory
+/// itself, or the parent of a file, handed to `xdg-open` (the desktop's
+/// default handler for directories). Returns the directory opened.
+#[tauri::command]
+fn open_folder(path: String) -> Result<String, String> {
+    let path = Path::new(&path);
+    let dir = if path.is_dir() {
+        path
+    } else {
+        path.parent()
+            .filter(|dir| dir.is_dir())
+            .ok_or_else(|| format!("folder not found: {}", path.display()))?
+    };
+    let mut child = Command::new("xdg-open")
+        .arg(dir)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .map_err(|err| format!("cannot run xdg-open: {err}"))?;
+    // reap it in the background: xdg-open may wait for the file manager
+    std::thread::spawn(move || {
+        let _ = child.wait();
+    });
+    Ok(dir.to_string_lossy().into_owned())
+}
+
 static STARTUP_OPEN_TAKEN: AtomicBool = AtomicBool::new(false);
 
 /// Dev-only: a file named by `TABGEN_OPEN` is opened once at startup through
@@ -340,6 +367,7 @@ pub fn run() {
             cancel_worker,
             file_exists,
             probe_audio,
+            open_folder,
             startup_open
         ])
         .build(tauri::generate_context!())

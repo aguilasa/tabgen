@@ -14,7 +14,13 @@ import {
   startupOpen,
   type RecentEntry,
 } from "./lib/recents";
-import { runArtifacts, useTablatureRun, type TablatureResult } from "./lib/run";
+import {
+  runArtifacts,
+  useExports,
+  useRunDetails,
+  useTablatureRun,
+  type TablatureResult,
+} from "./lib/run";
 import Ambiente from "./screens/Ambiente";
 import Inicio from "./screens/Inicio";
 import Musica from "./screens/Musica";
@@ -134,6 +140,8 @@ export default function App() {
     );
   }, []);
   const tablature = useTablatureRun(python, prefs, onRunFinished);
+  const details = useRunDetails(python, tablature.run);
+  const exports = useExports(python, tablature.run);
 
   const recheck = useCallback(() => {
     if (!python) return;
@@ -199,6 +207,9 @@ export default function App() {
         <Musica
           song={song}
           run={tablature.run}
+          details={details}
+          exporting={exports.current}
+          onExport={exports.start}
           transcriber={prefs.transcriber}
           blocked={python ? null : "Interpretador Python ainda não definido"}
           onGenerate={() => tablature.start(song.path)}

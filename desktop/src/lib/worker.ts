@@ -116,3 +116,12 @@ export async function runWorker<T = Record<string, unknown>>(
 export function cancelWorker(jobId: string): Promise<boolean> {
   return invoke<boolean>("cancel_worker", { jobId });
 }
+
+/**
+ * Show the folder of a result artifact (a file's parent, or the directory
+ * itself) in the file manager, through `xdg-open`. Resolves with the
+ * directory opened.
+ */
+export function openFolder(path: string): Promise<string> {
+  return invoke<string>("open_folder", { path });
+}

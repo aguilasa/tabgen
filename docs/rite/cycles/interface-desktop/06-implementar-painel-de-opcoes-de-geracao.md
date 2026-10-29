@@ -36,4 +36,11 @@ Pitfall herdado: comparar valores parseados, não strings.
 
 Da UI-TASK-04: o botão "Gerar tab ▶" chama `useTablatureRun.start(path)`, que monta os args com `tablatureArgs(path, prefs)` em `desktop/src/lib/run.ts`; o drawer deve estender essa função ou dar um argumento de opções ao `start`.
 
+Da UI-TASK-05: `tablatureArgs(path, prefs)` em `desktop/src/lib/run.ts` monta os args e os
+guarda em `RunState.args`; exports (`useExports`) e os jobs de detalhe (`detailArgs`) os
+reaproveitam — estender `tablatureArgs` com instrumentos/afinações/capo/técnicas/guitar_type/saída
+propaga para eles. Formato→sufixo: `exportPath`/`EXPORT_SUFFIX` em `run.ts`. Comando de presets:
+`COMMANDS` e `_HANDLERS` em `tabgen/worker/__init__.py` e `WorkerCmd` em `worker.ts`;
+`tracks[].tuning_name` já casa com `TUNING_PRESETS`.
+
 ## Execution Log

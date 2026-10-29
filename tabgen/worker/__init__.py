@@ -38,7 +38,23 @@ Protocol (``python -m tabgen.worker``), one JSON object per line:
   - ``{"type": "result", ...}`` and exit 0. The other keys are the core
     summary as a plain dict (``DoctorReport.to_dict()``; ``asdict`` of
     ``AnalysisSummary`` / ``TranscriptionSummary`` / ``TablatureSummary``).
-    ``tablature`` adds ``ascii_preview``: ``render_ascii_tab`` of the scores.
+    Extra keys the UI reads instead of deriving them itself:
+
+    - ``analyze`` adds ``stems``: stem name -> wav path, in the order of
+      ``separation.demucs.STEM_NAMES``, taken from the input's separation
+      cache entry when it is still valid (``{}`` otherwise, e.g. stems
+      overwritten by another song of the same folder).
+    - ``transcribe`` adds ``transcriber`` to each ``instruments`` item: the
+      model that transcribed it (the requested transcriber for the guitar,
+      ``basic-pitch`` for the other instruments, as routed by
+      ``pipeline.default_transcribe_fn``).
+    - ``tablature`` adds ``ascii_preview`` (``render_ascii_tab`` of the
+      scores) and ``tracks``, one per score in the same order:
+      ``instrument``, ``instrument_type``, ``note_count`` (fretted events),
+      ``tuning_name`` (``TUNING_PRESETS`` name or ``""`` when custom),
+      ``tuning_notes`` (scientific pitch names, low-to-high), ``capo_fret``,
+      ``unassigned`` (notes that could not be fretted), ``techniques``
+      (technique kind -> event count, every kind of ``TECHNIQUE_KINDS``).
   - ``{"type": "error", "kind": "<exception class name>", "message": "..."}``
     and exit 1. A malformed request has kind ``RequestError``.
 
@@ -117,13 +133,36 @@ def _analyze(args: Mapping[str, Any], emit: Emit, stage_fns: Mapping[str, Any]) 
         on_progress=_progress(emit),
         **stage_fns,
     )
-    return asdict(summary)
+    result = asdict(summary)
+    result["stems"] = _cached_stems(Path(summary.input_path))
+    return result
+
+
+def _cached_stems(input_path: Path) -> dict[str, str]:
+    """Stem paths of the input's separation cache entry, ``{}`` when the
+    entry is missing or its stem files no longer match it."""
+    from tabgen.core.cache import StageCache
+    from tabgen.core.separation.demucs import (
+        MODEL_VERSION,
+        STAGE,
+        STEM_NAMES,
+        _cached_result_is_valid,
+    )
+
+    payload = StageCache(input_path).get(STAGE, MODEL_VERSION)
+    if payload is None or not _cached_result_is_valid(payload):
+        return {}
+    return {name: payload["stems"][name] for name in STEM_NAMES}
 
 
 def _transcribe(
     args: Mapping[str, Any], emit: Emit, stage_fns: Mapping[str, Any]
 ) -> dict:
-    from tabgen.core.pipeline import run_transcription
+    from tabgen.core.pipeline import (
+        DEFAULT_TRANSCRIBER,
+        TRANSCRIBER_BASIC_PITCH,
+        run_transcription,
+    )
 
     _check_keys(
         args,
@@ -144,7 +183,44 @@ def _transcribe(
         **kwargs,
         **stage_fns,
     )
-    return asdict(summary)
+    result = asdict(summary)
+    guitar_transcriber = kwargs.get("transcriber", DEFAULT_TRANSCRIBER)
+    for item in result["instruments"]:
+        item["transcriber"] = (
+            guitar_transcriber
+            if item["instrument"] == "guitar"
+            else TRANSCRIBER_BASIC_PITCH
+        )
+    return result
+
+
+def _track(score: Any, unassigned: int) -> dict[str, Any]:
+    """Display summary of one TabScore (see ``tracks`` in the protocol)."""
+    from tabgen.core.export.ascii_tab import _pitch_name
+    from tabgen.core.models import TECHNIQUE_KINDS
+    from tabgen.core.pipeline import TUNING_PRESETS
+
+    presets = TUNING_PRESETS.get(score.instrument, {})
+    tuning_name = next(
+        (name for name, tuning in presets.items() if tuning == score.tuning_midi),
+        "",
+    )
+    techniques = {kind: 0 for kind in TECHNIQUE_KINDS}
+    for event in score.events:
+        if event.technique is not None:
+            techniques[event.technique.kind] = (
+                techniques.get(event.technique.kind, 0) + 1
+            )
+    return {
+        "instrument": score.instrument,
+        "instrument_type": score.instrument_type,
+        "note_count": len(score.events),
+        "tuning_name": tuning_name,
+        "tuning_notes": [_pitch_name(midi) for midi in score.tuning_midi],
+        "capo_fret": score.capo_fret,
+        "unassigned": unassigned,
+        "techniques": techniques,
+    }
 
 
 def _tablature(
@@ -210,6 +286,10 @@ def _tablature(
     )
     result = asdict(summary)
     result["ascii_preview"] = render_ascii_tab(summary.scores, summary.beat_grids)
+    result["tracks"] = [
+        _track(score, summary.unassigned.get(score.instrument, 0))
+        for score in summary.scores
+    ]
     return result
 
 

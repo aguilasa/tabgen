@@ -21,6 +21,60 @@ export interface TablatureResult {
   >;
   unassigned: Record<string, number>;
   ascii_preview: string;
+  /** Per score, in the same order: display summary computed by the worker. */
+  tracks: TrackSummary[];
+}
+
+/** One `tracks` item of the tablature result. */
+export interface TrackSummary {
+  instrument: string;
+  instrument_type: string;
+  note_count: number;
+  /** TUNING_PRESETS name, "" for a custom tuning. */
+  tuning_name: string;
+  /** Scientific pitch names, low-to-high. */
+  tuning_notes: string[];
+  capo_fret: number;
+  unassigned: number;
+  /** Technique kind -> number of events. */
+  techniques: Record<string, number>;
+}
+
+export interface ChordSegment {
+  start_s: number;
+  end_s: number;
+  /** Harte label; "N" = no chord. */
+  label: string;
+}
+
+/** `analyze` result line, without `type`. */
+export interface AnalysisPayload {
+  input_path: string;
+  separation_cache_hit: boolean;
+  analysis_cache_hit: boolean;
+  result: {
+    tempo_bpm: number;
+    beat_times: number[];
+    downbeat_times: number[];
+    key: string;
+    key_confidence: number;
+    chords: ChordSegment[];
+  };
+  /** Stem name -> wav path; {} when the separation cache no longer holds them. */
+  stems: Record<string, string>;
+}
+
+/** `transcribe` result line, without `type`. */
+export interface TranscriptionPayload {
+  input_path: string;
+  separation_cache_hit: boolean;
+  instruments: {
+    instrument: string;
+    note_count: number;
+    midi_path: string;
+    cache_hit: boolean;
+    transcriber: string;
+  }[];
 }
 
 /** Progress of one core stage, as reported by the worker. */
@@ -43,6 +97,8 @@ export interface RunState {
   stages: StageProgress[];
   startedAt: number;
   endedAt: number | null;
+  /** Worker args of the job (exports and the detail jobs reuse them). */
+  args: Record<string, unknown>;
   result: TablatureResult | null;
   error: { kind: string; message: string; stderr: string } | null;
 }
@@ -197,6 +253,7 @@ export function useTablatureRun(
         stages: [],
         startedAt: performance.now(),
         endedAt: null,
+        args: tablatureArgs(path, prefs),
         result: null,
         error: null,
       };
@@ -206,7 +263,7 @@ export function useTablatureRun(
       runWorker<TablatureResult>(
         python,
         "tablature",
-        tablatureArgs(path, prefs),
+        state.args,
         (stage, pct) => update(jobId, (r) => ({ ...r, stages: withProgress(r.stages, stage, pct) })),
         jobId,
       ).then(
@@ -239,4 +296,173 @@ export function useTablatureRun(
   }, [update]);
 
   return { run, start, cancel };
+}
+
+export type Loadable<T> =
+  | { state: "loading" }
+  | { state: "ok"; data: T }
+  | { state: "error"; kind: string; message: string };
+
+/** Stems, analysis and per-instrument notes of a finished run. */
+export interface RunDetails {
+  jobId: string;
+  analysis: Loadable<AnalysisPayload>;
+  transcription: Loadable<TranscriptionPayload>;
+}
+
+function failure(err: unknown): { state: "error"; kind: string; message: string } {
+  const error = err instanceof WorkerError ? err : new WorkerError("Error", String(err));
+  return { state: "error", kind: error.kind, message: error.message };
+}
+
+/**
+ * Worker args of the detail jobs, from the tablature job's args: `analyze`
+ * takes input/device; `transcribe` also the transcriber and guitar type, and
+ * writes the .mid files next to the tablature output.
+ */
+export function detailArgs(run: RunState): {
+  analyze: Record<string, unknown>;
+  transcribe: Record<string, unknown>;
+} {
+  const { input, device, transcriber, guitar_type, instruments } = run.args;
+  const analyze: Record<string, unknown> = { input };
+  if (device !== undefined) analyze.device = device;
+  const transcribe: Record<string, unknown> = { ...analyze };
+  if (transcriber !== undefined) transcribe.transcriber = transcriber;
+  if (guitar_type !== undefined) transcribe.guitar_type = guitar_type;
+  if (instruments !== undefined) transcribe.instruments = instruments;
+  if (run.result) transcribe.output_dir = dirName(run.result.output_path);
+  return { analyze, transcribe };
+}
+
+export function dirName(path: string): string {
+  const cut = path.lastIndexOf("/");
+  return cut > 0 ? path.slice(0, cut) : "/";
+}
+
+/**
+ * Once a tablature job finishes, fetch what its result does not carry:
+ * `analyze` (stems + AnalysisResult) then `transcribe` (.mid per instrument).
+ * Both hit the stage caches the tablature job just filled.
+ */
+export function useRunDetails(python: string, run: RunState | null): RunDetails | null {
+  const [details, setDetails] = useState<RunDetails | null>(null);
+  const started = useRef<string | null>(null);
+  const done = run?.phase === "done" ? run : null;
+
+  useEffect(() => {
+    if (!done || !python || started.current === done.jobId) return;
+    started.current = done.jobId;
+    const { jobId } = done;
+    const args = detailArgs(done);
+    const set = (change: (d: RunDetails) => RunDetails) =>
+      setDetails((current) => (current?.jobId === jobId ? change(current) : current));
+    setDetails({ jobId, analysis: { state: "loading" }, transcription: { state: "loading" } });
+    void (async () => {
+      try {
+        const data = await runWorker<AnalysisPayload>(python, "analyze", args.analyze);
+        set((d) => ({ ...d, analysis: { state: "ok", data } }));
+      } catch (err) {
+        set((d) => ({ ...d, analysis: failure(err) }));
+      }
+      try {
+        const data = await runWorker<TranscriptionPayload>(python, "transcribe", args.transcribe);
+        set((d) => ({ ...d, transcription: { state: "ok", data } }));
+      } catch (err) {
+        set((d) => ({ ...d, transcription: failure(err) }));
+      }
+    })();
+  }, [done, python]);
+
+  return details && run && details.jobId === run.jobId ? details : null;
+}
+
+export type ExportFormat = "gp5" | "musicxml" | "ascii";
+
+const EXPORT_SUFFIX: Record<ExportFormat, string> = {
+  gp5: ".gp5",
+  musicxml: ".musicxml",
+  ascii: ".txt",
+};
+
+/** One export of a finished run, re-invoking `tablature` with another format. */
+export interface ExportState {
+  jobId: string;
+  format: ExportFormat;
+  phase: "running" | "done" | "error";
+  startedAt: number;
+  endedAt: number | null;
+  outputPath: string;
+  cacheHit: boolean;
+  error: string | null;
+}
+
+/** Output path of an export: the run's output with the format's suffix. */
+export function exportPath(result: TablatureResult, format: ExportFormat): string {
+  const out = result.output_path;
+  const name = out.slice(out.lastIndexOf("/") + 1);
+  const dot = name.lastIndexOf(".");
+  const stem = dot > 0 ? out.slice(0, out.length - name.length + dot) : out;
+  return stem + EXPORT_SUFFIX[format];
+}
+
+/**
+ * Exports of the run shown in the workspace. Same args as the run, so the
+ * worker takes the TabScores from the tablature cache and only exports.
+ */
+export function useExports(python: string, run: RunState | null) {
+  const [exports, setExports] = useState<ExportState | null>(null);
+  const done = run?.phase === "done" && run.result ? run : null;
+
+  const start = useCallback(
+    (format: ExportFormat) => {
+      if (!done?.result || !python) return;
+      const outputPath = exportPath(done.result, format);
+      const state: ExportState = {
+        jobId: done.jobId,
+        format,
+        phase: "running",
+        startedAt: performance.now(),
+        endedAt: null,
+        outputPath,
+        cacheHit: false,
+        error: null,
+      };
+      setExports(state);
+      const same = (e: ExportState | null) => e?.startedAt === state.startedAt;
+      runWorker<TablatureResult>(python, "tablature", {
+        ...done.args,
+        output: outputPath,
+        format,
+      }).then(
+        (result) =>
+          setExports((e) =>
+            same(e)
+              ? {
+                  ...state,
+                  phase: "done",
+                  endedAt: performance.now(),
+                  outputPath: result.output_path,
+                  cacheHit: result.cache_hit,
+                }
+              : e,
+          ),
+        (err: unknown) =>
+          setExports((e) =>
+            same(e)
+              ? {
+                  ...state,
+                  phase: "error",
+                  endedAt: performance.now(),
+                  error: `${failure(err).kind}: ${failure(err).message}`,
+                }
+              : e,
+          ),
+      );
+    },
+    [done, python],
+  );
+
+  const current = exports && done && exports.jobId === done.jobId ? exports : null;
+  return { current, start };
 }
