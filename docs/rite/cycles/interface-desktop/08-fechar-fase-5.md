@@ -78,3 +78,4 @@ build e configuração do Python; Usage aponta para ela; "Expected runtimes" gan
     - `docs/rite/cycles/interface-desktop/evidencias/08-real-fria.png`
     - `docs/rite/cycles/interface-desktop/evidencias/08-real-quente.png`
     - `docs/rite/cycles/interface-desktop/evidencias/08-real-tablatura.png`
+- **Reviewed** (2026-10-29) at `5c30bb9`: no finding
