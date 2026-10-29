@@ -16,9 +16,14 @@ from test_tablature_pipeline import make_fakes, write_input
 
 from tabgen.core import pipeline
 from tabgen.core.cache import StageCache
-from tabgen.core.models import TECHNIQUE_KINDS, AnalysisResult, SeparationResult
+from tabgen.core.models import (
+    CAPO_RANGE,
+    TECHNIQUE_KINDS,
+    AnalysisResult,
+    SeparationResult,
+)
 from tabgen.core.separation import demucs
-from tabgen.worker import CAPO_RANGE, run
+from tabgen.worker import run
 
 
 def serve(request, stage_fns=None) -> tuple[int, list[dict]]:

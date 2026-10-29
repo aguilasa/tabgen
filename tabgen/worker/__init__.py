@@ -98,12 +98,11 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Callable, Mapping, TextIO
 
+from tabgen.core.models import CAPO_RANGE
+
 Emit = Callable[[dict[str, Any]], None]
 
 COMMANDS = ("doctor", "presets", "tuning", "analyze", "transcribe", "tablature")
-
-# Capo fret bounds, the same as the CLI's ``tabgen export --capo``.
-CAPO_RANGE = (0, 12)
 
 
 class RequestError(ValueError):

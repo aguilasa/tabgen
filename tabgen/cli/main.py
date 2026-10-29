@@ -16,6 +16,7 @@ from rich.progress import (
 
 from tabgen import __version__
 from tabgen.core import doctor as doctor_core
+from tabgen.core.models import CAPO_RANGE
 from tabgen.core.pipeline import DEFAULT_TRANSCRIBER
 
 app = typer.Typer(
@@ -341,8 +342,8 @@ def export(
     capo: int = typer.Option(
         0,
         "--capo",
-        min=0,
-        max=12,
+        min=CAPO_RANGE[0],
+        max=CAPO_RANGE[1],
         help="Guitar capo fret (frets in the tab are relative to it).",
     ),
     device: Optional[str] = typer.Option(

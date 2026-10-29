@@ -58,3 +58,20 @@ tabgen/core/models.py` encontra a fonte única e `.venv/bin/pytest -q tests/test
 fica verde.
 
 ## Execution Log
+
+- 2026-10-29 — Triagem inline (`rite reproduce --all --cycle interface-desktop`): REPRODUCED.
+  `grep -n "CAPO_RANGE = " tabgen/worker/__init__.py` → `106:CAPO_RANGE = (0, 12)`;
+  `sed -n '341,346p' tabgen/cli/main.py` → `min=0, max=12` hardcoded no typer. Duas cópias,
+  nenhuma no core. Saída igual à Evidência.
+- 2026-10-29 — Fix (agente executor): `CAPO_RANGE: tuple[int, int] = (0, 12)` criado em
+  `tabgen/core/models.py` (ao lado de GUITAR_TYPES, comentário de contrato citando os dois
+  consumidores); worker importa do core (mantém re-export em `tabgen.worker`); CLI usa
+  `min=CAPO_RANGE[0], max=CAPO_RANGE[1]`; teste `test_presets_come_from_the_core_constants`
+  importa a constante do core e compara com o payload real (sem monkeypatch). Core puro —
+  nada de CLI/worker entrou em `tabgen/core`. Verificação na árvore do commit:
+  `grep -rn "max=12\|CAPO_RANGE = (0, 12)" tabgen/cli/main.py tabgen/worker/__init__.py` →
+  vazio (exit 1); `grep -n "CAPO_RANGE" tabgen/core/models.py` →
+  `133:CAPO_RANGE: tuple[int, int] = (0, 12)`; `.venv/bin/pytest -q tests/test_worker.py` →
+  39 passed; `rite gates --id FIX-UI-009` → passed (0 gates). Agente mediu na mesma árvore
+  `.venv/bin/pytest -q` → 260 passed e `.venv/bin/ruff check .` → All checks passed.
+  Desktop já consome `capo_range` do payload de presets do worker — sem cópia na UI.

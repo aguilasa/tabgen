@@ -128,6 +128,10 @@ GUITAR_STANDARD_TUNING = [40, 45, 50, 55, 59, 64]  # E2 A2 D3 G3 B3 E4
 BASS_STANDARD_TUNING = [28, 33, 38, 43]  # E1 A1 D2 G2
 BASS_FIVE_STRING_TUNING = [23, 28, 33, 38, 43]  # B0 E1 A1 D2 G2
 
+# Capo fret bounds, shared by every front end (the CLI's ``--capo`` option
+# and the worker protocol's ``capos`` argument / ``capo_range`` preset).
+CAPO_RANGE: tuple[int, int] = (0, 12)
+
 # Guitar types carried by ``TabScore.instrument_type`` for the guitar.
 GUITAR_ELECTRIC = "electric"
 GUITAR_NYLON = "nylon"
