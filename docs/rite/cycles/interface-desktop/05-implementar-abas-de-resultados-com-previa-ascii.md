@@ -95,3 +95,4 @@ Verificação (Xvfb `:99`, binário debug, `XDG_DATA_HOME` isolado, amostra seno
     - `M tests/test_worker.py`
   - **Files amended** — added to `files`:
     - `docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
+- **Reviewed** (2026-10-29) at `7935ca6`: no finding

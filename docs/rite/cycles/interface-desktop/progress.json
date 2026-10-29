@@ -107,12 +107,14 @@
       "status": "done",
       "done_on": "2026-10-29",
       "done_commit": "542fc20",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-10-29",
+      "review_commit": "7935ca6",
       "active_since": null,
       "started_at": "2026-10-29T11:41:07-03:00",
       "active_s": 1000,
-      "finished_at": "2026-10-29T11:57:47-03:00"
+      "finished_at": "2026-10-29T11:57:47-03:00",
+      "review_started_at": "2026-10-29T12:25:41-03:00",
+      "review_s": 360
     },
     {
       "id": "UI-TASK-06",
