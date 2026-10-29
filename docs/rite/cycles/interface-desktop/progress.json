@@ -122,13 +122,17 @@
       "phase": 5,
       "depends_on": ["UI-TASK-04"],
       "source_of_truth": "/docs/planejamento/interface-desktop.md#4",
-      "files": ["desktop/src/components/OpcoesDrawer.tsx", "tabgen/worker/__main__.py", "desktop/src/App.tsx", "desktop/src/App.css", "desktop/src/screens/Musica.tsx", "desktop/src/lib/run.ts", "desktop/src/lib/worker.ts", "desktop/src/components/Pipeline.tsx", "desktop/src-tauri/src/lib.rs", "desktop/src-tauri/Cargo.toml", "desktop/src-tauri/Cargo.lock", "desktop/src-tauri/capabilities/default.json", "desktop/package.json", "desktop/package-lock.json", "tabgen/worker/__init__.py", "tests/test_worker.py", "desktop/src/lib/recents.ts", "desktop/src/lib/prefs.ts", "docs/rite/cycles/interface-desktop/evidencias/06-*.png"],
+      "files": ["desktop/src/components/OpcoesDrawer.tsx", "tabgen/worker/__init__.py", "tests/test_worker.py", "desktop/src/App.tsx", "desktop/src/App.css", "desktop/src/screens/Musica.tsx", "desktop/src/lib/run.ts", "desktop/src/lib/worker.ts", "desktop/src-tauri/capabilities/default.json", "docs/rite/cycles/interface-desktop/evidencias/06-*.png"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-10-29",
+      "done_commit": "dfb5906",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-10-29T11:58:01-03:00",
+      "active_s": 1069,
+      "finished_at": "2026-10-29T12:15:50-03:00"
     },
     {
       "id": "UI-TASK-07",

@@ -86,3 +86,22 @@ Verificação (worker reproduzido pelo main thread em diretórios novos; UI em X
   pureza do core vazio. Números e2e por comando inline, sem probe (ver FIX-UI-007).
 
 ## Execution Log
+
+- **Closed** — commit `dfb5906` (2026-10-29): feat(desktop): add generation options drawer with worker presets and tuning validation
+  - Files (`git show --name-status dfb5906`):
+    - `M desktop/src-tauri/capabilities/default.json`
+    - `M desktop/src/App.css`
+    - `M desktop/src/App.tsx`
+    - `A desktop/src/components/OpcoesDrawer.tsx`
+    - `M desktop/src/lib/run.ts`
+    - `M desktop/src/lib/worker.ts`
+    - `M desktop/src/screens/Musica.tsx`
+    - `M docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/06-custom-igual-dropd-cache.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/06-custom-invalida.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/06-drawer-dropd-capo2-nylon.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/06-gerado-dropd-capo2-nylon.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/06-reaberta-ultimas-opcoes.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/06-troca-transcriber-riley.png`
+    - `M tabgen/worker/__init__.py`
+    - `M tests/test_worker.py`
