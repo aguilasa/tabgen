@@ -56,3 +56,11 @@ $ sh "$RITE_HOME/bin/rite" context UI-TASK-04 --json | grep -E 'capabilities/def
 Hoje imprime os quatro paths; depois do fix deve sair vazio.
 
 ## Execution Log
+
+- 2026-10-29 — Triagem inline (`rite reproduce --all --cycle interface-desktop`): REPRODUCED.
+  `git show --name-only 72ebb52` não lista nenhum dos quatro paths; context da UI-TASK-04
+  imprime os quatro em `files`. Saída igual à Evidência.
+- 2026-10-29 — Fix aplicado inline (trabalho é bookkeeping via CLI, vedado a workers):
+  `rite set UI-TASK-04 --files …` com a lista anterior menos os quatro paths não tocados
+  (13 entradas restantes, glob de evidências e docs amendados mantidos). Verificação: grep dos
+  quatro no context sai vazio (exit 1); `rite check --quick` → errors: 0, warnings: 0.
