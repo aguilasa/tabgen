@@ -75,3 +75,10 @@ fica verde.
   39 passed; `rite gates --id FIX-UI-009` → passed (0 gates). Agente mediu na mesma árvore
   `.venv/bin/pytest -q` → 260 passed e `.venv/bin/ruff check .` → All checks passed.
   Desktop já consome `capo_range` do payload de presets do worker — sem cópia na UI.
+- **Closed** — commit `0b9bada` (2026-10-29): refactor(core): single CAPO_RANGE constant shared by CLI and worker
+  - Files (`git show --name-status 0b9bada`):
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-009.md`
+    - `M tabgen/cli/main.py`
+    - `M tabgen/core/models.py`
+    - `M tabgen/worker/__init__.py`
+    - `M tests/test_worker.py`

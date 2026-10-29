@@ -11,5 +11,5 @@
 | [FIX-UI-006](/docs/rite/cycles/interface-desktop/FIX-UI-006.md) | Remover de files do UI-TASK-04 quatro paths não tocados pelo work commit | UI-TASK-04 | medium | done | 2026-10-29 |
 | [FIX-UI-007](/docs/rite/cycles/interface-desktop/FIX-UI-007.md) | Estender probe e2e do worker ao export MusicXML do cache | UI-TASK-05 | low | pending | — |
 | [FIX-UI-008](/docs/rite/cycles/interface-desktop/FIX-UI-008.md) | Rastrear em fix real o probe dos números e2e da UI-TASK-06 | UI-TASK-06 | medium | done | 2026-10-29 |
-| [FIX-UI-009](/docs/rite/cycles/interface-desktop/FIX-UI-009.md) | Unificar limite de capo no core (CLI e worker têm cópias) | UI-TASK-06 | low | in-progress | — |
+| [FIX-UI-009](/docs/rite/cycles/interface-desktop/FIX-UI-009.md) | Unificar limite de capo no core (CLI e worker têm cópias) | UI-TASK-06 | low | done | 2026-10-29 |
 <!-- rite:end -->

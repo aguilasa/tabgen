@@ -46,7 +46,7 @@ graph TD
 | [UI-TASK-03](/docs/rite/cycles/interface-desktop/03-implementar-tela-inicio-com-abertura-de-arquivo.md) | Implementar tela Início com abertura de arquivo e recentes | 5 | feature | UI-TASK-02 | done | 2026-10-28 | 2026-10-28 | approved |
 | [UI-TASK-04](/docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md) | Implementar workspace com progresso por estágio e cancelamento | 5 | feature | UI-TASK-02 | done | 2026-10-28 | 2026-10-29 | approved |
 | [UI-TASK-05](/docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md) | Implementar abas de resultados com prévia ASCII e exports | 5 | feature | UI-TASK-04 | done | 2026-10-29 | 2026-10-29 | changes |
-| [UI-TASK-06](/docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md) | Implementar painel de opções de geração | 5 | feature | UI-TASK-04 | done | 2026-10-29 | 2026-10-29 | changes |
+| [UI-TASK-06](/docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md) | Implementar painel de opções de geração | 5 | feature | UI-TASK-04 | done | 2026-10-29 | 2026-10-29 | approved |
 | [UI-TASK-07](/docs/rite/cycles/interface-desktop/07-empacotar-o-app-para-linux.md) | Empacotar o app para Linux | 5 | tool | UI-TASK-02 | pending | — | — | — |
 | [UI-TASK-08](/docs/rite/cycles/interface-desktop/08-fechar-fase-5.md) | Fechar Fase 5 | 5 | closing | UI-TASK-01, UI-TASK-02, UI-TASK-03, UI-TASK-04, UI-TASK-05, UI-TASK-06, UI-TASK-07 | pending | — | — | — |
 <!-- rite:end -->

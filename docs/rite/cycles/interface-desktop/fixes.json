@@ -138,13 +138,14 @@
       "severity": "low",
       "files": ["tabgen/core/models.py", "tabgen/cli/main.py", "tabgen/worker/__init__.py", "tests/test_worker.py"],
       "resources": [],
-      "status": "in-progress",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null,
-      "active_since": "2026-10-29T13:14:18-03:00",
+      "done_on": "2026-10-29",
+      "done_commit": "0b9bada",
+      "active_since": null,
       "started_at": "2026-10-29T13:14:18-03:00",
-      "active_s": 0
+      "active_s": 485,
+      "finished_at": "2026-10-29T13:22:23-03:00"
     }
   ]
 }
