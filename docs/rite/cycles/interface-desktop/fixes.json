@@ -72,12 +72,16 @@
       "title": "Remover de files do UI-TASK-03 dois paths não tocados pelo work commit",
       "origin": "UI-TASK-03",
       "severity": "medium",
-      "files": [],
+      "files": ["docs/rite/cycles/interface-desktop/progress.json"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-29",
+      "done_commit": "3d4f316",
+      "active_since": null,
+      "started_at": "2026-10-29T11:26:23-03:00",
+      "active_s": 48,
+      "finished_at": "2026-10-29T11:27:11-03:00"
     }
   ]
 }

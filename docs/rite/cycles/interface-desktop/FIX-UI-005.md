@@ -62,3 +62,7 @@ Deve sair vazio (hoje imprime as duas linhas).
   `rite set UI-TASK-03 --files …` com a lista anterior menos `desktop/src/lib/worker.ts` e
   `desktop/src-tauri/tauri.conf.json` (13 entradas restantes). Verificação: grep dos dois paths
   no context sai vazio (exit 1); `rite check --quick` → errors: 0, warnings: 0.
+- **Closed** — commit `3d4f316` (2026-10-29): chore(cycle): drop two untouched paths from UI-TASK-03 files
+  - Files (`git show --name-status 3d4f316`):
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-005.md`
+    - `M docs/rite/cycles/interface-desktop/progress.json`
