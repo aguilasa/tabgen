@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { defaultPython, runWorker, WorkerError } from "./lib/worker";
 import { loadPrefs, savePrefs, type Prefs } from "./lib/prefs";
@@ -15,10 +15,16 @@ import {
   type RecentEntry,
 } from "./lib/recents";
 import {
+  loadSongMemory,
   runArtifacts,
+  saveSongMemory,
   useExports,
   useRunDetails,
   useTablatureRun,
+  type GenerationPresets,
+  type GenOptions,
+  type Loadable,
+  type SongMemory,
   type TablatureResult,
 } from "./lib/run";
 import Ambiente from "./screens/Ambiente";
@@ -84,6 +90,12 @@ export default function App() {
   const [recents, setRecents] = useState<RecentEntry[]>(loadRecents);
   const [opening, setOpening] = useState<string | null>(null);
   const [openError, setOpenError] = useState<string | null>(null);
+  const [presets, setPresets] = useState<Loadable<GenerationPresets>>({ state: "loading" });
+  const [memory, setMemory] = useState<SongMemory | null>(null);
+  const songPath = useRef<string | null>(null);
+  useEffect(() => {
+    songPath.current = song?.path ?? null;
+  }, [song]);
 
   /** Single entry point for the picker, drag-and-drop, recents and TABGEN_OPEN. */
   const openSong = useCallback(async (path: string) => {
@@ -106,6 +118,7 @@ export default function App() {
       const next = rememberRecent(entry);
       setRecents(next);
       setSong(next[0]);
+      setMemory(loadSongMemory(path));
       setScreen("musica");
     } catch (err) {
       setOpenError(`Não foi possível abrir ${baseName(path)}: ${String(err)}`);
@@ -132,7 +145,13 @@ export default function App() {
 
   const python = prefs.pythonPath || fallbackPython;
 
-  const onRunFinished = useCallback((path: string, result: TablatureResult) => {
+  const onRunFinished = useCallback((path: string, result: TablatureResult, ms: number) => {
+    const remembered = loadSongMemory(path);
+    if (remembered) {
+      const updated = { ...remembered, lastRunMs: ms, lastRunCached: result.cache_hit };
+      saveSongMemory(path, updated);
+      if (songPath.current === path) setMemory(updated);
+    }
     const next = markProcessed(path, runArtifacts(result));
     setRecents(next);
     setSong((current) =>
@@ -142,6 +161,26 @@ export default function App() {
   const tablature = useTablatureRun(python, prefs, onRunFinished);
   const details = useRunDetails(python, tablature.run);
   const exports = useExports(python, tablature.run);
+
+  // Option values (tunings, guitar types, transcribers, formats) from the core.
+  useEffect(() => {
+    if (!python) return;
+    setPresets({ state: "loading" });
+    runWorker<GenerationPresets>(python, "presets").then(
+      (data) => setPresets({ state: "ok", data }),
+      (err: unknown) => {
+        const error = err instanceof WorkerError ? err : new WorkerError("Error", String(err));
+        setPresets({ state: "error", kind: error.kind, message: error.message });
+      },
+    );
+  }, [python]);
+
+  const generate = (path: string, options: GenOptions) => {
+    const memoryNow: SongMemory = { options, lastRunMs: null, lastRunCached: false };
+    saveSongMemory(path, memoryNow);
+    setMemory(memoryNow);
+    tablature.start(path, options);
+  };
 
   const recheck = useCallback(() => {
     if (!python) return;
@@ -210,9 +249,12 @@ export default function App() {
           details={details}
           exporting={exports.current}
           onExport={exports.start}
-          transcriber={prefs.transcriber}
+          python={python}
+          prefs={prefs}
+          presets={presets}
+          memory={memory}
           blocked={python ? null : "Interpretador Python ainda não definido"}
-          onGenerate={() => tablature.start(song.path)}
+          onGenerate={(options) => generate(song.path, options)}
           onCancel={tablature.cancel}
           onBack={() => setScreen("inicio")}
         />

@@ -362,3 +362,45 @@ table.chords tr.nc td { color: var(--muted); }
 .legend code { color: var(--fg); }
 .exports { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .exports .k { margin-right: 4px; }
+
+/* Gerar tab: options drawer */
+.sh-opts { margin: 8px 2px 0; font-size: 12.5px; }
+.scrim {
+  position: fixed; inset: 0; z-index: 40;
+  background: color-mix(in srgb, #000 45%, transparent);
+}
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 41;
+  width: min(440px, 100vw); overflow-y: auto;
+  background: var(--panel); border-left: 1px solid var(--line);
+  padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 14px;
+  box-shadow: -12px 0 32px color-mix(in srgb, #000 35%, transparent);
+}
+.drawer-head { display: flex; align-items: center; justify-content: space-between; }
+.drawer-head h2 { font-size: 17px; }
+.drawer-head .back {
+  width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 8px; color: var(--muted);
+}
+.drawer-head .back:hover { color: var(--fg); border-color: var(--muted); }
+.drawer-song { margin: -10px 0 0; font-size: 12.5px; word-break: break-all; }
+.drawer-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.drawer select {
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 8px; color: var(--fg); font: inherit; font-size: 13px; width: 100%;
+}
+.drawer .seg button { min-width: 0; }
+.field input[type="text"].invalid { border-color: var(--err); }
+.checkline { display: flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer; }
+.checkline input { accent-color: var(--accent); }
+.hint { font-size: 12px; color: var(--muted); }
+.ferr { font-size: 12px; color: var(--err); word-break: break-word; }
+.pathrow { display: flex; gap: 8px; align-items: center; }
+.pathrow input { flex: 1; }
+.estimate {
+  display: flex; flex-direction: column; gap: 4px; font-size: 13px;
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--panel-2);
+}
+.actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; padding-top: 6px; }
+.drawer-reason { margin: -6px 0 0; text-align: right; }
+.field > span.hint, .field > span.ferr { text-transform: none; letter-spacing: 0; font-size: 12px; }
+.field > span.ferr { color: var(--err); }

@@ -1,8 +1,8 @@
-// One `tablature` job of the workspace: request arguments from the prefs,
-// live per-stage progress from the worker's NDJSON events, cancel by
+// One `tablature` job of the workspace: request arguments from the
+// generation options (drawer, remembered per song), live per-stage progress from the worker's NDJSON events, cancel by
 // killing the worker (the core has no cooperative cancellation).
 import { useCallback, useEffect, useRef, useState } from "react";
-import { deviceArg, type Prefs } from "./prefs";
+import { deviceArg, type Device, type Prefs } from "./prefs";
 import { baseName } from "./recents";
 import { CANCELLED, cancelWorker, runWorker, WorkerError } from "./worker";
 
@@ -198,18 +198,203 @@ function stemOf(path: string): string {
   return dot > 0 ? name.slice(0, dot) : name;
 }
 
+/** `presets` result line (tabgen/worker/__init__.py): option values from the core. */
+export interface GenerationPresets {
+  instruments: string[];
+  /** Instrument -> TUNING_PRESETS in core order. */
+  tunings: Record<string, { name: string; midi: number[]; notes: string[] }[]>;
+  /** Instrument -> preset name used when no tuning is given. */
+  default_tunings: Record<string, string>;
+  guitar_types: string[];
+  default_guitar_type: string;
+  transcribers: string[];
+  default_transcriber: string;
+  /** EXPORT_FORMATS with the suffixes that imply each one (first = written). */
+  export_formats: { format: string; suffixes: string[] }[];
+  /** [min, max] capo fret. */
+  capo_range: [number, number];
+}
+
+/** `tuning` result line: one tuning resolved by the core's resolve_tuning. */
+export interface ResolvedTuning {
+  instrument: string;
+  midi: number[];
+  notes: string[];
+  /** TUNING_PRESETS name with the same pitches, "" when custom. */
+  name: string;
+}
+
+/** Value of a tuning select that means "use the custom text". */
+export const CUSTOM_TUNING = "custom";
+
+/** Choices of the "Gerar tab" drawer, remembered per song. */
+export interface GenOptions {
+  /** Selected instruments, in TABLATURE_INSTRUMENTS order. */
+  instruments: string[];
+  /** Instrument -> preset name, or CUSTOM_TUNING. */
+  tuning: Record<string, string>;
+  /** Instrument -> custom tuning text (notes or MIDI, low-to-high). */
+  customTuning: Record<string, string>;
+  /** Guitar capo fret. */
+  capo: number;
+  guitarType: string;
+  transcriber: string;
+  techniques: boolean;
+  device: Device;
+  /** Output file; its suffix and `format` agree unless the suffix is unknown. */
+  output: string;
+  format: string;
+}
+
+/** Format implied by the suffix of `path`, or null when no format claims it. */
+export function formatOfPath(presets: GenerationPresets, path: string): string | null {
+  const name = baseName(path).toLowerCase();
+  const dot = name.lastIndexOf(".");
+  if (dot <= 0) return null;
+  const suffix = name.slice(dot);
+  return presets.export_formats.find((f) => f.suffixes.includes(suffix))?.format ?? null;
+}
+
+/** `path` with the suffix written for `format` (a known suffix is replaced). */
+export function withFormatSuffix(
+  presets: GenerationPresets,
+  path: string,
+  format: string,
+): string {
+  const suffix = presets.export_formats.find((f) => f.format === format)?.suffixes[0];
+  if (!suffix) return path;
+  const base = formatOfPath(presets, path) ? path.slice(0, path.lastIndexOf(".")) : path;
+  return base + suffix;
+}
+
+/** Default output: `<stem>.gp5` in prefs.outputDir, else next to the audio. */
+export function defaultOutput(path: string, prefs: Prefs): string {
+  const dir = prefs.outputDir.trim().replace(/\/+$/, "") || dirName(path);
+  return `${dir}/${stemOf(path)}.gp5`;
+}
+
+/** Options of a song never generated: core defaults, device/transcriber/folder from prefs. */
+export function defaultOptions(
+  path: string,
+  prefs: Prefs,
+  presets: GenerationPresets,
+): GenOptions {
+  return {
+    instruments: [...presets.instruments],
+    tuning: { ...presets.default_tunings },
+    customTuning: {},
+    capo: presets.capo_range[0],
+    guitarType: presets.default_guitar_type,
+    transcriber: presets.transcribers.includes(prefs.transcriber)
+      ? prefs.transcriber
+      : presets.default_transcriber,
+    techniques: true,
+    device: prefs.device,
+    output: defaultOutput(path, prefs),
+    format: "gp5",
+  };
+}
+
+/** Worker spec of an instrument's tuning: the preset name or the custom text. */
+export function tuningSpec(options: GenOptions, instrument: string): string | undefined {
+  const choice = options.tuning[instrument];
+  if (choice === CUSTOM_TUNING) return options.customTuning[instrument] ?? "";
+  return choice || undefined;
+}
+
 /**
- * Worker args for `tablature` with the default options: device and
- * transcriber from the prefs; output in prefs.outputDir as `<stem>.gp5`,
- * or the worker default (`<input>.gp5`, next to the audio).
+ * Worker args for `tablature`. Without options (no drawer yet): device and
+ * transcriber from the prefs, output in prefs.outputDir as `<stem>.gp5` or
+ * the worker default (`<input>.gp5`, next to the audio).
  */
-export function tablatureArgs(path: string, prefs: Prefs): Record<string, unknown> {
-  const args: Record<string, unknown> = { input: path, transcriber: prefs.transcriber };
-  const device = deviceArg(prefs.device);
+export function tablatureArgs(
+  path: string,
+  prefs: Prefs,
+  options?: GenOptions,
+): Record<string, unknown> {
+  if (!options) {
+    const args: Record<string, unknown> = { input: path, transcriber: prefs.transcriber };
+    const device = deviceArg(prefs.device);
+    if (device) args.device = device;
+    const dir = prefs.outputDir.trim().replace(/\/+$/, "");
+    if (dir) args.output = `${dir}/${stemOf(path)}.gp5`;
+    return args;
+  }
+  const args: Record<string, unknown> = {
+    input: path,
+    output: options.output.trim(),
+    format: options.format,
+    instruments: options.instruments,
+    techniques: options.techniques,
+    transcriber: options.transcriber,
+  };
+  const tunings: Record<string, string> = {};
+  for (const name of options.instruments) {
+    const spec = tuningSpec(options, name);
+    if (spec !== undefined) tunings[name] = spec;
+  }
+  args.tunings = tunings;
+  if (options.instruments.includes("guitar")) {
+    args.capos = { guitar: options.capo };
+    args.guitar_type = options.guitarType;
+  }
+  const device = deviceArg(options.device);
   if (device) args.device = device;
-  const dir = prefs.outputDir.trim().replace(/\/+$/, "");
-  if (dir) args.output = `${dir}/${stemOf(path)}.gp5`;
   return args;
+}
+
+/** Remembered generation of one song: its options and how long the run took. */
+export interface SongMemory {
+  options: GenOptions;
+  /** Wall time of the last finished run with these options, in ms. */
+  lastRunMs: number | null;
+  /** True when that run came from the tablature cache. */
+  lastRunCached: boolean;
+}
+
+const OPTIONS_KEY = "tabgen.songOptions";
+const MAX_REMEMBERED = 50;
+
+function loadMemories(): Record<string, SongMemory & { saved_at: string }> {
+  try {
+    const stored: unknown = JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}");
+    return stored && typeof stored === "object" && !Array.isArray(stored)
+      ? (stored as Record<string, SongMemory & { saved_at: string }>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+/** Last options used for `path` (null = never generated here). */
+export function loadSongMemory(path: string): SongMemory | null {
+  return loadMemories()[path] ?? null;
+}
+
+/** Remember `memory` for `path`, keeping the MAX_REMEMBERED most recent songs. */
+export function saveSongMemory(path: string, memory: SongMemory): void {
+  const all = loadMemories();
+  all[path] = { ...memory, saved_at: new Date().toISOString() };
+  const kept = Object.entries(all)
+    .sort(([, a], [, b]) => b.saved_at.localeCompare(a.saved_at))
+    .slice(0, MAX_REMEMBERED);
+  try {
+    localStorage.setItem(OPTIONS_KEY, JSON.stringify(Object.fromEntries(kept)));
+  } catch {
+    // storage unavailable: the options stay for this session only
+  }
+}
+
+/**
+ * Cold-run estimate in seconds, scaled by the song duration from the
+ * README "Expected runtimes" table: `export` of a 4 min 08 s song with no
+ * cache took ~193 s on an RTX 3060 Laptop (separation, analysis,
+ * transcription and tablature). A warm run (tablature cache) took < 1 s.
+ */
+export const README_COLD_EXPORT = { songSeconds: 248, runSeconds: 193 };
+
+export function coldEstimateSeconds(durationS: number): number {
+  return (durationS * README_COLD_EXPORT.runSeconds) / README_COLD_EXPORT.songSeconds;
 }
 
 /** Recents artifacts after a finished run. */
@@ -230,7 +415,7 @@ function newJobId(): string {
 export function useTablatureRun(
   python: string,
   prefs: Prefs,
-  onFinished: (path: string, result: TablatureResult) => void,
+  onFinished: (path: string, result: TablatureResult, elapsedMs: number) => void,
 ) {
   const [run, setRun] = useState<RunState | null>(null);
   const active = useRef<RunState | null>(null);
@@ -244,7 +429,7 @@ export function useTablatureRun(
   }, []);
 
   const start = useCallback(
-    (path: string) => {
+    (path: string, options?: GenOptions) => {
       if (!python || active.current) return;
       const state: RunState = {
         path,
@@ -253,7 +438,7 @@ export function useTablatureRun(
         stages: [],
         startedAt: performance.now(),
         endedAt: null,
-        args: tablatureArgs(path, prefs),
+        args: tablatureArgs(path, prefs, options),
         result: null,
         error: null,
       };
@@ -268,8 +453,9 @@ export function useTablatureRun(
         jobId,
       ).then(
         (result) => {
-          update(jobId, (r) => ({ ...r, phase: "done", endedAt: performance.now(), result }));
-          finished.current(path, result);
+          const endedAt = performance.now();
+          update(jobId, (r) => ({ ...r, phase: "done", endedAt, result }));
+          finished.current(path, result, endedAt - state.startedAt);
         },
         (err: unknown) => {
           const error =

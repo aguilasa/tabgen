@@ -8,12 +8,19 @@ Protocol (``python -m tabgen.worker``), one JSON object per line:
 
 - **Request** — exactly one line on stdin::
 
-      {"cmd": "doctor" | "analyze" | "transcribe" | "tablature", "args": {...}}
+      {"cmd": "doctor" | "presets" | "tuning" | "analyze" | "transcribe"
+              | "tablature", "args": {...}}
 
   ``args`` is optional (default ``{}``); unknown keys are rejected. Keys per
   ``cmd``, mirroring the core functions (``?`` = optional, core default):
 
   - ``doctor``: none (:func:`tabgen.core.doctor.run_checks`).
+  - ``presets``: none. The option values of ``tablature``, from the core
+    constants (the UI never keeps its own copy).
+  - ``tuning``: ``instrument`` (str), ``spec``? (str or list of MIDI ints;
+    absent = standard): resolves one tuning with
+    :func:`tabgen.core.pipeline.resolve_tuning` and runs nothing else, so
+    the UI can validate a custom tuning before a job.
   - ``analyze``: ``input`` (str), ``device``? (str)
     (:func:`tabgen.core.pipeline.run_analysis`).
   - ``transcribe``: ``input`` (str), ``instruments``? (list of str),
@@ -24,9 +31,12 @@ Protocol (``python -m tabgen.worker``), one JSON object per line:
     from the ``output`` suffix), ``instruments``? (list of str),
     ``tunings``? (object: instrument -> preset name, comma-separated notes
     or list of MIDI ints, resolved by ``resolve_tuning``), ``capos``?
-    (object: instrument -> int), ``device``? (str), ``techniques``? (bool),
+    (object: instrument -> int in ``CAPO_RANGE``), ``device``? (str),
+    ``techniques``? (bool),
     ``guitar_type``? (str), ``transcriber``? (str)
-    (:func:`tabgen.core.pipeline.run_tablature`).
+    (:func:`tabgen.core.pipeline.run_tablature`). Tunings, capos and the
+    format are checked before the core runs: an invalid one ends the job
+    with its error line and no progress line.
 
 - **Progress** — zero or more lines on stdout, one per ``on_progress`` call
   of the core, unchanged::
@@ -38,6 +48,23 @@ Protocol (``python -m tabgen.worker``), one JSON object per line:
   - ``{"type": "result", ...}`` and exit 0. The other keys are the core
     summary as a plain dict (``DoctorReport.to_dict()``; ``asdict`` of
     ``AnalysisSummary`` / ``TranscriptionSummary`` / ``TablatureSummary``).
+    ``presets`` and ``tuning`` have no core summary; their keys:
+
+    - ``presets``: ``instruments`` (``TABLATURE_INSTRUMENTS``), ``tunings``
+      (instrument -> list of ``{"name", "midi", "notes"}``, the
+      ``TUNING_PRESETS`` in their order, ``notes`` in scientific pitch),
+      ``default_tunings`` (instrument -> preset name of
+      ``resolve_tuning(None, ...)``), ``guitar_types`` /
+      ``default_guitar_type`` (``models.GUITAR_TYPES``),
+      ``transcribers`` / ``default_transcriber`` (``pipeline.TRANSCRIBERS``),
+      ``export_formats`` (list of ``{"format", "suffixes"}``, the
+      ``EXPORT_FORMATS`` with the output suffixes that imply each one, the
+      first being the one to write), ``capo_range`` (``[min, max]`` fret,
+      the CLI's ``--capo`` bounds).
+    - ``tuning``: ``instrument``, ``midi`` (low-to-high), ``notes``
+      (scientific pitch names) and ``name`` (the ``TUNING_PRESETS`` name
+      whose pitches equal ``midi``, ``""`` when custom).
+
     Extra keys the UI reads instead of deriving them itself:
 
     - ``analyze`` adds ``stems``: stem name -> wav path, in the order of
@@ -73,7 +100,10 @@ from typing import Any, Callable, Mapping, TextIO
 
 Emit = Callable[[dict[str, Any]], None]
 
-COMMANDS = ("doctor", "analyze", "transcribe", "tablature")
+COMMANDS = ("doctor", "presets", "tuning", "analyze", "transcribe", "tablature")
+
+# Capo fret bounds, the same as the CLI's ``tabgen export --capo``.
+CAPO_RANGE = (0, 12)
 
 
 class RequestError(ValueError):
@@ -121,6 +151,87 @@ def _doctor(args: Mapping[str, Any], emit: Emit, stage_fns: Mapping[str, Any]) -
 
     _check_keys(args, set(), set())
     return run_checks().to_dict()
+
+
+def _preset_name(instrument: str, midi: list[int]) -> str:
+    """``TUNING_PRESETS`` name whose pitches equal ``midi`` ("" = custom)."""
+    from tabgen.core.pipeline import TUNING_PRESETS
+
+    presets = TUNING_PRESETS.get(instrument, {})
+    return next((name for name, tuning in presets.items() if tuning == midi), "")
+
+
+def _presets(args: Mapping[str, Any], emit: Emit, stage_fns: Mapping[str, Any]) -> dict:
+    from tabgen.core.export.ascii_tab import _pitch_name
+    from tabgen.core.models import DEFAULT_GUITAR_TYPE, GUITAR_TYPES
+    from tabgen.core.pipeline import (
+        _FORMAT_BY_SUFFIX,
+        DEFAULT_TRANSCRIBER,
+        EXPORT_FORMATS,
+        TABLATURE_INSTRUMENTS,
+        TRANSCRIBERS,
+        TUNING_PRESETS,
+        resolve_tuning,
+    )
+
+    _check_keys(args, set(), set())
+    return {
+        "instruments": list(TABLATURE_INSTRUMENTS),
+        "tunings": {
+            instrument: [
+                {
+                    "name": name,
+                    "midi": list(midi),
+                    "notes": [_pitch_name(pitch) for pitch in midi],
+                }
+                for name, midi in TUNING_PRESETS[instrument].items()
+            ]
+            for instrument in TABLATURE_INSTRUMENTS
+        },
+        "default_tunings": {
+            instrument: _preset_name(instrument, resolve_tuning(None, instrument))
+            for instrument in TABLATURE_INSTRUMENTS
+        },
+        "guitar_types": list(GUITAR_TYPES),
+        "default_guitar_type": DEFAULT_GUITAR_TYPE,
+        "transcribers": list(TRANSCRIBERS),
+        "default_transcriber": DEFAULT_TRANSCRIBER,
+        "export_formats": [
+            {
+                "format": fmt,
+                "suffixes": [s for s, f in _FORMAT_BY_SUFFIX.items() if f == fmt],
+            }
+            for fmt in EXPORT_FORMATS
+        ],
+        "capo_range": list(CAPO_RANGE),
+    }
+
+
+def _tuning_spec(value: Any, key: str) -> str | list[int] | None:
+    if value is None or isinstance(value, str):
+        return value
+    if (
+        isinstance(value, list)
+        and value
+        and all(isinstance(p, int) and not isinstance(p, bool) for p in value)
+    ):
+        return value
+    raise RequestError(f"{key} must be a string or a non-empty list of integers")
+
+
+def _tuning(args: Mapping[str, Any], emit: Emit, stage_fns: Mapping[str, Any]) -> dict:
+    from tabgen.core.export.ascii_tab import _pitch_name
+    from tabgen.core.pipeline import resolve_tuning
+
+    _check_keys(args, {"instrument", "spec"}, {"instrument"})
+    instrument = _str(args, "instrument")
+    midi = resolve_tuning(_tuning_spec(args.get("spec"), "spec"), instrument)
+    return {
+        "instrument": instrument,
+        "midi": midi,
+        "notes": [_pitch_name(pitch) for pitch in midi],
+        "name": _preset_name(instrument, midi),
+    }
 
 
 def _analyze(args: Mapping[str, Any], emit: Emit, stage_fns: Mapping[str, Any]) -> dict:
@@ -198,13 +309,8 @@ def _track(score: Any, unassigned: int) -> dict[str, Any]:
     """Display summary of one TabScore (see ``tracks`` in the protocol)."""
     from tabgen.core.export.ascii_tab import _pitch_name
     from tabgen.core.models import TECHNIQUE_KINDS
-    from tabgen.core.pipeline import TUNING_PRESETS
 
-    presets = TUNING_PRESETS.get(score.instrument, {})
-    tuning_name = next(
-        (name for name, tuning in presets.items() if tuning == score.tuning_midi),
-        "",
-    )
+    tuning_name = _preset_name(score.instrument, list(score.tuning_midi))
     techniques = {kind: 0 for kind in TECHNIQUE_KINDS}
     for event in score.events:
         if event.technique is not None:
@@ -254,7 +360,7 @@ def _tablature(
     output = _str(args, "output") or str(input_path.with_suffix(".gp5"))
     instruments = _str_list(args, "instruments") or list(TABLATURE_INSTRUMENTS)
     tunings = {
-        name: resolve_tuning(spec, name)
+        name: resolve_tuning(_tuning_spec(spec, f"tunings.{name}"), name)
         for name, spec in _object(args, "tunings").items()
     }
     capos = _object(args, "capos")
@@ -262,6 +368,10 @@ def _tablature(
         isinstance(fret, int) and not isinstance(fret, bool) for fret in capos.values()
     ):
         raise RequestError("capos values must be integers")
+    low, high = CAPO_RANGE
+    for name, fret in capos.items():
+        if not low <= fret <= high:
+            raise RequestError(f"capos.{name} must be between {low} and {high}")
     techniques = args.get("techniques", True)
     if not isinstance(techniques, bool):
         raise RequestError("techniques must be a boolean")
@@ -271,10 +381,11 @@ def _tablature(
         if value is not None:
             kwargs[key] = value
 
+    fmt = resolve_export_format(output, _str(args, "format"))
     summary = run_tablature(
         input_path,
         output_path=output,
-        fmt=resolve_export_format(output, _str(args, "format")),
+        fmt=fmt,
         instruments=instruments,
         tunings=tunings,
         capos=capos,
@@ -295,6 +406,8 @@ def _tablature(
 
 _HANDLERS = {
     "doctor": _doctor,
+    "presets": _presets,
+    "tuning": _tuning,
     "analyze": _analyze,
     "transcribe": _transcribe,
     "tablature": _tablature,

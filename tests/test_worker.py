@@ -18,7 +18,7 @@ from tabgen.core import pipeline
 from tabgen.core.cache import StageCache
 from tabgen.core.models import TECHNIQUE_KINDS, AnalysisResult, SeparationResult
 from tabgen.core.separation import demucs
-from tabgen.worker import run
+from tabgen.worker import CAPO_RANGE, run
 
 
 def serve(request, stage_fns=None) -> tuple[int, list[dict]]:
@@ -118,6 +118,160 @@ def test_tablature_tracks_summarize_each_score(tmp_path):
     assert bass["tuning_notes"] == ["F#1", "B1", "E2", "A2"]
 
 
+def test_tablature_writes_tuning_capo_and_guitar_program_to_gp5(tmp_path):
+    guitarpro = pytest.importorskip("guitarpro")
+    song = write_input(tmp_path)
+    out = tmp_path / "o.gp5"
+    code, messages = serve(
+        {
+            "cmd": "tablature",
+            "args": {
+                "input": str(song),
+                "output": str(out),
+                "tunings": {"guitar": "drop-d"},
+                "capos": {"guitar": 2},
+                "guitar_type": "nylon",
+            },
+        },
+        fake_stage_fns(tmp_path),
+    )
+
+    assert code == 0, messages[-1]
+    guitar = guitarpro.parse(str(out)).tracks[0]
+    # GP5 lists strings high-to-low (string 1 = highest pitch)
+    assert [s.value for s in guitar.strings] == pipeline.TUNING_PRESETS["guitar"][
+        "drop-d"
+    ][::-1]
+    assert guitar.offset == 2  # GP5 capo
+    assert guitar.channel.instrument == 24  # GM Acoustic Guitar (nylon), 0-based
+    assert messages[-1]["tracks"][0]["capo_fret"] == 2
+
+
+def test_presets_come_from_the_core_constants():
+    code, messages = serve({"cmd": "presets"})
+
+    assert code == 0
+    result = messages[-1]
+    assert result["instruments"] == list(pipeline.TABLATURE_INSTRUMENTS)
+    for instrument, presets in pipeline.TUNING_PRESETS.items():
+        listed = result["tunings"][instrument]
+        assert [p["name"] for p in listed] == list(presets)
+        assert [p["midi"] for p in listed] == list(presets.values())
+        assert result["default_tunings"][instrument] == "standard"
+    drop_d = result["tunings"]["guitar"][1]
+    assert drop_d["notes"] == ["D2", "A2", "D3", "G3", "B3", "E4"]
+    assert "five-string" in [p["name"] for p in result["tunings"]["bass"]]
+    assert result["guitar_types"] == ["electric", "nylon", "steel"]
+    assert result["transcribers"] == list(pipeline.TRANSCRIBERS)
+    assert result["default_transcriber"] == pipeline.DEFAULT_TRANSCRIBER
+    formats = {f["format"]: f["suffixes"] for f in result["export_formats"]}
+    assert list(formats) == list(pipeline.EXPORT_FORMATS)
+    for fmt, suffixes in formats.items():
+        assert all(pipeline.resolve_export_format(f"x{s}") == fmt for s in suffixes)
+    assert result["capo_range"] == list(CAPO_RANGE) == [0, 12]
+
+
+@pytest.mark.parametrize(
+    "spec, midi, name",
+    [
+        (None, [40, 45, 50, 55, 59, 64], "standard"),
+        ("drop-d", [38, 45, 50, 55, 59, 64], "drop-d"),
+        # parsed values are compared, not the strings: notes of a preset
+        ("D2, A2, D3, G3, B3, E4", [38, 45, 50, 55, 59, 64], "drop-d"),
+        ([38, 45, 50, 55, 59, 64], [38, 45, 50, 55, 59, 64], "drop-d"),
+        ("C2,G2,C3,F3,A3,D4", [36, 43, 48, 53, 57, 62], ""),
+    ],
+)
+def test_tuning_resolves_like_the_core(spec, midi, name):
+    args = {"instrument": "guitar"} | ({} if spec is None else {"spec": spec})
+    code, messages = serve({"cmd": "tuning", "args": args})
+
+    assert code == 0
+    result = messages[-1]
+    assert result["midi"] == midi == pipeline.resolve_tuning(spec, "guitar")
+    assert result["name"] == name
+    assert len(result["notes"]) == len(midi)
+
+
+@pytest.mark.parametrize("spec", ["E4,B3,G3,D3,A2,E2", "X2,A2", "", "drop-z"])
+def test_invalid_custom_tuning_fails_with_the_core_error(spec):
+    code, messages = serve(
+        {"cmd": "tuning", "args": {"instrument": "guitar", "spec": spec}}
+    )
+
+    assert code == 1
+    (error,) = messages
+    assert error["kind"] == "PipelineError"
+    with pytest.raises(pipeline.PipelineError) as raised:
+        pipeline.resolve_tuning(spec, "guitar")
+    assert error["message"] == str(raised.value)
+
+
+def test_tablature_with_an_invalid_tuning_fails_before_any_stage(tmp_path):
+    song = write_input(tmp_path)
+    calls = []
+    fns = fake_stage_fns(tmp_path)
+
+    def spy(*args, **kwargs):
+        calls.append("separate")
+        return fns["separate_fn"](*args, **kwargs)
+
+    code, messages = serve(
+        {
+            "cmd": "tablature",
+            "args": {
+                "input": str(song),
+                "tunings": {"guitar": "E4,B3,G3,D3,A2,E2"},
+            },
+        },
+        {**fns, "separate_fn": spy},
+    )
+
+    assert code == 1
+    (error,) = messages  # no progress line: no stage ran
+    assert error["kind"] == "PipelineError"
+    assert "low-to-high" in error["message"]
+    assert calls == []
+
+
+def test_switching_transcriber_misses_the_tablature_cache(tmp_path):
+    # The transcriber is part of the tablature cache key: switching it runs
+    # the upstream stage functions again (each real stage then answers from
+    # its own cache unless its key changed too: only the guitar
+    # transcription does, see tabgen.core.pipeline.transcriber_tag).
+    song = write_input(tmp_path)
+    calls: list[str] = []
+
+    def counted(name, fn):
+        def stage(input_path, *args, **kwargs):
+            calls.append(name)
+            return fn(input_path, *args, **kwargs)
+
+        return stage
+
+    fns = {key: counted(key, fn) for key, fn in fake_stage_fns(tmp_path).items()}
+
+    def tablature(transcriber: str) -> tuple[bool, list[str]]:
+        calls.clear()
+        code, messages = serve(
+            with_args(
+                {"cmd": "tablature", "args": {"input": str(song)}},
+                output=str(tmp_path / "o.gp5"),
+                transcriber=transcriber,
+            ),
+            fns,
+        )
+        assert code == 0, messages[-1]
+        return messages[-1]["cache_hit"], sorted(set(calls))
+
+    every_stage = sorted(fns)
+    assert tablature("basic-pitch") == (False, every_stage)
+    assert tablature("basic-pitch") == (True, [])
+    assert tablature("riley") == (False, every_stage)
+    assert tablature("riley") == (True, [])
+    assert tablature("basic-pitch") == (True, [])
+
+
 def test_transcribe_reports_the_transcriber_per_instrument(tmp_path):
     song = write_input(tmp_path)
     separate, _, transcribe = make_fakes(tmp_path, [])
@@ -210,6 +364,12 @@ def with_args(base: dict, **args) -> str:
         json.dumps({"cmd": "analyze", "args": {}}),
         with_args(TAB, input=3),
         with_args(TAB, capos={"guitar": "2"}),
+        with_args(TAB, capos={"guitar": 13}),
+        with_args(TAB, capos={"guitar": -1}),
+        with_args(TAB, tunings={"guitar": ["38"]}),
+        json.dumps({"cmd": "presets", "args": {"x": 1}}),
+        json.dumps({"cmd": "tuning", "args": {}}),
+        json.dumps({"cmd": "tuning", "args": {"instrument": "guitar", "spec": 3}}),
         with_args(TAB, techniques="yes"),
         with_args({"cmd": "transcribe", "args": {"input": "x.wav"}}, instruments=[]),
     ],

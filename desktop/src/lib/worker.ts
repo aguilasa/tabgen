@@ -2,7 +2,7 @@
 // tabgen/worker/__init__.py). One call = one worker process = one job.
 import { Channel, invoke } from "@tauri-apps/api/core";
 
-export type WorkerCmd = "doctor" | "analyze" | "transcribe" | "tablature";
+export type WorkerCmd = "doctor" | "presets" | "tuning" | "analyze" | "transcribe" | "tablature";
 
 export interface ProgressMessage {
   type: "progress";
