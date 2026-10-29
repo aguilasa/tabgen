@@ -72,3 +72,26 @@ Verificação (Xvfb `:99`, binário debug, `XDG_DATA_HOME` isolado, amostra seno
   pureza do core vazio.
 
 ## Execution Log
+
+- **Closed** — commit `542fc20` (2026-10-29): feat(desktop): add result tabs with stems, analysis, notes, ASCII preview and exports
+  - Files (`git show --name-status 542fc20`):
+    - `M desktop/src-tauri/src/lib.rs`
+    - `M desktop/src/App.css`
+    - `M desktop/src/App.tsx`
+    - `A desktop/src/components/Analise.tsx`
+    - `A desktop/src/components/Notas.tsx`
+    - `A desktop/src/components/Stems.tsx`
+    - `A desktop/src/components/Tablatura.tsx`
+    - `M desktop/src/lib/run.ts`
+    - `M desktop/src/lib/worker.ts`
+    - `M desktop/src/screens/Musica.tsx`
+    - `M docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md`
+    - `M docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
+    - `A docs/rite/cycles/interface-desktop/evidencias/05-analise.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/05-notas.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/05-stems.png`
+    - `A docs/rite/cycles/interface-desktop/evidencias/05-tablatura.png`
+    - `M tabgen/worker/__init__.py`
+    - `M tests/test_worker.py`
+  - **Files amended** — added to `files`:
+    - `docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md`
