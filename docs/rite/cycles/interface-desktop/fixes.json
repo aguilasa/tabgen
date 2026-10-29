@@ -89,12 +89,16 @@
       "title": "Remover de files do UI-TASK-04 quatro paths não tocados pelo work commit",
       "origin": "UI-TASK-04",
       "severity": "medium",
-      "files": [],
+      "files": ["docs/rite/cycles/interface-desktop/progress.json"],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-10-29",
+      "done_commit": "da91083",
+      "active_since": null,
+      "started_at": "2026-10-29T11:38:45-03:00",
+      "active_s": 40,
+      "finished_at": "2026-10-29T11:39:25-03:00"
     }
   ]
 }

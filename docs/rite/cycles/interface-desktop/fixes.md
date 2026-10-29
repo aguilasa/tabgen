@@ -8,5 +8,5 @@
 | [FIX-UI-003](/docs/rite/cycles/interface-desktop/FIX-UI-003.md) | Encerrar workers em andamento ao fechar a janela do app | UI-TASK-04 | medium | done | 2026-10-28 |
 | [FIX-UI-004](/docs/rite/cycles/interface-desktop/FIX-UI-004.md) | Versionar probe e2e do pipeline frio/quente usado pela UI | UI-TASK-04 | low | done | 2026-10-28 |
 | [FIX-UI-005](/docs/rite/cycles/interface-desktop/FIX-UI-005.md) | Remover de files do UI-TASK-03 dois paths não tocados pelo work commit | UI-TASK-03 | medium | done | 2026-10-29 |
-| [FIX-UI-006](/docs/rite/cycles/interface-desktop/FIX-UI-006.md) | Remover de files do UI-TASK-04 quatro paths não tocados pelo work commit | UI-TASK-04 | medium | pending | — |
+| [FIX-UI-006](/docs/rite/cycles/interface-desktop/FIX-UI-006.md) | Remover de files do UI-TASK-04 quatro paths não tocados pelo work commit | UI-TASK-04 | medium | done | 2026-10-29 |
 <!-- rite:end -->

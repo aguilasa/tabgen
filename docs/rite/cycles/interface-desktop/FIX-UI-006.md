@@ -64,3 +64,7 @@ Hoje imprime os quatro paths; depois do fix deve sair vazio.
   `rite set UI-TASK-04 --files …` com a lista anterior menos os quatro paths não tocados
   (13 entradas restantes, glob de evidências e docs amendados mantidos). Verificação: grep dos
   quatro no context sai vazio (exit 1); `rite check --quick` → errors: 0, warnings: 0.
+- **Closed** — commit `da91083` (2026-10-29): chore(cycle): drop four untouched paths from UI-TASK-04 files
+  - Files (`git show --name-status da91083`):
+    - `M docs/rite/cycles/interface-desktop/FIX-UI-006.md`
+    - `M docs/rite/cycles/interface-desktop/progress.json`
