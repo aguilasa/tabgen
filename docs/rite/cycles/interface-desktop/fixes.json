@@ -99,6 +99,19 @@
       "started_at": "2026-10-29T11:38:45-03:00",
       "active_s": 40,
       "finished_at": "2026-10-29T11:39:25-03:00"
+    },
+    {
+      "id": "FIX-UI-007",
+      "file": "FIX-UI-007.md",
+      "title": "Estender probe e2e do worker ao export MusicXML do cache",
+      "origin": "UI-TASK-05",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
