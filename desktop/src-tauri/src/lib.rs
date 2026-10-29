@@ -61,7 +61,7 @@ fn spawn_reaper(pid: u32) -> Option<std::process::Child> {
     let script = format!(
         "read -r _ || {{ kill -s TERM -- -{pid} 2>/dev/null; sleep 2; kill -s KILL -- -{pid} 2>/dev/null; }}"
     );
-    Command::new("sh")
+    host_command("sh")
         .args(["-c", &script])
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
@@ -82,7 +82,52 @@ fn release_reaper(reaper: Option<std::process::Child>) {
     }
 }
 
-/// Repository root: the worker runs from there so `tabgen` is importable.
+/// What a child process must not inherit from an AppImage launch: AppRun
+/// points PYTHONHOME, LD_LIBRARY_PATH, GTK_* and friends into the mounted
+/// image, which breaks the user's Python. Returns the variables to remove and
+/// the path lists to reset without their image entries.
+fn appimage_env_fixes(
+    appdir: &str,
+    vars: impl Iterator<Item = (String, String)>,
+) -> (Vec<String>, Vec<(String, String)>) {
+    const PATH_LISTS: [&str; 2] = ["PATH", "XDG_DATA_DIRS"];
+    let mut removed = Vec::new();
+    let mut reset = Vec::new();
+    for (key, value) in vars {
+        if !value.contains(appdir) {
+            continue;
+        }
+        if PATH_LISTS.contains(&key.as_str()) {
+            let kept: Vec<&str> = value
+                .split(':')
+                .filter(|entry| !entry.is_empty() && !entry.starts_with(appdir))
+                .collect();
+            reset.push((key, kept.join(":")));
+        } else {
+            removed.push(key);
+        }
+    }
+    (removed, reset)
+}
+
+/// A command for a host program (Python, ffprobe, xdg-open), with the
+/// AppImage's own environment taken back out when the app runs from one.
+fn host_command(program: impl AsRef<std::ffi::OsStr>) -> Command {
+    let mut command = Command::new(program);
+    if let Ok(appdir) = std::env::var("APPDIR")
+        && !appdir.is_empty()
+    {
+        let (removed, reset) = appimage_env_fixes(&appdir, std::env::vars());
+        for key in removed {
+            command.env_remove(key);
+        }
+        command.envs(reset);
+    }
+    command
+}
+
+/// Repository root at build time: the worker runs from there when it still
+/// exists, so a checkout's `tabgen` is importable without being installed.
 fn repo_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
@@ -124,9 +169,15 @@ async fn run_worker(
 ) -> Result<WorkerExit, String> {
     let jobs = jobs.inner().clone();
     tauri::async_runtime::spawn_blocking(move || {
-        let mut child = Command::new(&python)
-            .args(["-m", "tabgen.worker"])
-            .current_dir(repo_root())
+        let mut command = host_command(&python);
+        command.args(["-m", "tabgen.worker"]);
+        // A packaged app may run where the build checkout does not exist; the
+        // worker then relies on `tabgen` being installed in that interpreter.
+        let root = repo_root();
+        if root.is_dir() {
+            command.current_dir(root);
+        }
+        let mut child = command
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -269,7 +320,7 @@ async fn probe_audio(path: String) -> Result<AudioInfo, String> {
         if !Path::new(&path).is_file() {
             return Err(format!("file not found: {path}"));
         }
-        let output = Command::new("ffprobe")
+        let output = host_command("ffprobe")
             .args([
                 "-v",
                 "error",
@@ -329,7 +380,7 @@ fn open_folder(path: String) -> Result<String, String> {
             .filter(|dir| dir.is_dir())
             .ok_or_else(|| format!("folder not found: {}", path.display()))?
     };
-    let mut child = Command::new("xdg-open")
+    let mut child = host_command("xdg-open")
         .arg(dir)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
@@ -379,4 +430,27 @@ pub fn run() {
                 kill_all_jobs(&app.state::<Jobs>());
             }
         });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::appimage_env_fixes;
+
+    #[test]
+    fn appimage_env_is_taken_out_of_child_processes() {
+        let vars = [
+            ("PYTHONHOME", "/tmp/.mount_x/usr/"),
+            ("LD_LIBRARY_PATH", "/tmp/.mount_x/usr/lib/:"),
+            ("PATH", "/tmp/.mount_x/usr/bin/:/usr/local/bin:/usr/bin"),
+            ("HOME", "/home/user"),
+            ("APPDIR", "/tmp/.mount_x"),
+        ]
+        .map(|(k, v)| (k.to_string(), v.to_string()));
+        let (removed, reset) = appimage_env_fixes("/tmp/.mount_x", vars.into_iter());
+        assert_eq!(removed, ["PYTHONHOME", "LD_LIBRARY_PATH", "APPDIR"]);
+        assert_eq!(
+            reset,
+            [("PATH".to_string(), "/usr/local/bin:/usr/bin".to_string())]
+        );
+    }
 }

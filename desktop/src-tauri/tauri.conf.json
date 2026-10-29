@@ -25,13 +25,26 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": [
+      "deb",
+      "appimage"
+    ],
     "icon": [
       "icons/32x32.png",
+      "icons/64x64.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
+      "icons/icon.png"
+    ],
+    "category": "Music",
+    "shortDescription": "Audio to guitar/bass tablature (desktop front end for tabgen)",
+    "longDescription": "tabgen Studio runs the tabgen pipeline (stem separation, analysis, transcription, tablature) through the Python worker of an existing tabgen install and exports Guitar Pro, MusicXML, MIDI and ASCII tabs.",
+    "linux": {
+      "deb": {
+        "depends": [
+          "ffmpeg"
+        ]
+      }
+    }
   }
 }

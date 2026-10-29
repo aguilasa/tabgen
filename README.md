@@ -6,8 +6,8 @@ detects the key, chords and tempo, and exports the result as Guitar Pro (`.gp5`)
 MusicXML, MIDI and ASCII tab — using only free and open models.
 
 tabgen is CLI-first and layered: a pure-Python core library (`tabgen/core`) does
-all the work, and thin interfaces (the CLI today, possibly web/desktop later)
-consume its API.
+all the work, and thin interfaces consume its API: the CLI and the desktop app
+[tabgen Studio](desktop/README.md).
 
 > Status: early development. See [docs/planejamento/audio-para-tablatura.md](docs/planejamento/audio-para-tablatura.md)
 > for the full research and planning document (in Brazilian Portuguese).
@@ -34,12 +34,13 @@ tabgen/
 │   ├── models.py    # serializable dataclasses (stage contracts)
 │   ├── cache.py     # on-disk cache of stage results
 │   └── pipeline.py  # orchestration, progress via callbacks
-└── cli/         # thin layer (v1); web/ and desktop/ may come later
+├── cli/         # thin layer: the tabgen command
+└── worker/      # NDJSON worker (python -m tabgen.worker) used by the desktop app
+desktop/         # tabgen Studio: Tauri 2 + React shell over the worker
 ```
 
 The core never prints or serves HTTP; interfaces are thin consumers of its API,
-so the CLI can later be joined by a web or desktop front end without rewriting
-the pipeline. Stage results are JSON-serializable and cached on disk.
+so the CLI and the desktop app share the pipeline without rewriting it. Stage results are JSON-serializable and cached on disk.
 
 ## Requirements
 
@@ -91,6 +92,10 @@ pip install torch --index-url https://download.pytorch.org/whl/cu121
 [pytorch.org](https://pytorch.org/get-started/locally/) for the available tags).
 
 ## Usage
+
+The examples below use the CLI. For a desktop window over the same pipeline,
+see [tabgen Studio](desktop/README.md) (Linux `.deb`/AppImage; it uses the
+virtual environment installed above).
 
 Check the installed version:
 
