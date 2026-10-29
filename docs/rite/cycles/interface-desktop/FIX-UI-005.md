@@ -54,3 +54,11 @@ $ sh "$RITE_HOME/bin/rite" context UI-TASK-03 --json | grep -E "desktop/src/lib/
 Deve sair vazio (hoje imprime as duas linhas).
 
 ## Execution Log
+
+- 2026-10-29 — Triagem inline (`rite reproduce --all --cycle interface-desktop`): REPRODUCED.
+  `git show --name-status d96d198 | grep -E "worker\.ts|tauri\.conf\.json"` → vazio (exit 1);
+  context da UI-TASK-03 ainda lista os dois paths. Saída igual à Evidência.
+- 2026-10-29 — Fix aplicado inline (trabalho é bookkeeping via CLI, vedado a workers):
+  `rite set UI-TASK-03 --files …` com a lista anterior menos `desktop/src/lib/worker.ts` e
+  `desktop/src-tauri/tauri.conf.json` (13 entradas restantes). Verificação: grep dos dois paths
+  no context sai vazio (exit 1); `rite check --quick` → errors: 0, warnings: 0.
