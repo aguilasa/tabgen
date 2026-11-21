@@ -51,3 +51,10 @@ README explica o uso com stems do Moises.
     - `M tabgen/cli/main.py`
     - `A tests/test_cli_stems.py`
 - **Reviewed** (2026-11-21) at `f043edd`: FIX-STEM-003, FIX-STEM-004, FIX-STEM-005, FIX-STEM-006
+- **Notes** (2026-11-21, FIX-STEM-003) — evidência que faltava. A frase "o tempo medido vai para o Execution Log" é do critério 2. Comando `.venv/bin/python scripts/probe_e2e_stems.py`, no HEAD do FIX-STEM-002, RTX 3060:
+  - `demucs_loaded=False`
+  - `gp5 ok: 20 guitar notes`
+  - `cold export: 10.8 s`
+  - `warm export (--stem, cache hit): 0.3 s`
+  - `probe ok`
+  - Outras medidas: `.venv/bin/pytest -q tests/test_cli_stems.py` → `9 passed`; `make test` → `283 passed`; `make lint` ok.
