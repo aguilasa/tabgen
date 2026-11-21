@@ -24,12 +24,18 @@ from tabgen.core.pipeline import (
     run_transcription,
     tablature_version,
 )
-from tabgen.core.separation.prepared import MIX_STEM, prepared_separate, stems_tag
+from tabgen.core.separation.prepared import (
+    MIX_STEM,
+    NORMALIZED_DIR,
+    prepared_separate,
+    stems_tag,
+)
 
 
-def write_stem(path: Path, value: float = 0.0) -> Path:
+def write_stem(path: Path, value: float = 0.0, rate: int = 44100) -> Path:
+    """Stereo wav; at 44.1 kHz it is already in the Demucs format (no conversion)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    soundfile.write(str(path), np.full((4410, 1), value, dtype=np.float32), 44100)
+    soundfile.write(str(path), np.full((rate // 10, 2), value, dtype=np.float32), rate)
     return path
 
 
@@ -193,4 +199,59 @@ def test_unknown_stem_instrument_raises(tmp_path):
             instruments=("guitar",),
             user_stems={"drums": stem},
             separate_fn=failing("Demucs"),
+        )
+
+
+def test_mix_and_stems_at_other_rates_are_brought_to_44100(tmp_path):
+    """FIX-STEM-001: a 48 kHz mix with a 44.1 kHz stem used to raise HarmonyError."""
+    song = write_stem(tmp_path / "song.wav", 0.1, rate=48000)
+    stem = write_stem(tmp_path / "moises" / "lead.wav", 0.2, rate=22050)
+    harmony_calls: list[dict[str, str]] = []
+    run_analysis(
+        song,
+        user_stems={"guitar": stem},
+        separate_fn=failing("Demucs"),
+        beats_fn=make_fake_beats([]),
+        harmony_fn=make_fake_harmony(harmony_calls),
+    )
+    (stems,) = harmony_calls
+    assert set(stems) == {"guitar", MIX_STEM}
+    for path in stems.values():
+        info = soundfile.info(path)
+        assert (info.samplerate, info.channels) == (44100, 2)
+        assert Path(path).parent == tmp_path / ".tabgen" / NORMALIZED_DIR
+    # the real harmony summing accepts them now
+    from tabgen.core.analysis.harmony import sum_harmonic_stems
+
+    _, rate = sum_harmonic_stems(stems)
+    assert rate == 44100
+
+
+def test_compressed_mix_is_decoded_with_ffmpeg(tmp_path):
+    import subprocess
+
+    song = tmp_path / "song.m4a"
+    subprocess.run(
+        ["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i",
+         "sine=f=440:d=1:sample_rate=48000", "-ac", "2", str(song)],
+        check=True,
+    )
+    stem = write_stem(tmp_path / "lead.wav", 0.2)
+    sep = prepared_separate({"guitar": stem.resolve()}, ("guitar",))
+    result, _ = sep(song)
+    assert soundfile.info(result.stems[MIX_STEM]).samplerate == 44100
+    assert result.stems["guitar"] == str(stem.resolve())  # already in format
+
+
+def test_unreadable_stem_raises_pipeline_error(tmp_path):
+    write_input(tmp_path)
+    bad = tmp_path / "bad.wav"
+    bad.write_bytes(b"not audio")
+    with pytest.raises(PipelineError, match="cannot decode"):
+        run_analysis(
+            tmp_path / "song.wav",
+            user_stems={"guitar": bad},
+            separate_fn=failing("Demucs"),
+            beats_fn=make_fake_beats([]),
+            harmony_fn=make_fake_harmony([]),
         )

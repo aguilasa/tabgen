@@ -357,7 +357,15 @@ def _user_stems_setup(
     except PreparedStemsError as err:
         raise PipelineError(str(err)) from err
     tag = stems_tag(checked, uses_demucs=not covers(checked, instruments))
-    return prepared_separate(checked, instruments, fallback=separate_fn), tag
+    prepared = prepared_separate(checked, instruments, fallback=separate_fn)
+
+    def separate(*args, **kwargs):
+        try:
+            return prepared(*args, **kwargs)
+        except PreparedStemsError as err:
+            raise PipelineError(str(err)) from err
+
+    return separate, tag
 
 
 @dataclass

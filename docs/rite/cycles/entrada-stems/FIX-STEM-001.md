@@ -62,4 +62,17 @@ Em `tabgen/core/separation/prepared.py`, converter o mix e os stems dados para w
 O script da Evidência imprime `OK`. Com entrada `.m4a`, imprime `OK` ou uma `PipelineError`, nunca
 `LibsndfileError`. `.venv/bin/pytest -q tests/test_prepared_stems.py` passa.
 
+Resultado (2026-11-21):
+- O script da Evidência agora imprime `OK` (antes: `HarmonyError stem sample rates differ: ...`).
+- Testes novos em `tests/test_prepared_stems.py` (`-k "rates or compressed or unreadable"`):
+  - mix de 48 kHz com stem de 22,05 kHz: os dois saem a 44,1 kHz estéreo em `.tabgen/user-stems/`,
+    e o `sum_harmonic_stems` real aceita;
+  - `.m4a` decodificado pelo ffmpeg;
+  - arquivo ilegível → `PipelineError: cannot decode`.
+- Controle: com `prepared.py` e `pipeline.py` do HEAD, esses testes dão `3 failed`.
+- `make test` → `282 passed`; `make lint` → `All checks passed!`; `scripts/probe_e2e_stems.py` →
+  `probe ok` (a frio em 10,6 s).
+- Um stem que já é wav estéreo de 44,1 kHz não é convertido: o caminho original segue para a
+  transcrição.
+
 ## Execution Log

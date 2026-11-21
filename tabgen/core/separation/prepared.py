@@ -27,7 +27,54 @@ _SeparateFn = Callable[..., tuple[SeparationResult, bool]]
 
 
 class PreparedStemsError(ValueError):
-    """A user stem is invalid (unknown instrument or missing file)."""
+    """A user stem is invalid (unknown instrument, missing or unreadable file)."""
+
+
+# Folder (inside the input's ``.tabgen/`` cache) for stems normalized to the
+# Demucs format: stereo wav at ``TARGET_SAMPLE_RATE``, one file per content.
+NORMALIZED_DIR = "user-stems"
+
+
+def _is_target_wav(path: Path, sample_rate: int) -> bool:
+    import soundfile
+
+    try:
+        info = soundfile.info(str(path))
+    except Exception:  # noqa: BLE001 - any unreadable file gets converted
+        return False
+    return (
+        info.format == "WAV"
+        and info.samplerate == sample_rate
+        and info.channels == 2
+    )
+
+
+def normalize_audio(path: Path, workdir: Path) -> Path:
+    """Return ``path`` as a stereo wav at the Demucs rate, converting if needed.
+
+    The harmony stage sums stems with soundfile and needs one sample rate;
+    Demucs output is 44.1 kHz stereo wav, so user stems and the mix are
+    brought to the same format (ffmpeg, like the Demucs input). Converted
+    files are named after the source content's sha256 and reused.
+    """
+    from tabgen.core.separation.demucs import (
+        TARGET_SAMPLE_RATE,
+        SeparationError,
+        convert_to_wav,
+    )
+
+    if _is_target_wav(path, TARGET_SAMPLE_RATE):
+        return path
+    workdir.mkdir(parents=True, exist_ok=True)
+    target = workdir / f"{_sha256_of_file(path)[:16]}.wav"
+    if not target.is_file():
+        tmp = target.with_suffix(".tmp.wav")
+        try:
+            convert_to_wav(path, tmp, TARGET_SAMPLE_RATE)
+        except SeparationError as err:
+            raise PreparedStemsError(f"cannot decode {path}: {err}") from err
+        tmp.replace(target)
+    return target
 
 
 def check_user_stems(
@@ -86,17 +133,23 @@ def prepared_separate(
     (default: Demucs) separates the input and the user stems replace its
     stems of the same name.
     """
-    stems = {name: str(Path(path)) for name, path in user_stems.items()}
-    full = covers(stems, instruments)
+    sources = {
+        name: Path(path).expanduser().resolve() for name, path in user_stems.items()
+    }
+    full = covers(sources, instruments)
 
     def separate(input_path, device=None, on_progress=None, **kwargs):
+        input_path = Path(input_path)
+        workdir = input_path.parent / ".tabgen" / NORMALIZED_DIR
+        stems = {
+            name: str(normalize_audio(src, workdir)) for name, src in sources.items()
+        }
         if full:
             if on_progress is not None:
                 on_progress("separation", 100.0)
             result = dict(stems)
-            input_resolved = str(Path(input_path).expanduser().resolve())
-            if input_resolved not in {str(Path(p).resolve()) for p in result.values()}:
-                result[MIX_STEM] = str(input_path)
+            if input_path.expanduser().resolve() not in set(sources.values()):
+                result[MIX_STEM] = str(normalize_audio(input_path, workdir))
             return SeparationResult(stems=result, model_version=USER_STEMS_MODEL), True
         sep = fallback
         if sep is None:
