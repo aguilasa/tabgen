@@ -36,4 +36,10 @@ No README: os beats vêm da mistura e os acordes, dos stems dados mais a mistura
 
 `grep -n "beats and chords come from it" README.md` vazio; `grep -n "probe_e2e_stems" README.md` descreve as três conferências.
 
+Resultado (2026-11-21):
+- `grep -n "beats and chords come from it" README.md` sai vazio (exit 1).
+- A frase do probe agora lista as três conferências: Demucs pulado, .gp5 com notas, cache acertado
+  no `--stem`.
+- O README também cita a conversão para wav estéreo de 44,1 kHz (FIX-STEM-001).
+
 ## Execution Log

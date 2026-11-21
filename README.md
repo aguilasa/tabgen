@@ -320,16 +320,20 @@ exported by Moises), skip Demucs and hand tabgen the stems:
 # the input itself is the guitar stem
 tabgen export lead.wav --no-separate --instruments guitar -o lead.gp5
 
-# full mix as input (beats and chords come from it), stems given per instrument
+# full mix as input (beats come from it), stems given per instrument
 tabgen export song.flac --stem guitar=rhythm.wav --stem bass=bass.wav -o song.gp5
 ```
 
 `--stem INSTRUMENT=FILE` (repeatable; `guitar` or `bass`) and `--no-separate`
 work with `export`, `transcribe` and `analyze`. When every requested
 instrument has a stem, Demucs does not run; when only some do, Demucs runs and
-the given stems replace its own. The stems' content is part of the cache key,
-so editing a stem file recomputes the tablature; runs without these flags keep
-using the existing caches. `scripts/probe_e2e_stems.py` checks this end to end.
+the given stems replace its own. Beats always come from the input audio; chords
+come from the given stems plus the input (when it is not itself a stem). Stems
+and mix in other formats or sample rates are converted to 44.1 kHz stereo wav
+first. The stems' content is part of the cache key, so editing a stem file
+recomputes the tablature; runs without these flags keep using the existing
+caches. `scripts/probe_e2e_stems.py` checks end to end that Demucs is skipped,
+that the .gp5 reopens with notes and that a `--stem` rerun hits the cache.
 
 ### Evaluation
 
