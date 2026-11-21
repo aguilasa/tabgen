@@ -26,7 +26,7 @@ graph TD
 <!-- rite:begin tasks -->
 | ID | Title | Phase | Type | Depends on | Status | Done on | Reviewed on | Review |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [STEM-TASK-01](/docs/rite/cycles/entrada-stems/01-separacao-preparada-a-partir-de-stems-dados-no.md) | Separação preparada a partir de stems dados no core | 6 | feature | — | pending | — | — | — |
+| [STEM-TASK-01](/docs/rite/cycles/entrada-stems/01-separacao-preparada-a-partir-de-stems-dados-no.md) | Separação preparada a partir de stems dados no core | 6 | feature | — | done | 2026-11-21 | pending | awaiting |
 | [STEM-TASK-02](/docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md) | Flags --stem e --no-separate na CLI, probe e README | 6 | feature | STEM-TASK-01 | pending | — | — | — |
 | [STEM-TASK-03](/docs/rite/cycles/entrada-stems/03-fechar-fase-6.md) | Fechar Fase 6 | 6 | closing | STEM-TASK-01, STEM-TASK-02 | pending | — | — | — |
 <!-- rite:end -->

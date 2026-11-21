@@ -65,3 +65,10 @@ Evidência (2026-11-21):
   ainda roda (caso parcial), a versão dele entra no digest da tag. O teste confere `len(nome) <= 255`.
 
 ## Execution Log
+
+- **Closed** — commit `e159ef3` (2026-11-21): feat(core): accept user-provided stems and skip Demucs when they cover every instrument
+  - Files (`git show --name-status e159ef3`):
+    - `M docs/rite/cycles/entrada-stems/01-separacao-preparada-a-partir-de-stems-dados-no.md`
+    - `M tabgen/core/pipeline.py`
+    - `A tabgen/core/separation/prepared.py`
+    - `A tests/test_prepared_stems.py`

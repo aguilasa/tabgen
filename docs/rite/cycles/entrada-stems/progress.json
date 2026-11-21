@@ -17,11 +17,15 @@
       "source_of_truth": "/docs/planejamento/entrada-stems.md#decisões",
       "files": ["tabgen/core/separation/prepared.py", "tabgen/core/pipeline.py", "tests/test_prepared_stems.py"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-11-21",
+      "done_commit": "e159ef3",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-11-21T10:26:57-03:00",
+      "active_s": 167,
+      "finished_at": "2026-11-21T10:29:44-03:00"
     },
     {
       "id": "STEM-TASK-02",
