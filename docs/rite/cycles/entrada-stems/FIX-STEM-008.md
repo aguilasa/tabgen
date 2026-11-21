@@ -36,3 +36,7 @@ Acrescentar ao Execution Log uma linha para `5887f0d`, com a lista de arquivos e
 `grep -c "5887f0d" docs/rite/cycles/entrada-stems/03-fechar-fase-6.md` dá 1 ou mais.
 
 ## Execution Log
+
+- **Closed** — commit `c3546e5` (2026-11-21): docs(rite): list 5887f0d in STEM-TASK-03 execution log
+  - Files (`git show --name-status c3546e5`):
+    - `M docs/rite/cycles/entrada-stems/03-fechar-fase-6.md`
