@@ -42,13 +42,14 @@
       "status": "done",
       "done_on": "2026-11-21",
       "done_commit": "89dd225",
-      "reviewed_on": "pending",
-      "review_commit": null,
+      "reviewed_on": "2026-11-21",
+      "review_commit": "f043edd",
       "active_since": null,
       "started_at": "2026-11-21T10:29:51-03:00",
       "active_s": 140,
       "finished_at": "2026-11-21T10:32:11-03:00",
-      "review_started_at": "2026-11-21T10:32:25-03:00"
+      "review_started_at": "2026-11-21T10:32:25-03:00",
+      "review_s": 292
     },
     {
       "id": "STEM-TASK-03",

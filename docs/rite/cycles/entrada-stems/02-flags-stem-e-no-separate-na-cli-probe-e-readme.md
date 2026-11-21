@@ -50,3 +50,4 @@ README explica o uso com stems do Moises.
     - `A scripts/probe_e2e_stems.py`
     - `M tabgen/cli/main.py`
     - `A tests/test_cli_stems.py`
+- **Reviewed** (2026-11-21) at `f043edd`: FIX-STEM-003, FIX-STEM-004, FIX-STEM-005, FIX-STEM-006
