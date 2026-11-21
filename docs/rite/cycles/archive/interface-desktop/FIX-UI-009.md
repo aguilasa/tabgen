@@ -4,7 +4,7 @@ id: FIX-UI-009
 
 # FIX-UI-009 — Unificar limite de capo no core (CLI e worker têm cópias)
 
-Origin: [UI-TASK-06](/docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md)
+Origin: [UI-TASK-06](/docs/rite/cycles/archive/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md)
 
 ## Problem
 

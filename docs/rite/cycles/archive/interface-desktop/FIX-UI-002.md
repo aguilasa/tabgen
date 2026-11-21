@@ -4,7 +4,7 @@ id: FIX-UI-002
 
 # FIX-UI-002 — Fixar Node do desktop via mise e remover legacy-peer-deps
 
-Origin: [UI-TASK-02](/docs/rite/cycles/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md)
+Origin: [UI-TASK-02](/docs/rite/cycles/archive/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md)
 
 ## Problem
 

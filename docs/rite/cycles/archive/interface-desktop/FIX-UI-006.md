@@ -4,7 +4,7 @@ id: FIX-UI-006
 
 # FIX-UI-006 — Remover de files do UI-TASK-04 quatro paths não tocados pelo work commit
 
-Origin: [UI-TASK-04](/docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md)
+Origin: [UI-TASK-04](/docs/rite/cycles/archive/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md)
 
 ## Problem
 

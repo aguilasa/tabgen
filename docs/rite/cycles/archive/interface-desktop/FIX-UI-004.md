@@ -4,7 +4,7 @@ id: FIX-UI-004
 
 # FIX-UI-004 — Versionar probe e2e do pipeline frio/quente usado pela UI
 
-Origin: [UI-TASK-04](/docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md)
+Origin: [UI-TASK-04](/docs/rite/cycles/archive/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md)
 
 ## Problem
 

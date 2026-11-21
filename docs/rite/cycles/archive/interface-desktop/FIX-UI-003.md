@@ -4,7 +4,7 @@ id: FIX-UI-003
 
 # FIX-UI-003 — Encerrar workers em andamento ao fechar a janela do app
 
-Origin: [UI-TASK-04](/docs/rite/cycles/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md)
+Origin: [UI-TASK-04](/docs/rite/cycles/archive/interface-desktop/04-implementar-workspace-com-progresso-por-estagio.md)
 
 ## Problem
 

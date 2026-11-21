@@ -4,7 +4,7 @@ id: FIX-UI-008
 
 # FIX-UI-008 — Rastrear em fix real o probe dos números e2e da UI-TASK-06
 
-Origin: [UI-TASK-06](/docs/rite/cycles/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md)
+Origin: [UI-TASK-06](/docs/rite/cycles/archive/interface-desktop/06-implementar-painel-de-opcoes-de-geracao.md)
 
 ## Problem
 

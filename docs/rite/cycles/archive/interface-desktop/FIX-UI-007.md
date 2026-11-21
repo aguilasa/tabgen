@@ -4,7 +4,7 @@ id: FIX-UI-007
 
 # FIX-UI-007 — Estender probe e2e do worker ao export MusicXML do cache
 
-Origin: [UI-TASK-05](/docs/rite/cycles/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md)
+Origin: [UI-TASK-05](/docs/rite/cycles/archive/interface-desktop/05-implementar-abas-de-resultados-com-previa-ascii.md)
 
 ## Problem
 

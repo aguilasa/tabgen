@@ -4,7 +4,7 @@ id: FIX-UI-005
 
 # FIX-UI-005 — Remover de files do UI-TASK-03 dois paths não tocados pelo work commit
 
-Origin: [UI-TASK-03](/docs/rite/cycles/interface-desktop/03-implementar-tela-inicio-com-abertura-de-arquivo.md)
+Origin: [UI-TASK-03](/docs/rite/cycles/archive/interface-desktop/03-implementar-tela-inicio-com-abertura-de-arquivo.md)
 
 ## Problem
 

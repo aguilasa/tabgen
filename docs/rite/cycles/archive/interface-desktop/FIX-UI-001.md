@@ -4,7 +4,7 @@ id: FIX-UI-001
 
 # FIX-UI-001 — Verificar persistência das preferências após reiniciar o app
 
-Origin: [UI-TASK-02](/docs/rite/cycles/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md)
+Origin: [UI-TASK-02](/docs/rite/cycles/archive/interface-desktop/02-criar-scaffold-tauri-com-sidecar-e-tela-ambiente.md)
 
 ## Problem
 
