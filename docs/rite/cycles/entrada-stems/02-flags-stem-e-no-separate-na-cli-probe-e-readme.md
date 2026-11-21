@@ -58,3 +58,4 @@ README explica o uso com stems do Moises.
   - `warm export (--stem, cache hit): 0.3 s`
   - `probe ok`
   - Outras medidas: `.venv/bin/pytest -q tests/test_cli_stems.py` → `9 passed`; `make test` → `283 passed`; `make lint` ok.
+- **Scope amended** (2026-11-21, FIX-STEM-004) — no commit `89dd225` o probe passou de "20 s de um stem real (`stems/guitar.wav` da raiz, se existir)" para "stem sintetizado por Karplus-Strong, 10 s". Motivo: `stems/guitar.wav` não é versionado (`git ls-files stems/` sai vazio), e a regra do CLAUDE.md diz que um número de e2e só vale se o comando for reproduzível a partir do HEAD. Com o sinal sintetizado o probe é determinístico em qualquer clone. O critério 2 não mudou.
