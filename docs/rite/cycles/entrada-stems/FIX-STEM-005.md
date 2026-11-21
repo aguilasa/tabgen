@@ -36,4 +36,12 @@ Se `no_separate` estiver ligado e o instrumento já tiver `--stem`, chamar `inva
 O comando da Evidência termina com `typer.Exit` (código 2) em vez de imprimir o dicionário;
 `.venv/bin/pytest -q tests/test_cli_stems.py` passa com o caso novo.
 
+Resultado (2026-11-21):
+- O comando da Evidência agora termina com `typer.exceptions.Exit: 2`; antes imprimia
+  `{'guitar': PosixPath('README.md')}`. O `echo $?` do pipe dá 0 por causa do `tail`.
+- Na CLI, o erro sai como "Invalid option: --no-separate and --stem guitar=... both name the guitar
+  stem; use one of them", com exit 2.
+- `.venv/bin/pytest -q tests/test_cli_stems.py` → `10 passed`, com o caso novo no parametrize.
+- `make test` → `284 passed`; `make lint` ok.
+
 ## Execution Log

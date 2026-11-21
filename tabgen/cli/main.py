@@ -90,7 +90,12 @@ def _user_stems(
                 "--no-separate needs exactly one instrument in --instruments, "
                 f"got {', '.join(instruments) or 'none'}"
             )
-        result.setdefault(instruments[0], audio)
+        if instruments[0] in result:
+            invalid(
+                f"--no-separate and --stem {instruments[0]}=... both name the "
+                f"{instruments[0]} stem; use one of them"
+            )
+        result[instruments[0]] = audio
     return result or None
 
 

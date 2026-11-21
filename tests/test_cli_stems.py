@@ -80,6 +80,7 @@ def test_analyze_no_separate(tmp_path, recorded):
     ["--stem", "guitar"],
     ["--stem", "guitar=/nope/missing.wav"],
     ["--no-separate", "--instruments", "guitar,bass"],
+    ["--no-separate", "--instruments", "guitar", "--stem", "guitar=LEAD"],
 ])
 def test_invalid_stem_options_exit_2(tmp_path, recorded, args):
     song, lead = files(tmp_path)
