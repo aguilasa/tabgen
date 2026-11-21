@@ -48,7 +48,7 @@ Medido em 2026-11-21 no HEAD depois do FIX-STEM-006 (RTX 3060):
     - nenhuma pasta `stems/` criada;
     - o mix entrou em `.tabgen/user-stems/` (o wav do Moises não está no formato do Demucs).
   - A saída dá `Key: F# major` e `guitar: 516 notes`.
-  - Cache: a análise e a tablatura usam a tag `+stems-ab079fa433+`. O nome mais longo tem 249 bytes.
+  - Cache: a análise e a tablatura usam a tag `+stems-ab079fa433+`. O nome mais longo tem 246 bytes (`ls .tabgen | awk "{print length}"`), abaixo do limite de 255.
   - Conferências do `.gp5`:
     - `guitarpro.parse` reabre o arquivo; o `gp_info.py` da skill `tablatura-guitar-pro` dá
       `problemas: 0`, 51 compassos e afinação eb;
