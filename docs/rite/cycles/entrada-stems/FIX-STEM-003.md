@@ -36,3 +36,7 @@ Acrescentar sob o Execution Log a saída do probe (`.venv/bin/python scripts/pro
 `sed -n '/## Execution Log/,$p' docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md | grep -E "cold export: [0-9.]+ s"` acha a linha.
 
 ## Execution Log
+
+- **Closed** — commit `e0be64f` (2026-11-21): docs(rite): record STEM-TASK-02 probe timings
+  - Files (`git show --name-status e0be64f`):
+    - `M docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md`
