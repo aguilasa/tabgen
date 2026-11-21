@@ -43,3 +43,11 @@ which commands search instead of reading whole.
 ## Phase-specific checks
 
 <!-- One entry per phase used by tasks ("### Phase 1 — ..."). The reviewer runs these; a phase without an entry is a finding. -->
+
+### Fase 6 — Entrada de stems
+
+- `tabgen export <stem>.wav --no-separate --instruments guitar -o x.gp5` sai 0 sem carregar o Demucs (o probe `scripts/probe_e2e_stems.py` imprime `demucs_loaded=False`).
+- `--stem guitar=<arquivo>` com mistura como entrada: os beats vêm da mistura e a faixa de guitarra vem do stem dado.
+- Sem `--stem`, os caches existentes continuam válidos: as versões de `analysis` e `tablature` são iguais às do HEAD anterior ao ciclo.
+- `make test` e `make lint` saem 0; `grep -rnE "import typer|import rich|print\(" tabgen/core/` vazio.
+

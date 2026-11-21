@@ -10,6 +10,14 @@
 <!-- rite:begin graph -->
 ```mermaid
 graph TD
+  subgraph phase_6["Fase 6"]
+    STEM_TASK_01["STEM-TASK-01<br/>Separação preparada a partir de stems dados no core"]
+    STEM_TASK_02["STEM-TASK-02<br/>Flags --stem e --no-separate na CLI, probe e README"]
+    STEM_TASK_03["STEM-TASK-03<br/>Fechar Fase 6"]
+  end
+  STEM_TASK_01 --> STEM_TASK_02
+  STEM_TASK_01 --> STEM_TASK_03
+  STEM_TASK_02 --> STEM_TASK_03
 ```
 <!-- rite:end -->
 
@@ -18,7 +26,9 @@ graph TD
 <!-- rite:begin tasks -->
 | ID | Title | Phase | Type | Depends on | Status | Done on | Reviewed on | Review |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| — | *(no tasks yet)* | | | | | | | |
+| [STEM-TASK-01](/docs/rite/cycles/entrada-stems/01-separacao-preparada-a-partir-de-stems-dados-no.md) | Separação preparada a partir de stems dados no core | 6 | feature | — | pending | — | — | — |
+| [STEM-TASK-02](/docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md) | Flags --stem e --no-separate na CLI, probe e README | 6 | feature | STEM-TASK-01 | pending | — | — | — |
+| [STEM-TASK-03](/docs/rite/cycles/entrada-stems/03-fechar-fase-6.md) | Fechar Fase 6 | 6 | closing | STEM-TASK-01, STEM-TASK-02 | pending | — | — | — |
 <!-- rite:end -->
 
 ## Notes

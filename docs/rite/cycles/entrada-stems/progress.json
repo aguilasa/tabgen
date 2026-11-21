@@ -6,5 +6,54 @@
   "ticket": null,
   "local": false,
   "seq": 1,
-  "tasks": []
+  "tasks": [
+    {
+      "id": "STEM-TASK-01",
+      "file": "01-separacao-preparada-a-partir-de-stems-dados-no.md",
+      "title": "Separação preparada a partir de stems dados no core",
+      "type": "feature",
+      "phase": 6,
+      "depends_on": [],
+      "source_of_truth": "/docs/planejamento/entrada-stems.md#decisões",
+      "files": ["tabgen/core/separation/prepared.py", "tabgen/core/pipeline.py", "tests/test_prepared_stems.py"],
+      "resources": [],
+      "status": "pending",
+      "done_on": null,
+      "done_commit": null,
+      "reviewed_on": null,
+      "review_commit": null
+    },
+    {
+      "id": "STEM-TASK-02",
+      "file": "02-flags-stem-e-no-separate-na-cli-probe-e-readme.md",
+      "title": "Flags --stem e --no-separate na CLI, probe e README",
+      "type": "feature",
+      "phase": 6,
+      "depends_on": ["STEM-TASK-01"],
+      "source_of_truth": "/docs/planejamento/entrada-stems.md#decisões",
+      "files": ["tabgen/cli/main.py", "scripts/probe_e2e_stems.py", "tests/test_cli_stems.py", "README.md"],
+      "resources": [],
+      "status": "pending",
+      "done_on": null,
+      "done_commit": null,
+      "reviewed_on": null,
+      "review_commit": null
+    },
+    {
+      "id": "STEM-TASK-03",
+      "file": "03-fechar-fase-6.md",
+      "title": "Fechar Fase 6",
+      "type": "closing",
+      "phase": 6,
+      "depends_on": ["STEM-TASK-01", "STEM-TASK-02"],
+      "source_of_truth": "/docs/planejamento/entrada-stems.md#verificação",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "done_on": null,
+      "done_commit": null,
+      "reviewed_on": null,
+      "review_commit": null
+    }
+  ]
 }
