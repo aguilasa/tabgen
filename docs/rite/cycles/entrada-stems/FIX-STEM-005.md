@@ -45,3 +45,9 @@ Resultado (2026-11-21):
 - `make test` → `284 passed`; `make lint` ok.
 
 ## Execution Log
+
+- **Closed** — commit `fb95dbf` (2026-11-21): fix(cli): reject --no-separate together with --stem for the same instrument
+  - Files (`git show --name-status fb95dbf`):
+    - `M docs/rite/cycles/entrada-stems/FIX-STEM-005.md`
+    - `M tabgen/cli/main.py`
+    - `M tests/test_cli_stems.py`

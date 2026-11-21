@@ -7,6 +7,6 @@
 | [FIX-STEM-002](/docs/rite/cycles/entrada-stems/FIX-STEM-002.md) | Alinhar model_version preparado ao Escopo ou registrar o desvio | STEM-TASK-01 | low | done | 2026-11-21 |
 | [FIX-STEM-003](/docs/rite/cycles/entrada-stems/FIX-STEM-003.md) | Registrar o tempo medido do probe no Execution Log | STEM-TASK-02 | high | done | 2026-11-21 |
 | [FIX-STEM-004](/docs/rite/cycles/entrada-stems/FIX-STEM-004.md) | Justificar a reescrita do Escopo feita no commit de trabalho | STEM-TASK-02 | medium | done | 2026-11-21 |
-| [FIX-STEM-005](/docs/rite/cycles/entrada-stems/FIX-STEM-005.md) | Recusar --no-separate junto com --stem do mesmo instrumento | STEM-TASK-02 | low | pending | — |
+| [FIX-STEM-005](/docs/rite/cycles/entrada-stems/FIX-STEM-005.md) | Recusar --no-separate junto com --stem do mesmo instrumento | STEM-TASK-02 | low | done | 2026-11-21 |
 | [FIX-STEM-006](/docs/rite/cycles/entrada-stems/FIX-STEM-006.md) | Corrigir o README sobre a origem dos acordes e o que o probe confere | STEM-TASK-02 | low | pending | — |
 <!-- rite:end -->
