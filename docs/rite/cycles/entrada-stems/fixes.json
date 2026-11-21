@@ -112,10 +112,14 @@
       "severity": "medium",
       "files": [],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-11-21",
+      "done_commit": "0d6a334",
+      "active_since": null,
+      "started_at": "2026-11-21T10:50:39-03:00",
+      "active_s": 1,
+      "finished_at": "2026-11-21T10:50:40-03:00"
     },
     {
       "id": "FIX-STEM-008",

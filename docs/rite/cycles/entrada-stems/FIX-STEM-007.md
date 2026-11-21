@@ -36,3 +36,7 @@ Acrescentar às Notes da tarefa os comandos e as saídas das checagens 2 e 3 (se
 `grep -nE "test_versions_without_user_stems_are_unchanged|adds_the_mix" docs/rite/cycles/entrada-stems/03-fechar-fase-6.md` lista as duas.
 
 ## Execution Log
+
+- **Closed** — commit `0d6a334` (2026-11-21): docs(rite): record phase 6 checks 2 and 3 evidence
+  - Files (`git show --name-status 0d6a334`):
+    - `M docs/rite/cycles/entrada-stems/03-fechar-fase-6.md`
