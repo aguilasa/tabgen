@@ -39,3 +39,7 @@ Acrescentar ao Execution Log uma entrada "Scope amended" com o motivo (reproduti
 `sed -n '/## Execution Log/,$p' docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md | grep -i amended` acha a linha.
 
 ## Execution Log
+
+- **Closed** — commit `153bb1f` (2026-11-21): docs(rite): record the STEM-TASK-02 scope amendment
+  - Files (`git show --name-status 153bb1f`):
+    - `M docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md`
