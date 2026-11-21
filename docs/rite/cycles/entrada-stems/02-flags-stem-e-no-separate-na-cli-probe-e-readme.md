@@ -42,3 +42,11 @@ README explica o uso com stems do Moises.
 - [x] `grep -n "no-separate" README.md` acha a seção nova.
 
 ## Execution Log
+
+- **Closed** — commit `89dd225` (2026-11-21): feat(cli): add --stem and --no-separate to export, transcribe and analyze
+  - Files (`git show --name-status 89dd225`):
+    - `M README.md`
+    - `M docs/rite/cycles/entrada-stems/02-flags-stem-e-no-separate-na-cli-probe-e-readme.md`
+    - `A scripts/probe_e2e_stems.py`
+    - `M tabgen/cli/main.py`
+    - `A tests/test_cli_stems.py`

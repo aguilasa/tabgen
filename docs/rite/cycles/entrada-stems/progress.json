@@ -37,11 +37,15 @@
       "source_of_truth": "/docs/planejamento/entrada-stems.md#decisões",
       "files": ["tabgen/cli/main.py", "scripts/probe_e2e_stems.py", "tests/test_cli_stems.py", "README.md"],
       "resources": [],
-      "status": "pending",
-      "done_on": null,
-      "done_commit": null,
-      "reviewed_on": null,
-      "review_commit": null
+      "status": "done",
+      "done_on": "2026-11-21",
+      "done_commit": "89dd225",
+      "reviewed_on": "pending",
+      "review_commit": null,
+      "active_since": null,
+      "started_at": "2026-11-21T10:29:51-03:00",
+      "active_s": 140,
+      "finished_at": "2026-11-21T10:32:11-03:00"
     },
     {
       "id": "STEM-TASK-03",
