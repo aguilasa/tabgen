@@ -95,10 +95,14 @@
       "severity": "low",
       "files": [],
       "resources": [],
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
-      "done_on": null,
-      "done_commit": null
+      "done_on": "2026-11-21",
+      "done_commit": "2a54865",
+      "active_since": null,
+      "started_at": "2026-11-21T10:41:07-03:00",
+      "active_s": 0,
+      "finished_at": "2026-11-21T10:41:07-03:00"
     }
   ]
 }

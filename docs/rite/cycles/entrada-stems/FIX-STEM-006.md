@@ -43,3 +43,8 @@ Resultado (2026-11-21):
 - O README também cita a conversão para wav estéreo de 44,1 kHz (FIX-STEM-001).
 
 ## Execution Log
+
+- **Closed** — commit `2a54865` (2026-11-21): docs(readme): describe where beats and chords come from with user stems
+  - Files (`git show --name-status 2a54865`):
+    - `M README.md`
+    - `M docs/rite/cycles/entrada-stems/FIX-STEM-006.md`
