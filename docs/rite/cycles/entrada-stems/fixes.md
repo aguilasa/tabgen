@@ -11,5 +11,5 @@
 | [FIX-STEM-006](/docs/rite/cycles/entrada-stems/FIX-STEM-006.md) | Corrigir o README sobre a origem dos acordes e o que o probe confere | STEM-TASK-02 | low | done | 2026-11-21 |
 | [FIX-STEM-007](/docs/rite/cycles/entrada-stems/FIX-STEM-007.md) | Registrar a evidência das checagens 2 e 3 da Fase 6 | STEM-TASK-03 | medium | done | 2026-11-21 |
 | [FIX-STEM-008](/docs/rite/cycles/entrada-stems/FIX-STEM-008.md) | Listar o commit 5887f0d no Execution Log da STEM-TASK-03 | STEM-TASK-03 | medium | done | 2026-11-21 |
-| [FIX-STEM-009](/docs/rite/cycles/entrada-stems/FIX-STEM-009.md) | Contar as notas de 29/10 e do export novo pelo mesmo método | STEM-TASK-03 | low | pending | — |
+| [FIX-STEM-009](/docs/rite/cycles/entrada-stems/FIX-STEM-009.md) | Contar as notas de 29/10 e do export novo pelo mesmo método | STEM-TASK-03 | low | done | 2026-11-21 |
 <!-- rite:end -->

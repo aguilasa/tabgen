@@ -36,3 +36,7 @@ Contar os dois arquivos com o mesmo script PyGuitarPro e registrar o comando com
 `grep -n "nontie" docs/rite/cycles/entrada-stems/03-fechar-fase-6.md` mostra as contagens dos dois arquivos pelo mesmo método.
 
 ## Execution Log
+
+- **Closed** — commit `99add44` (2026-11-21): docs(rite): compare note counts with one method in STEM-TASK-03
+  - Files (`git show --name-status 99add44`):
+    - `M docs/rite/cycles/entrada-stems/03-fechar-fase-6.md`
