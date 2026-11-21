@@ -69,7 +69,7 @@ Resultado (2026-11-21):
     e o `sum_harmonic_stems` real aceita;
   - `.m4a` decodificado pelo ffmpeg;
   - arquivo ilegível → `PipelineError: cannot decode`.
-- Controle: com `prepared.py` e `pipeline.py` do HEAD, esses testes dão `3 failed`.
+- Controle: com `prepared.py` e `pipeline.py` do HEAD (`git stash push` dos dois), a suíte dá `1 error`: falha na coleta, porque `NORMALIZED_DIR` não existe. É vermelho, mas por import, não pelos asserts.
 - `make test` → `282 passed`; `make lint` → `All checks passed!`; `scripts/probe_e2e_stems.py` →
   `probe ok` (a frio em 10,6 s).
 - Um stem que já é wav estéreo de 44,1 kHz não é convertido: o caminho original segue para a
