@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "cycle": "entrada-stems",
+  "prefix": "STEM",
+  "plan": "/docs/planejamento/entrada-stems.md",
+  "ticket": null,
+  "local": false,
+  "seq": 1,
+  "tasks": []
+}
