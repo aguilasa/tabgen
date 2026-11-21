@@ -54,8 +54,12 @@ Medido em 2026-11-21 no HEAD depois do FIX-STEM-006 (RTX 3060):
       `problemas: 0`, 51 compassos e afinação eb;
     - `timeout 25 flatpak run ar.com.tuxguitar.TuxGuitar lead.gp5` sai com exit 124 (abriu e ficou
       aberto até o timeout).
-  - Comparação: em 29/10 o mesmo wav, passado pelo Demucs, levou ao `.gp5` de 509 notas que está em
-    `~/Documents/diversos/musica/you-and-i/`.
+  - Comparação pelo mesmo método (FIX-STEM-009). Script PyGuitarPro, que conta as notas da faixa 1 com
+    e sem ligaduras (`NoteType.tie`):
+    `python count.py <gp5 de 29/10, com Demucs sobre o stem> <lead.gp5 de agora>`
+    - `you-and-i-lead-gb-major-139bpm-443hz.gp5 all 509 nontie 506`
+    - `lead.gp5 all 525 nontie 516`
+    O "516 notes" do resumo do tabgen é a contagem sem ligaduras: 506 antes, 516 agora.
 - `grep -rnE "import typer|import rich|print\(" tabgen/core/` sai vazio (exit 1).
 - Checagens 2 e 3 do profile (FIX-STEM-007): `.venv/bin/pytest -q tests/test_prepared_stems.py -k "adds_the_mix or full_cover or versions_without_user_stems" -v`:
   - `======================= 3 passed, 11 deselected in 0.35s =======================`
