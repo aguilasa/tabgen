@@ -76,3 +76,10 @@ Resultado (2026-11-21):
   transcrição.
 
 ## Execution Log
+
+- **Closed** — commit `a6d4527` (2026-11-21): fix(core): bring user stems and the mix to 44.1 kHz stereo wav before harmony
+  - Files (`git show --name-status a6d4527`):
+    - `M docs/rite/cycles/entrada-stems/FIX-STEM-001.md`
+    - `M tabgen/core/pipeline.py`
+    - `M tabgen/core/separation/prepared.py`
+    - `M tests/test_prepared_stems.py`
