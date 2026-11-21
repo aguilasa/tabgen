@@ -57,6 +57,12 @@ Medido em 2026-11-21 no HEAD depois do FIX-STEM-006 (RTX 3060):
   - Comparação: em 29/10 o mesmo wav, passado pelo Demucs, levou ao `.gp5` de 509 notas que está em
     `~/Documents/diversos/musica/you-and-i/`.
 - `grep -rnE "import typer|import rich|print\(" tabgen/core/` sai vazio (exit 1).
+- Checagens 2 e 3 do profile (FIX-STEM-007): `.venv/bin/pytest -q tests/test_prepared_stems.py -k "adds_the_mix or full_cover or versions_without_user_stems" -v`:
+  - `======================= 3 passed, 11 deselected in 0.35s =======================`
+  - Check 2, beats da mistura e guitarra do stem: `test_analysis_with_user_stems_skips_demucs_and_adds_the_mix`
+    (`beats_calls == [song]`) e `test_full_cover_never_calls_demucs_and_uses_the_user_stem`.
+  - Check 3, versões sem `--stem` iguais às do HEAD anterior ao ciclo: `test_versions_without_user_stems_are_unchanged`,
+    com os valores fixados a partir do `3d5afb2` (STEM-TASK-01).
 
 ## Execution Log
 
