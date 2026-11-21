@@ -10,9 +10,15 @@ which commands search instead of reading whole.
 
 <!-- Decisions the user confirmed. One line each, with the date and where it was decided. -->
 
+- 2026-11-21 — Aceitar stem pronto por flag no tabgen (não contornar fora do repo) — decidido pelo usuário ao planejar a skill global de tablatura.
+- 2026-11-21 — `--stem INSTRUMENTO=ARQUIVO` repetível e `--no-separate` em export/transcribe/analyze; Demucs não roda quando todo instrumento pedido tem stem — plano, seção "Decisões" 1–3.
+- 2026-11-21 — Sem `--stem`, versões de cache inalteradas; worker/desktop fora do escopo — plano, "Decisões" 5–6.
+
 ## Sources of truth
 
 <!-- Plan sections, specs, reference outputs. Items point here through `source_of_truth`. -->
+
+- Plano do ciclo: [/docs/planejamento/entrada-stems.md](/docs/planejamento/entrada-stems.md).
 
 ## Generated artifacts
 
