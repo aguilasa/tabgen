@@ -63,3 +63,4 @@ Medido em 2026-11-21 no HEAD depois do FIX-STEM-006 (RTX 3060):
 - **Closed** — commit `d9de920` (2026-11-21): docs: correct cache name length in phase 6 closing evidence
   - Files (`git show --name-status d9de920`):
     - `M docs/rite/cycles/entrada-stems/03-fechar-fase-6.md`
+- **Reviewed** (2026-11-21) at `816d5e7`: FIX-STEM-007, FIX-STEM-008, FIX-STEM-009

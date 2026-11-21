@@ -103,6 +103,45 @@
       "started_at": "2026-11-21T10:41:07-03:00",
       "active_s": 0,
       "finished_at": "2026-11-21T10:41:07-03:00"
+    },
+    {
+      "id": "FIX-STEM-007",
+      "file": "FIX-STEM-007.md",
+      "title": "Registrar a evidência das checagens 2 e 3 da Fase 6",
+      "origin": "STEM-TASK-03",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-008",
+      "file": "FIX-STEM-008.md",
+      "title": "Listar o commit 5887f0d no Execution Log da STEM-TASK-03",
+      "origin": "STEM-TASK-03",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-009",
+      "file": "FIX-STEM-009.md",
+      "title": "Contar as notas de 29/10 e do export novo pelo mesmo método",
+      "origin": "STEM-TASK-03",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
     }
   ]
 }
