@@ -37,4 +37,13 @@ Acrescentar o digest dos stems ao `model_version` em `prepared.py` (`user-stems:
 
 `grep -n 'user-stems:' tabgen/core/separation/prepared.py` acha; um teste confere o `model_version` com o digest.
 
+Resultado (2026-11-21):
+- `model_version` passa a ser `user-stems:<sha10>`, o mesmo digest do `stems_tag`. No caso parcial
+  fica `<demucs>+user-stems:<sha10>`.
+- `.venv/bin/pytest -q tests/test_prepared_stems.py` → `14 passed`, com o teste novo
+  `test_model_version_carries_the_stems_digest`.
+- `grep -n 'user-stems:' tabgen/core/separation/prepared.py` acha a linha 140. É um comentário: o
+  código monta o valor por f-string, e quem confere de fato é o teste.
+- `make test` → `283 passed`; `make lint` ok.
+
 ## Execution Log

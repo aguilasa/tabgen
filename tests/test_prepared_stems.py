@@ -255,3 +255,11 @@ def test_unreadable_stem_raises_pipeline_error(tmp_path):
             beats_fn=make_fake_beats([]),
             harmony_fn=make_fake_harmony([]),
         )
+
+
+def test_model_version_carries_the_stems_digest(tmp_path):
+    """FIX-STEM-002: model_version is user-stems:<digest of stems_tag>."""
+    stem = write_stem(tmp_path / "lead.wav", 0.3)
+    result, _ = prepared_separate({"guitar": stem.resolve()}, ("guitar",))(stem)
+    tag = stems_tag({"guitar": stem.resolve()}, False)
+    assert result.model_version == "user-stems:" + tag.removeprefix("stems-")

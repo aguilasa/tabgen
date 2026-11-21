@@ -137,6 +137,8 @@ def prepared_separate(
         name: Path(path).expanduser().resolve() for name, path in user_stems.items()
     }
     full = covers(sources, instruments)
+    # e.g. "user-stems:3f2a9c01de" -- the same digest as stems_tag
+    model = f"{USER_STEMS_MODEL}:{stems_tag(sources, uses_demucs=not full)[6:]}"
 
     def separate(input_path, device=None, on_progress=None, **kwargs):
         input_path = Path(input_path)
@@ -150,7 +152,7 @@ def prepared_separate(
             result = dict(stems)
             if input_path.expanduser().resolve() not in set(sources.values()):
                 result[MIX_STEM] = str(normalize_audio(input_path, workdir))
-            return SeparationResult(stems=result, model_version=USER_STEMS_MODEL), True
+            return SeparationResult(stems=result, model_version=model), True
         sep = fallback
         if sep is None:
             from tabgen.core.separation.demucs import separate as sep
@@ -164,7 +166,7 @@ def prepared_separate(
             SeparationResult(
                 stems=merged,
                 sample_rate=separation.sample_rate,
-                model_version=f"{separation.model_version}+{USER_STEMS_MODEL}",
+                model_version=f"{separation.model_version}+{model}",
             ),
             hit,
         )
