@@ -201,6 +201,7 @@ def run_transcription(
     export_fn: _ExportFn | None = None,
     guitar_type: str | None = None,
     transcriber: str = DEFAULT_TRANSCRIBER,
+    user_stems: Mapping[str, str | Path] | None = None,
 ) -> TranscriptionSummary:
     """Separate the input, transcribe each instrument's stem, export MIDI.
 
@@ -221,12 +222,16 @@ def run_transcription(
     ``transcriber`` (one of :data:`TRANSCRIBERS`) picks the guitar's
     transcription when ``transcribe_fn`` is not injected (see
     :func:`default_transcribe_fn`); the bass always uses Basic Pitch.
+
+    ``user_stems`` (instrument -> stem file) skips Demucs when it covers
+    every requested instrument (see :func:`_user_stems_setup`).
     """
     input_path = Path(input_path)
     if not instruments:
         raise PipelineError("no instruments requested")
     _check_guitar_type(guitar_type)
     _check_transcriber(transcriber)
+    separate_fn, _ = _user_stems_setup(user_stems, tuple(instruments), separate_fn)
 
     if separate_fn is None:
         from tabgen.core.separation.demucs import separate as separate_fn
@@ -297,13 +302,19 @@ ANALYSIS_CONTRACT_REVISION = 2
 ANALYSIS_STAGES = ("separation", "analysis:beats", "analysis:harmony")
 
 
-def analysis_version() -> str:
+def analysis_version(stems_tag: str = "") -> str:
     """Cache version string of the analysis stage.
 
     Combines the installed madmom distribution version (both the beats
     and the harmony models come from it), the Demucs model version (the
     harmony stage consumes its stems) and the AnalysisResult contract
     revision, so upgrading any of them invalidates cached analyses.
+
+    With user stems (``stems_tag`` from
+    :func:`tabgen.core.separation.prepared.stems_tag`) the tag takes the
+    place of the Demucs model version: it digests the stems' content (and
+    the Demucs version when Demucs still runs). Without it the string is
+    unchanged, so existing caches stay valid.
     """
     from importlib.metadata import PackageNotFoundError, version
 
@@ -314,9 +325,39 @@ def analysis_version() -> str:
     except PackageNotFoundError:  # pragma: no cover - env without madmom
         madmom_version = "unknown"
     return (
-        f"madmom-{madmom_version}+{MODEL_VERSION}"
+        f"madmom-{madmom_version}+{stems_tag or MODEL_VERSION}"
         f"+contract-{ANALYSIS_CONTRACT_REVISION}"
     )
+
+
+def _user_stems_setup(
+    user_stems: Mapping[str, str | Path] | None,
+    instruments: Sequence[str],
+    separate_fn: _SeparateFn | None,
+) -> tuple[_SeparateFn | None, str]:
+    """Wrap ``separate_fn`` to serve user stems; return it and the cache tag.
+
+    No ``user_stems``: ``separate_fn`` unchanged and an empty tag. Otherwise
+    the stems are validated (instrument names, files) and a prepared
+    separator is returned that only falls back to ``separate_fn`` (Demucs by
+    default) when some of ``instruments`` has no user stem.
+    """
+    if not user_stems:
+        return separate_fn, ""
+    from tabgen.core.separation.prepared import (
+        PreparedStemsError,
+        check_user_stems,
+        covers,
+        prepared_separate,
+        stems_tag,
+    )
+
+    try:
+        checked = check_user_stems(user_stems, TABLATURE_INSTRUMENTS)
+    except PreparedStemsError as err:
+        raise PipelineError(str(err)) from err
+    tag = stems_tag(checked, uses_demucs=not covers(checked, instruments))
+    return prepared_separate(checked, instruments, fallback=separate_fn), tag
 
 
 @dataclass
@@ -340,6 +381,8 @@ def run_analysis(
     separate_fn: _SeparateFn | None = None,
     beats_fn: _BeatsFn | None = None,
     harmony_fn: _HarmonyFn | None = None,
+    user_stems: Mapping[str, str | Path] | None = None,
+    stem_instruments: Sequence[str] | None = None,
 ) -> AnalysisSummary:
     """Analyze the input: tempo/beats plus key/chords, with caching.
 
@@ -356,6 +399,11 @@ def run_analysis(
     reaching 100.0 (immediately, on a cache hit). ``separate_fn`` /
     ``beats_fn`` / ``harmony_fn`` default to the real stages and exist
     for dependency injection in tests.
+
+    ``user_stems`` maps instrument names to stem files the user already has
+    (see :func:`_user_stems_setup`); Demucs is skipped when they cover
+    ``stem_instruments`` (default: the instruments of ``user_stems``), and
+    the harmony then hears the user stems plus the input audio.
     """
     input_path = Path(input_path)
     if not input_path.is_file():
@@ -363,7 +411,12 @@ def run_analysis(
     if cache is None:
         cache = StageCache(input_path)
 
-    version = analysis_version()
+    separate_fn, stems_tag = _user_stems_setup(
+        user_stems,
+        tuple(stem_instruments) if stem_instruments else tuple(user_stems or ()),
+        separate_fn,
+    )
+    version = analysis_version(stems_tag)
     cached = cache.get(ANALYSIS_STAGE, version)
     if cached is not None:
         try:
@@ -609,6 +662,7 @@ def tablature_version(
     techniques: bool = True,
     guitar_type: str = DEFAULT_GUITAR_TYPE,
     transcriber: str = DEFAULT_TRANSCRIBER,
+    stems_tag: str = "",
 ) -> str:
     """Cache version of the tablature stage for the given fretting configs.
 
@@ -622,7 +676,8 @@ def tablature_version(
     and legato detector thresholds), so changing any of them recomputes the
     tablature. A guitar transcribed by ``riley`` adds
     :func:`transcriber_tag` (transcriber and weights sha); ``basic-pitch``
-    adds nothing, so its keys are unchanged.
+    adds nothing, so its keys are unchanged. ``stems_tag`` (user stems) goes
+    into the analysis part, see :func:`analysis_version`.
     """
     import hashlib
     import json
@@ -637,7 +692,7 @@ def tablature_version(
     ).hexdigest()[:12]
     return (
         f"tab-{TAB_FORMAT_VERSION}+rev-{TABLATURE_PIPELINE_REVISION}"
-        f"+{analysis_version()}+{BP_VERSION}"
+        f"+{analysis_version(stems_tag)}+{BP_VERSION}"
         f"{transcriber_tag(transcriber, list(configs))}"
         f"+note-{NOTE_CONTRACT_REVISION}"
         f"+params-{digest}+gtype-{guitar_type}+{_techniques_tag(techniques)}"
@@ -738,6 +793,7 @@ def run_tablature(
     techniques: bool = True,
     guitar_type: str = DEFAULT_GUITAR_TYPE,
     transcriber: str = DEFAULT_TRANSCRIBER,
+    user_stems: Mapping[str, str | Path] | None = None,
 ) -> TablatureSummary:
     """Build guitar/bass tablature for the input and export it.
 
@@ -777,6 +833,11 @@ def run_tablature(
     transcription when ``transcribe_fn`` is not injected: ``riley`` gives
     Riley notes with Basic Pitch bends (see :func:`default_transcribe_fn`),
     the bass stays on Basic Pitch. It is part of the cache version.
+
+    ``user_stems`` (instrument -> stem file the user already has, e.g. from
+    Moises) replaces Demucs for those instruments; when it covers every
+    requested instrument Demucs does not run at all. Their content is part
+    of the cache version (see :func:`_user_stems_setup`).
     """
     input_path = Path(input_path)
     _check_guitar_type(guitar_type)
@@ -804,9 +865,11 @@ def run_tablature(
     for name in instruments:
         tunings.setdefault(name, resolve_tuning(None, name))
     configs = _fretting_configs(instruments, tunings, capos, guitar_type)
+    outer_separate = separate_fn
+    separate_fn, stems_tag = _user_stems_setup(user_stems, instruments, separate_fn)
     version = tablature_version(
         configs, techniques=techniques, guitar_type=guitar_type,
-        transcriber=transcriber,
+        transcriber=transcriber, stems_tag=stems_tag,
     )
 
     summary = None
@@ -846,6 +909,8 @@ def run_tablature(
             techniques,
             guitar_type,
             transcriber,
+            user_stems=user_stems,
+            outer_separate=outer_separate,
         )
         cache.put(
             TABLATURE_STAGE,
@@ -964,8 +1029,15 @@ def _compute_tablature(
     techniques: bool = True,
     guitar_type: str = DEFAULT_GUITAR_TYPE,
     transcriber: str = DEFAULT_TRANSCRIBER,
+    user_stems: Mapping[str, str | Path] | None = None,
+    outer_separate: _SeparateFn | None = None,
 ) -> TablatureSummary:
-    """Run every upstream stage and assemble the TabScores (cache miss)."""
+    """Run every upstream stage and assemble the TabScores (cache miss).
+
+    ``separate_fn`` is already the prepared separator when ``user_stems``
+    is given; the analysis gets ``user_stems`` and ``outer_separate`` (the
+    caller's separator) instead, so it computes its own cache tag.
+    """
     from dataclasses import asdict
 
     from tabgen.core.analysis.key_check import check_key
@@ -979,7 +1051,7 @@ def _compute_tablature(
         from tabgen.core.fretting import assign_frets as fretting_fn
 
     if analysis_fn is None:
-        injected_separate = separate_fn
+        injected_separate = outer_separate if user_stems else separate_fn
 
         def analysis_fn(input_path, device=None, on_progress=null_progress, cache=None):
             return run_analysis(
@@ -988,6 +1060,8 @@ def _compute_tablature(
                 on_progress=on_progress,
                 cache=cache,
                 separate_fn=injected_separate,
+                user_stems=user_stems,
+                stem_instruments=instruments,
             )
 
     analysis = analysis_fn(
