@@ -70,3 +70,6 @@ Medido em 2026-11-21 no HEAD depois do FIX-STEM-006 (RTX 3060):
   - Files (`git show --name-status d9de920`):
     - `M docs/rite/cycles/entrada-stems/03-fechar-fase-6.md`
 - **Reviewed** (2026-11-21) at `816d5e7`: FIX-STEM-007, FIX-STEM-008, FIX-STEM-009
+- **Work commit** `5887f0d` (2026-11-21, FIX-STEM-008): chore(rite): close phase 6 checks for entrada-stems. Este commit traz os critérios marcados e a evidência das Notes; o `rite finish` o recusou porque o prefixo `chore(rite)` é o dos commits de registro, e o done_commit ficou sendo o `d9de920`.
+  - Files (`git show --name-status 5887f0d`):
+    - `M docs/rite/cycles/entrada-stems/03-fechar-fase-6.md`
