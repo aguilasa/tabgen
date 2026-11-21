@@ -47,3 +47,9 @@ Resultado (2026-11-21):
 - `make test` → `283 passed`; `make lint` ok.
 
 ## Execution Log
+
+- **Closed** — commit `a3d554f` (2026-11-21): fix(core): include the stems digest in the prepared model_version
+  - Files (`git show --name-status a3d554f`):
+    - `M docs/rite/cycles/entrada-stems/FIX-STEM-002.md`
+    - `M tabgen/core/separation/prepared.py`
+    - `M tests/test_prepared_stems.py`
