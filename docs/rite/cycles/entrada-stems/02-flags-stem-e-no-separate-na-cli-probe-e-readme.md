@@ -20,8 +20,9 @@ README explica o uso com stems do Moises.
       instrumento em `--instruments` → exit 2.
     - As flags são repassadas como `user_stems` ao core.
   - `scripts/probe_e2e_stems.py`:
-    - Pega 20 s de um stem real (o padrão é o `stems/guitar.wav` da raiz, se existir; senão, um sinal
-      Karplus-Strong sintetizado) e roda `tabgen export ... --no-separate --instruments guitar`.
+    - Sintetiza um stem de guitarra determinístico (Karplus-Strong, 10 s) e roda
+      `tabgen export ... --no-separate --instruments guitar`. Não usa `stems/guitar.wav`: esse arquivo
+      não é versionado, e um número só vale se for reproduzível a partir do HEAD (regra do CLAUDE.md).
     - Imprime o tempo total e se o Demucs foi carregado, e confere o `.gp5` com `guitarpro.parse`.
     - Sai 0.
   - README: seção "Using stems you already have" com `--stem` e `--no-separate`.
@@ -30,14 +31,14 @@ README explica o uso com stems do Moises.
 
 ## Done criteria
 
-- [ ] `.venv/bin/pytest -q tests/test_cli_stems.py` passa, cobrindo:
+- [x] `.venv/bin/pytest -q tests/test_cli_stems.py` passa, cobrindo:
   - `--stem guitar=x.wav` chega ao core como `user_stems`;
   - `--stem foo=x.wav` → exit 2;
   - `--no-separate --instruments guitar,bass` → exit 2;
   - stem inexistente → exit 2.
-- [ ] `.venv/bin/python scripts/probe_e2e_stems.py` sai 0. Ele imprime `demucs_loaded=False` e
+- [x] `.venv/bin/python scripts/probe_e2e_stems.py` sai 0. Ele imprime `demucs_loaded=False` e
       `gp5 ok`, e o tempo medido vai para o Execution Log.
-- [ ] `.venv/bin/tabgen export --help | grep -E -- "--stem|--no-separate"` lista as duas flags.
-- [ ] `grep -n "no-separate" README.md` acha a seção nova.
+- [x] `.venv/bin/tabgen export --help | grep -E -- "--stem|--no-separate"` lista as duas flags.
+- [x] `grep -n "no-separate" README.md` acha a seção nova.
 
 ## Execution Log

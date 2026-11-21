@@ -311,6 +311,26 @@ in TuxGuitar or Guitar Pro before using it (true of commercial tools too).
 - The string/fret assignment still favours the lower strings; the evaluation
   below measures string accuracy (tab-F1) well under note accuracy.
 
+### Using stems you already have
+
+If the song is already split (for example, `rhythm` / `lead` / `bass` tracks
+exported by Moises), skip Demucs and hand tabgen the stems:
+
+```bash
+# the input itself is the guitar stem
+tabgen export lead.wav --no-separate --instruments guitar -o lead.gp5
+
+# full mix as input (beats and chords come from it), stems given per instrument
+tabgen export song.flac --stem guitar=rhythm.wav --stem bass=bass.wav -o song.gp5
+```
+
+`--stem INSTRUMENT=FILE` (repeatable; `guitar` or `bass`) and `--no-separate`
+work with `export`, `transcribe` and `analyze`. When every requested
+instrument has a stem, Demucs does not run; when only some do, Demucs runs and
+the given stems replace its own. The stems' content is part of the cache key,
+so editing a stem file recomputes the tablature; runs without these flags keep
+using the existing caches. `scripts/probe_e2e_stems.py` checks this end to end.
+
 ### Evaluation
 
 `scripts/eval/run.py` scores the pipeline on a fixed, versioned subset of

@@ -34,6 +34,66 @@ TRANSCRIBER_HELP = (
 )
 
 
+STEM_HELP = (
+    "Stem you already have, as INSTRUMENT=FILE (guitar or bass), e.g. a "
+    "track exported by Moises. Repeat for more instruments. When every "
+    "requested instrument has a stem, Demucs does not run."
+)
+NO_SEPARATE_HELP = (
+    "The input audio already is the stem of the one requested instrument "
+    "(same as --stem <instrument>=<input>): Demucs does not run."
+)
+
+
+def _stem_option():
+    return typer.Option(None, "--stem", help=STEM_HELP)
+
+
+def _no_separate_option():
+    return typer.Option(False, "--no-separate", help=NO_SEPARATE_HELP)
+
+
+def _user_stems(
+    stems: Optional[list[str]],
+    no_separate: bool,
+    audio: Path,
+    instruments: tuple[str, ...],
+) -> Optional[dict[str, Path]]:
+    """Parse --stem INSTRUMENT=FILE and --no-separate into user stems.
+
+    Invalid input prints "Invalid option" and exits with code 2.
+    """
+    from tabgen.core.pipeline import TABLATURE_INSTRUMENTS
+
+    def invalid(message: str) -> None:
+        console.print(f"[red]Invalid option:[/red] {message}")
+        raise typer.Exit(2)
+
+    result: dict[str, Path] = {}
+    for spec in stems or []:
+        name, sep, path = spec.partition("=")
+        name = name.strip().lower()
+        if not sep or not name or not path.strip():
+            invalid(f"--stem expects INSTRUMENT=FILE, got {spec!r}")
+        if name not in TABLATURE_INSTRUMENTS:
+            invalid(
+                f"unknown stem instrument {name!r}; choose from "
+                f"{', '.join(TABLATURE_INSTRUMENTS)}"
+            )
+        file = Path(path.strip()).expanduser()
+        if not file.is_file():
+            invalid(f"stem file not found: {file}")
+        result[name] = file
+    if no_separate:
+        if len(instruments) != 1:
+            invalid(
+                "--no-separate needs exactly one instrument in --instruments, "
+                f"got {', '.join(instruments) or 'none'}"
+            )
+        result.setdefault(instruments[0], audio)
+    return result or None
+
+
 def _version_callback(value: bool) -> None:
     if value:
         console.print(f"tabgen {__version__}")
@@ -160,6 +220,8 @@ def transcribe(
         "--transcriber",
         help=TRANSCRIBER_HELP,
     ),
+    stem: Optional[list[str]] = _stem_option(),
+    no_separate: bool = _no_separate_option(),
 ) -> None:
     """Transcribe the audio into one MIDI file per instrument."""
     from tabgen.core.pipeline import PipelineError, run_transcription
@@ -167,6 +229,7 @@ def transcribe(
     from tabgen.core.transcription.basic_pitch import TranscriptionError
 
     wanted = tuple(name.strip() for name in instruments.split(",") if name.strip())
+    user_stems = _user_stems(stem, no_separate, audio, wanted)
 
     with Progress(
         TextColumn("[progress.description]{task.description}"),
@@ -191,6 +254,7 @@ def transcribe(
                 on_progress=on_progress,
                 guitar_type=guitar_type.strip().lower() if guitar_type else None,
                 transcriber=transcriber.strip().lower(),
+                user_stems=user_stems,
             )
         except (PipelineError, SeparationError, TranscriptionError) as err:
             progress.stop()
@@ -229,12 +293,21 @@ def analyze(
         "--device",
         help="Device for Demucs: cuda or cpu (default: autodetect).",
     ),
+    stem: Optional[list[str]] = _stem_option(),
+    no_separate: bool = typer.Option(
+        False,
+        "--no-separate",
+        help="Analyze the input as it is: Demucs does not run (beats and "
+        "chords come straight from the input audio).",
+    ),
 ) -> None:
     """Analyze the audio: key, tempo/beats and chord sequence."""
     from tabgen.core.analysis.beats import BeatAnalysisError
     from tabgen.core.analysis.harmony import HarmonyError
     from tabgen.core.pipeline import PipelineError, run_analysis
     from tabgen.core.separation.demucs import SeparationError
+
+    user_stems = _user_stems(stem, no_separate, audio, ("guitar",))
 
     with Progress(
         TextColumn("[progress.description]{task.description}"),
@@ -251,7 +324,12 @@ def analyze(
             progress.update(tasks[stage], completed=pct)
 
         try:
-            summary = run_analysis(audio, device=device, on_progress=on_progress)
+            summary = run_analysis(
+                audio,
+                device=device,
+                on_progress=on_progress,
+                user_stems=user_stems,
+            )
         except (
             PipelineError,
             SeparationError,
@@ -362,6 +440,8 @@ def export(
         "--transcriber",
         help=TRANSCRIBER_HELP,
     ),
+    stem: Optional[list[str]] = _stem_option(),
+    no_separate: bool = _no_separate_option(),
 ) -> None:
     """Generate tablature (Guitar Pro 5, MusicXML or ASCII) from the audio."""
     from tabgen.core.analysis.beats import BeatAnalysisError
@@ -378,6 +458,7 @@ def export(
     from tabgen.core.transcription.basic_pitch import TranscriptionError
 
     wanted = tuple(name.strip() for name in instruments.split(",") if name.strip())
+    user_stems = _user_stems(stem, no_separate, audio, wanted)
     try:
         out_path = (
             output if output is not None else audio.parent / f"{audio.stem}.gp5"
@@ -431,6 +512,7 @@ def export(
                 techniques=techniques,
                 guitar_type=guitar_type,
                 transcriber=transcriber,
+                user_stems=user_stems,
             )
         except (
             PipelineError,
