@@ -72,3 +72,4 @@ Evidência (2026-11-21):
     - `M tabgen/core/pipeline.py`
     - `A tabgen/core/separation/prepared.py`
     - `A tests/test_prepared_stems.py`
+- **Reviewed** (2026-11-21) at `f07170a`: FIX-STEM-001, FIX-STEM-002

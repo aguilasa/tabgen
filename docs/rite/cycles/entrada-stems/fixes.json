@@ -1,5 +1,84 @@
 {
   "schema": 1,
   "cycle": "entrada-stems",
-  "fixes": []
+  "fixes": [
+    {
+      "id": "FIX-STEM-001",
+      "file": "FIX-STEM-001.md",
+      "title": "Decodificar mix e stems como o Demucs antes da harmonia",
+      "origin": "STEM-TASK-01",
+      "severity": "high",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-002",
+      "file": "FIX-STEM-002.md",
+      "title": "Alinhar model_version preparado ao Escopo ou registrar o desvio",
+      "origin": "STEM-TASK-01",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-003",
+      "file": "FIX-STEM-003.md",
+      "title": "Registrar o tempo medido do probe no Execution Log",
+      "origin": "STEM-TASK-02",
+      "severity": "high",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-004",
+      "file": "FIX-STEM-004.md",
+      "title": "Justificar a reescrita do Escopo feita no commit de trabalho",
+      "origin": "STEM-TASK-02",
+      "severity": "medium",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-005",
+      "file": "FIX-STEM-005.md",
+      "title": "Recusar --no-separate junto com --stem do mesmo instrumento",
+      "origin": "STEM-TASK-02",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    },
+    {
+      "id": "FIX-STEM-006",
+      "file": "FIX-STEM-006.md",
+      "title": "Corrigir o README sobre a origem dos acordes e o que o probe confere",
+      "origin": "STEM-TASK-02",
+      "severity": "low",
+      "files": [],
+      "resources": [],
+      "status": "pending",
+      "depends_on": [],
+      "done_on": null,
+      "done_commit": null
+    }
+  ]
 }
